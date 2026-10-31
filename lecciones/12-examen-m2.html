@@ -84,7 +84,7 @@ print("Dinero: ", dinero)
 
 func _ready():
 	pass</code></pre>
-        <p class="explicacion">Fuera de las funciones solo puede haber <strong>declaraciones</strong> (<code>var</code>, <code>const</code>, <code>signal</code>, <code>func</code>…). Las instrucciones, como <code>print</code>, van <strong>dentro</strong> de una función, por ejemplo en <code>_ready()</code>.</p>
+        <p class="explicacion">Fuera de las funciones solo puede haber <strong>declaraciones</strong> (<code>var</code>, <code>const</code>, <code>signal</code>, <code>func</code>…). Las instrucciones, como <code>print</code>, van <strong>dentro</strong> de una función, por ejemplo en <code>_ready()</code>.<br>Godot dice: <span class="error-texto">Unexpected identifier "print" in class body.</span></p>
       </div>
 
       <div class="error-codigo" data-linea="4">
@@ -93,7 +93,7 @@ func _ready():
 
 func _ready():
 	dinero = "mil monedas"</code></pre>
-        <p class="explicacion"><code>dinero</code> es de tipo <code>int</code> y le intentas meter un texto. Gracias al tipo, Godot te avisa antes de que el fallo llegue al juego.</p>
+        <p class="explicacion"><code>dinero</code> es de tipo <code>int</code> y le intentas meter un texto. Gracias al tipo, Godot te avisa antes de que el fallo llegue al juego.<br>Godot dice: <span class="error-texto">Cannot assign a value of type "String" as "int".</span></p>
       </div>
 
       <div class="relacionar">

@@ -142,7 +142,9 @@
         const nombre = fase === 0 ? "gallina" : "pozo";
         const d = distancia(granjero, objetivo);
         const fuera = Math.abs(granjero.x) > LIMITE || Math.abs(granjero.z) > LIMITE ? " (¡te has salido del mapa!)" : "";
-        consola.textContent = `position = (${granjero.x}, 0, ${granjero.z})${fuera}\nposition.distance_to(${nombre}) ≈ ${d.toFixed(2)}`;
+        // Como lo imprimiría Godot: los vectores siempre con decimales, por ejemplo (3.0, 0.0, -2.0).
+        const num = (n) => (Number.isInteger(n) ? n.toFixed(1) : String(n));
+        consola.textContent = `position = (${num(granjero.x)}, 0.0, ${num(granjero.z)})${fuera}\nposition.distance_to(${nombre}) ≈ ${d.toFixed(2)}`;
         if (d < 0.001) {
           fase++;
           pintarFase();

@@ -39,8 +39,8 @@
         <ul>
           <li><code>not declared</code> = «no declarado»: esa variable no existe aquí.</li>
           <li><code>not found</code> = «no encontrado»: no encuentra ese nodo o esa función.</li>
-          <li><code>null</code> = «nulo, nada»: estás usando algo que está vacío.</li>
-          <li><code>out of bounds</code> = «fuera de los límites»: esa posición no existe en la lista.</li>
+          <li><code>null</code> o <code>Nil</code> = «nulo, nada»: estás usando algo que está vacío.</li>
+          <li><code>index</code> = «índice»: esa posición no existe en la lista (por ejemplo, <code>Invalid access of index '3'</code>).</li>
           <li><code>expected</code> = «se esperaba»: falta algo, como un <code>:</code> o la sangría.</li>
           <li><code>invalid operands</code> = «operandos no válidos»: operación entre tipos que no encajan.</li>
         </ul>
@@ -52,7 +52,7 @@
           <li><span><code>not declared</code></span><span>Esa variable no existe aquí</span></li>
           <li><span><code>not found</code></span><span>No encuentra ese nodo o esa función</span></li>
           <li><span><code>null</code></span><span>Estás usando algo vacío</span></li>
-          <li><span><code>out of bounds</code></span><span>Esa posición no existe en la lista</span></li>
+          <li><span><code>index</code></span><span>Esa posición no existe en la lista</span></li>
           <li><span><code>expected</code></span><span>Falta algo: un <code>:</code>, la sangría…</span></li>
           <li><span><code>invalid operands</code></span><span>Operación entre tipos que no encajan</span></li>
         </ul>
@@ -68,7 +68,7 @@
         <p>Y este es el script de <code>Datos</code>. Toca la línea donde está <strong>la causa</strong>:</p>
         <pre><code>extends Node
 
-@onready var reloj = $Timer
+@onready var reloj: Timer = $Timer
 
 func _ready():
 	reloj.start()

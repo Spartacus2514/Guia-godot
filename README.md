@@ -2,6 +2,8 @@
 
 Curso interactivo en HTML para aprender **Godot 4** y **GDScript** desde cero construyendo un juego de granja en 3D (estilo Harvest Moon): poca teoría y muchos retos. Cada lección se supera al completar todos sus retos.
 
+Todo el código GDScript del curso está comprobado con **Godot 4.7.2**: los bloques de las lecciones pasan el análisis de Godot, el script del examen del módulo 2 da la salida que indica la lección y los mensajes de error de la chuleta son los reales.
+
 ## Cómo verlo
 
 - **En el ordenador**: abre `index.html` en el navegador. No hace falta instalar nada.

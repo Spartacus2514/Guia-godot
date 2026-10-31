@@ -197,6 +197,7 @@ Vector3.RIGHT     # (1, 0, 0)
 a.distance_to(b)          # metros entre a y b
 (b - a).normalized()      # dirección de a hacia b (largo 1)
 global_position           # posición en el mundo (position es relativa al padre)</code></pre>
+          <p>Al imprimir un vector, Godot muestra los decimales: <code>print(Vector3.FORWARD)</code> escribe <code>(0.0, 0.0, -1.0)</code>.</p>
         </div>
       </section>
 
@@ -239,21 +240,31 @@ func _on_cultivo_listo(nombre: String):    # la función que responde
 
       <section class="bloque-chuleta" id="errores">
         <h2>Errores frecuentes</h2>
-        <p>Los mensajes salen en inglés y el texto exacto cambia un poco entre versiones: fíjate en las <strong>palabras clave</strong>. Haz clic en el error, en la Salida o en el Depurador, y Godot te lleva a la línea.</p>
+        <p>Los mensajes salen en inglés. Estos son los de <strong>Godot 4.7</strong>, comprobados provocando cada error; en otras versiones el texto puede cambiar un poco, así que fíjate en las <strong>palabras clave</strong>. Haz clic en el error, en la Salida o en el Depurador, y Godot te lleva a la línea.</p>
         <div class="entrada">
           <h3>Expected indented block</h3>
           <p class="error-texto">Expected indented block after "if" block.</p>
           <p>Después de una línea que acaba en <code>:</code> (<code>if</code>, <code>for</code>, <code>func</code>…) falta la sangría. Pon un tabulador al principio de las líneas de dentro.</p>
         </div>
         <div class="entrada">
-          <h3>Mixed use of tabs and spaces</h3>
-          <p class="error-texto">Mixed use of tabs and spaces for indentation.</p>
-          <p>Has mezclado tabuladores y espacios (pasa mucho al copiar código). Usa solo tabuladores: el menú <em>Editar</em> del editor de scripts tiene una opción para convertir la sangría.</p>
+          <h3>Used space character for indentation</h3>
+          <p class="error-texto">Used space character for indentation instead of tab as used before in the file.</p>
+          <p>Has mezclado tabuladores y espacios en la sangría (pasa mucho al copiar código). Usa solo tabuladores: el menú <em>Editar</em> del editor de scripts tiene una opción para convertir la sangría.</p>
         </div>
         <div class="entrada">
           <h3>Expected ":"</h3>
           <p class="error-texto">Expected ":" after "if" condition.</p>
           <p>Falta el <code>:</code> al final de un <code>if</code>, <code>elif</code>, <code>else</code>, <code>for</code>, <code>while</code> o <code>func</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Assignment is not allowed inside an expression</h3>
+          <p class="error-texto">Assignment is not allowed inside an expression.</p>
+          <p>Has puesto un solo <code>=</code> donde querías comparar: <code>if dinero = 100:</code>. Para comparar se usan dos: <code>==</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Unexpected identifier in class body</h3>
+          <p class="error-texto">Unexpected identifier "print" in class body.</p>
+          <p>Hay una instrucción (como <code>print</code>) fuera de cualquier función. Fuera de las funciones solo van declaraciones: muévela dentro de <code>_ready()</code> o de otra función.</p>
         </div>
         <div class="entrada">
           <h3>Not declared in the current scope</h3>
@@ -272,7 +283,7 @@ func _on_cultivo_listo(nombre: String):    # la función que responde
         </div>
         <div class="entrada">
           <h3>Cannot assign … type</h3>
-          <p class="error-texto">Cannot assign a value of type "String" … "int".</p>
+          <p class="error-texto">Cannot assign a value of type "String" as "int".</p>
           <p>Metes un dato de un tipo en una variable de otro tipo (por ejemplo, texto en un <code>int</code>).</p>
         </div>
         <div class="entrada">
@@ -281,17 +292,18 @@ func _on_cultivo_listo(nombre: String):    # la función que responde
           <p>El <code>$Nodo</code> no existe con ese nombre o esa ruta. Compara con el árbol: las mayúsculas cuentan. El mensaje te dice desde qué nodo buscaba.</p>
         </div>
         <div class="entrada">
-          <h3>null: null instance, null value, Nil</h3>
+          <h3>null value / Nil</h3>
           <p class="error-texto">Cannot call method 'start' on a null value.</p>
-          <p>Estás usando algo vacío (<code>null</code>). Casi siempre viene de un <code>Node not found</code> anterior o de una variable a la que nunca diste valor. El error salta donde se <em>usa</em>, pero la causa suele estar antes.</p>
+          <p class="error-texto">Invalid call. Nonexistent function 'start' in base 'Nil'.</p>
+          <p>Estás usando algo vacío (<code>null</code>, que Godot también llama <code>Nil</code>). El primer mensaje sale si la variable tiene tipo (<code>var reloj: Timer</code>), y el segundo si no lo tiene. Casi siempre viene de un <code>Node not found</code> anterior o de una variable a la que nunca diste valor. El error salta donde se <em>usa</em>, pero la causa suele estar antes.</p>
         </div>
         <div class="entrada">
-          <h3>Out of bounds</h3>
-          <p class="error-texto">Out of bounds get index '3' (on base: 'Array').</p>
-          <p>Pides una posición del array que no existe. Con 3 elementos, los índices son 0, 1 y 2.</p>
+          <h3>Invalid access of index</h3>
+          <p class="error-texto">Invalid access of index '3' on a base object of type: 'Array'.</p>
+          <p>Pides una posición del array que no existe («fuera de rango»). Con 3 elementos, los índices son 0, 1 y 2.</p>
         </div>
         <div class="entrada">
-          <h3>Invalid access / invalid get index</h3>
+          <h3>Invalid access to property or key</h3>
           <p class="error-texto">Invalid access to property or key 'melon' on a base object of type 'Dictionary'.</p>
           <p>Lees una clave de diccionario (o una propiedad) que no existe. Revisa cómo está escrita, o usa <code>get(clave, valor_por_defecto)</code>.</p>
         </div>

@@ -99,7 +99,7 @@ func _ready():
 
 func vender():
 	print("Vendo ", cosecha, " nabos")</code></pre>
-        <p class="explicacion"><code>cosecha</code> se creó <strong>dentro</strong> de <code>_ready()</code>: es local y no existe en <code>vender()</code>. Si la necesitas en varias funciones, declárala <strong>fuera</strong>, arriba del script, o pásala como parámetro.</p>
+        <p class="explicacion"><code>cosecha</code> se creó <strong>dentro</strong> de <code>_ready()</code>: es local y no existe en <code>vender()</code>. Si la necesitas en varias funciones, declárala <strong>fuera</strong>, arriba del script, o pásala como parámetro.<br>Godot dice: <span class="error-texto">Identifier "cosecha" not declared in the current scope.</span></p>
       </div>
 
       <div class="completar">
