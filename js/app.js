@@ -443,10 +443,20 @@
 
     const reiniciar = document.getElementById("reiniciar-progreso");
     if (reiniciar) {
+      // Confirmación en dos pulsaciones (sin confirm(), que algunos visores bloquean).
+      reiniciar.textContent = "Reiniciar progreso";
       reiniciar.onclick = () => {
-        if (confirm("¿Seguro que quieres borrar tu progreso?")) {
+        if (reiniciar.dataset.confirmar) {
+          delete reiniciar.dataset.confirmar;
           guardarProgreso({});
           pintarPortada();
+        } else {
+          reiniciar.dataset.confirmar = "1";
+          reiniciar.textContent = "¿Seguro? Pulsa otra vez para borrar";
+          setTimeout(() => {
+            delete reiniciar.dataset.confirmar;
+            reiniciar.textContent = "Reiniciar progreso";
+          }, 4000);
         }
       };
     }
