@@ -14,51 +14,60 @@
       <span class="etiqueta-modulo">Módulo 1 · Lección 4</span>
       <h1>Tu primer script en GDScript</h1>
 
-      <p>Clic derecho en un nodo → <strong>Añadir script</strong> → Crear. Este es un script completo:</p>
+      <p>Clic derecho en un nodo → <strong>Añadir script</strong> → Crear. Este script hace girar las aspas de un molino:</p>
 
-      <pre><code class="gdscript">extends Sprite2D            # este script amplía un Sprite2D
+      <pre><code class="gdscript">extends Node3D                 # este script amplía un Node3D
 
-var velocidad = 200         # variable: píxeles por segundo
+var velocidad = 1.5            # variable: cuánto gira por segundo
 
-func _ready():              # se ejecuta UNA vez al empezar
-	print("¡Hola, Godot!")  # escribe en el panel Salida
+func _ready():                 # se ejecuta UNA vez al empezar
+	print("¡El molino funciona!")  # escribe en el panel Salida
 
-func _process(delta):       # se ejecuta en CADA fotograma
-	position.x += velocidad * delta</code></pre>
+func _process(delta):          # se ejecuta en CADA fotograma
+	rotation.z += velocidad * delta</code></pre>
 
       <div class="esencial">
         <ul>
           <li>Orden habitual: <code>extends</code> → variables → funciones.</li>
           <li>Lo que va <strong>dentro</strong> de una función lleva <strong>sangría</strong> (tabulador).</li>
           <li><code>_ready()</code>: una vez. <code>_process(delta)</code>: cada fotograma.</li>
+          <li>En 3D hay tres ejes: <strong style="color:#ff6b6b">X</strong> (izquierda-derecha), <strong style="color:#7bd88f">Y</strong> (arriba-abajo) y <strong style="color:#6bb3ff">Z</strong> (delante-detrás). Se miden en <strong>metros</strong>.</li>
         </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Quieres que una gallina salte. ¿Qué parte de su posición cambias?</p>
+        <button data-opcion="a"><code>position.x</code></button>
+        <button data-opcion="b"><code>position.y</code></button>
+        <button data-opcion="c"><code>position.z</code></button>
+        <p class="explicacion">En Godot el eje <strong>Y</strong> apunta hacia arriba. Truco: los colores del editor son <strong>X roja, Y verde, Z azul</strong>.</p>
       </div>
 
       <div class="ordenar" data-codigo>
         <p>Ordena el script (pon <code>_ready</code> antes que <code>_process</code>):</p>
         <ul class="piezas">
-          <li>extends Sprite2D</li>
-          <li>var velocidad = 200</li>
+          <li>extends Node3D</li>
+          <li>var velocidad = 1.5</li>
           <li>func _ready():</li>
           <li>&#9;print("¡Hola!")</li>
           <li>func _process(delta):</li>
-          <li>&#9;position.x += velocidad * delta</li>
+          <li>&#9;rotation.z += velocidad * delta</li>
         </ul>
       </div>
 
       <div class="error-codigo" data-linea="6">
         <p>Este script da error. Toca la línea culpable:</p>
-        <pre><code>extends Sprite2D
+        <pre><code>extends Node3D
 
-var velocidad = 200
+var velocidad = 1.5
 
 func _process(delta):
-position.x += velocidad * delta</code></pre>
+rotation.z += velocidad * delta</code></pre>
         <p class="explicacion">Falta la <strong>sangría</strong>. Sin el tabulador, la línea no pertenece a <code>_process</code> y Godot da error.</p>
       </div>
 
       <div class="quiz" data-respuesta="b">
-        <p class="pregunta">Quieres mostrar «Partida iniciada» una sola vez. ¿Dónde pones el <code>print()</code>?</p>
+        <p class="pregunta">Quieres mostrar «¡Buenos días, granjero!» una sola vez al empezar. ¿Dónde pones el <code>print()</code>?</p>
         <button data-opcion="a">En <code>_process(delta)</code>.</button>
         <button data-opcion="b">En <code>_ready()</code>.</button>
         <button data-opcion="c">Fuera de cualquier función.</button>
@@ -80,13 +89,13 @@ position.x += velocidad * delta</code></pre>
       </div>
 
       <div class="widget reto" id="bandera">
-        <p class="widget-titulo">🚩 Reto: llega a la bandera</p>
+        <p class="widget-titulo">🐄 Reto: lleva la vaca al establo</p>
         <p class="widget-info" id="bandera-texto"></p>
         <div class="pista-bandera" id="pista">
-          <div class="meta" id="meta">🚩</div>
-          <div class="corredor" id="corredor">🤖</div>
+          <div class="meta" id="meta">🛖</div>
+          <div class="corredor" id="corredor">🐄</div>
         </div>
-        <pre><code><span class="t-clave">var</span> velocidad = <input type="number" id="bandera-vel" value="100" step="10">
+        <pre><code><span class="t-clave">var</span> velocidad = <input type="number" id="bandera-vel" value="1" step="0.5">
 
 <span class="t-clave">func</span> <span class="t-funcion">_process</span>(delta):
 	position.x += velocidad * delta</code></pre>
@@ -94,18 +103,28 @@ position.x += velocidad * delta</code></pre>
       </div>
 
       <div class="completar">
-        <p>Haz que el sprite <strong>gire</strong> a velocidad constante en cualquier PC (la propiedad de giro es <code>rotation</code>):</p>
-        <pre><code><input data-respuesta="extends"> Sprite2D
+        <p>Haz que una moneda <strong>gire sobre el eje vertical</strong> a la misma velocidad en cualquier PC:</p>
+        <pre><code><input data-respuesta="extends"> Node3D
 
 var velocidad_giro = 3.0
 
 <input data-respuesta="func"> _process(delta):
-	<input data-respuesta="rotation"> += velocidad_giro * <input data-respuesta="delta"></code></pre>
+	rotation.<input data-respuesta="y|Y"> += velocidad_giro * <input data-respuesta="delta"></code></pre>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>granja.tscn</code>, añade un <code>MeshInstance3D</code> con un <em>BoxMesh</em>: será un objeto de prueba (luego pondrás tu molino o lo que quieras).</li>
+          <li>Clic derecho sobre él → <strong>Añadir script</strong> → guárdalo en <code>scripts/</code>.</li>
+          <li>Escribe el código de la moneda que gira. Godot habrá puesto <code>extends MeshInstance3D</code> en la primera línea: déjalo así, funciona igual porque un MeshInstance3D también <em>es</em> un Node3D.</li>
+          <li>Pulsa <kbd>F6</kbd> y mira cómo gira. Luego prueba <code>velocidad_giro = -3.0</code>.</li>
+          <li>Añade un <code>print("¡Buenos días, granjero!")</code> en <code>_ready()</code> y búscalo en la Salida.</li>
+        </ul>
       </div>
 
       <div class="consejo">
-        <strong>Hazlo en Godot (2 min)</strong>
-        Añade el script de arriba al <code>Sprite2D</code> de la lección anterior y pulsa <kbd>F6</kbd>. Luego prueba <code>velocidad = -200</code>. Truco: <kbd>Ctrl</kbd>+clic sobre cualquier palabra del código abre su documentación.
+        <strong>Truco</strong>
+        <kbd>Ctrl</kbd>+clic sobre cualquier palabra del código (como <code>rotation</code>) abre su documentación dentro de Godot.
       </div>
 
       <div id="navegacion"></div>
@@ -201,11 +220,11 @@ var velocidad_giro = 3.0
       const meta = document.getElementById("meta");
       const entrada = document.getElementById("bandera-vel");
       const boton = document.getElementById("bandera-ejecutar");
-      const LARGO = 500;       // píxeles "del juego" que mide la pista
-      const OBJETIVO = 300;    // posición de la bandera
+      const LARGO = 10;        // metros que mide el prado
+      const OBJETIVO = 6;      // posición del establo
       const TIEMPO = 2;        // segundos de ejecución
       meta.style.left = (OBJETIVO / LARGO) * 100 + "%";
-      texto.innerHTML = `La bandera está en <code>x = ${OBJETIVO}</code>. El juego corre <strong>${TIEMPO} segundos</strong>. ¿Qué <code>velocidad</code> necesitas?`;
+      texto.innerHTML = `El establo está en <code>x = ${OBJETIVO}</code> metros. El juego corre <strong>${TIEMPO} segundos</strong>. ¿Qué <code>velocidad</code> (metros por segundo) necesita la vaca?`;
 
       boton.addEventListener("click", () => {
         const v = Number(entrada.value) || 0;
@@ -218,8 +237,8 @@ var velocidad_giro = 3.0
           if (t < TIEMPO) return requestAnimationFrame(paso);
           boton.disabled = false;
           const final = v * TIEMPO;
-          if (final === OBJETIVO) {
-            texto.innerHTML = `🎉 <strong>¡Justo en la bandera!</strong> ${v} px/s × ${TIEMPO} s = ${OBJETIVO} px.`;
+          if (Math.abs(final - OBJETIVO) < 0.001) {
+            texto.innerHTML = `🎉 <strong>¡La vaca está en el establo!</strong> ${v} m/s × ${TIEMPO} s = ${OBJETIVO} m.`;
             window.GuiaGodot.resuelto(widget);
           } else {
             texto.innerHTML = `Has llegado a <code>x = ${final}</code> (${v} × ${TIEMPO}). ${final < OBJETIVO ? "Te quedas corto." : "Te pasas."} Pista: distancia = velocidad × tiempo.`;

@@ -26,8 +26,13 @@
     }
   }
 
+  // Lecciones ya escritas (las que tienen archivo); el resto son "próximamente".
   function todasLasLecciones() {
-    return curso.modulos.flatMap((m) => m.lecciones);
+    return curso.modulos.flatMap((m) => m.lecciones.filter((l) => l.archivo));
+  }
+
+  function modulosDisponibles() {
+    return curso.modulos.filter((m) => m.lecciones.some((l) => l.archivo));
   }
 
   function porcentaje(lecciones, progreso) {
@@ -59,7 +64,9 @@
   const TIPOS = new Set(
     ("int float bool String Vector2 Vector3 Color Array Dictionary Node Node2D Node3D Sprite2D " +
       "CharacterBody2D CharacterBody3D RigidBody2D Area2D CollisionShape2D Camera2D Label Button Control " +
-      "AnimatedSprite2D Timer Input PackedScene").split(" ")
+      "AnimatedSprite2D Timer Input PackedScene Node3D MeshInstance3D CollisionShape3D StaticBody3D " +
+      "Camera3D DirectionalLight3D SpringArm3D RayCast3D Area3D NavigationAgent3D AnimationPlayer " +
+      "Resource Basis Transform3D").split(" ")
   );
 
   function escapar(texto) {
@@ -396,6 +403,47 @@
     });
   }
 
+  // ---------- Hazlo en tu juego ----------
+  // <div class="en-tu-juego"><ul><li>Paso…</li>…</ul></div>
+  // Lista de pasos para aplicar la lección en tu proyecto; se supera al marcarlos todos.
+
+  function iniciarEnTuJuego() {
+    document.querySelectorAll(".en-tu-juego").forEach((ej) => {
+      ej.classList.add("reto");
+      const clave = `${CLAVE_PROGRESO}-pasos-${idLeccion}`;
+      let marcados = [];
+      try {
+        marcados = JSON.parse(localStorage.getItem(clave)) || [];
+      } catch (e) {
+        marcados = [];
+      }
+      const pasos = ej.querySelectorAll("li");
+      function comprobar() {
+        if ([...pasos].every((li) => li.querySelector("input").checked)) resuelto(ej);
+      }
+      pasos.forEach((li, k) => {
+        const casilla = document.createElement("input");
+        casilla.type = "checkbox";
+        casilla.checked = marcados.includes(k);
+        const texto = document.createElement("span");
+        texto.append(...li.childNodes);
+        const etiqueta = document.createElement("label");
+        etiqueta.append(casilla, texto);
+        li.appendChild(etiqueta);
+        casilla.addEventListener("change", () => {
+          marcados = [...pasos].map((x, i) => (x.querySelector("input").checked ? i : -1)).filter((i) => i >= 0);
+          try {
+            localStorage.setItem(clave, JSON.stringify(marcados));
+          } catch (e) {
+            // Sin almacenamiento: solo se pierde la marca al recargar.
+          }
+          comprobar();
+        });
+      });
+      comprobar();
+    });
+  }
+
   // ---------- Portada ----------
 
   function pintarPortada() {
@@ -408,8 +456,9 @@
     if (barra) {
       const pct = porcentaje(total, progreso);
       barra.querySelector(".barra-relleno").style.width = pct + "%";
+      const planificadas = curso.modulos.flatMap((m) => m.lecciones).length;
       barra.querySelector(".barra-texto").textContent =
-        `${total.filter((l) => progreso[l.id]).length} de ${total.length} lecciones superadas (${pct}%)`;
+        `${total.filter((l) => progreso[l.id]).length} de ${total.length} lecciones superadas (${pct}%) · ${planificadas} lecciones en el plan completo`;
     }
 
     const siguiente = total.find((l) => !progreso[l.id]) || total[0];
@@ -424,18 +473,30 @@
 
     contenedor.innerHTML = "";
     curso.modulos.forEach((modulo) => {
-      const tarjeta = document.createElement("section");
-      tarjeta.className = "tarjeta-modulo";
-      tarjeta.innerHTML = `
-        <h2>${modulo.titulo}</h2>
-        <p>${modulo.descripcion || ""}</p>
-        <div class="barra"><div class="barra-relleno" style="width:${porcentaje(modulo.lecciones, progreso)}%"></div></div>
-        <ol class="lista-lecciones"></ol>`;
+      if (modulo.fase) {
+        const fase = document.createElement("h2");
+        fase.className = "fase";
+        fase.textContent = modulo.fase;
+        contenedor.appendChild(fase);
+      }
+      const disponibles = modulo.lecciones.filter((l) => l.archivo);
+      const proximamente = !disponibles.length;
+      const tarjeta = document.createElement(proximamente ? "details" : "section");
+      tarjeta.className = "tarjeta-modulo" + (proximamente ? " proximamente" : "");
+      tarjeta.innerHTML = proximamente
+        ? `<summary><h2>${modulo.titulo}</h2><span class="chip">Próximamente</span></summary>
+           <p>${modulo.descripcion || ""}</p><ol class="lista-lecciones"></ol>`
+        : `<h2>${modulo.titulo}</h2>
+           <p>${modulo.descripcion || ""}</p>
+           <div class="barra"><div class="barra-relleno" style="width:${porcentaje(disponibles, progreso)}%"></div></div>
+           <ol class="lista-lecciones"></ol>`;
       const lista = tarjeta.querySelector("ol");
       modulo.lecciones.forEach((l) => {
         const li = document.createElement("li");
         if (progreso[l.id]) li.classList.add("hecha");
-        li.innerHTML = `<a href="lecciones/${l.archivo}">${l.titulo}</a>${l.duracion ? ` <span class="duracion">${l.duracion}</span>` : ""}`;
+        li.innerHTML = l.archivo
+          ? `<a href="lecciones/${l.archivo}">${l.titulo}</a>${l.duracion ? ` <span class="duracion">${l.duracion}</span>` : ""}`
+          : `<span class="pendiente">${l.titulo}</span>`;
         lista.appendChild(li);
       });
       contenedor.appendChild(tarjeta);
@@ -469,9 +530,9 @@
     if (!lateral) return;
     const progreso = leerProgreso();
     let html = `<a class="volver" href="../index.html">← ${curso.titulo}</a>`;
-    curso.modulos.forEach((m) => {
+    modulosDisponibles().forEach((m) => {
       html += `<h3>${m.titulo}</h3><ol>`;
-      m.lecciones.forEach((l) => {
+      m.lecciones.filter((l) => l.archivo).forEach((l) => {
         const clases = [l.id === idLeccion ? "actual" : "", progreso[l.id] ? "hecha" : ""].join(" ");
         html += `<li class="${clases}"><a href="${l.archivo}">${l.titulo}</a></li>`;
       });
@@ -525,6 +586,7 @@
   iniciarRelacionar();
   iniciarQuizzes();
   iniciarCompletar();
+  iniciarEnTuJuego(); // el último: puede resolverse al cargar y necesita todos los retos registrados
   iniciarCodigo();
   actualizarRetos();
 })();

@@ -1,6 +1,6 @@
 # Guía Godot
 
-Curso interactivo en HTML para aprender **Godot 4** y **GDScript** lo más rápido posible: poca teoría y muchos retos. Cada lección se supera al completar todos sus retos.
+Curso interactivo en HTML para aprender **Godot 4** y **GDScript** desde cero construyendo un juego de granja en 3D (estilo Harvest Moon): poca teoría y muchos retos. Cada lección se supera al completar todos sus retos.
 
 ## Cómo verlo
 
@@ -9,11 +9,13 @@ Curso interactivo en HTML para aprender **Godot 4** y **GDScript** lo más rápi
 
 ## Contenido
 
-**Módulo 1 · Primeros pasos**
-1. ¿Qué es Godot? (ordenar pasos, relacionar archivos)
-2. La interfaz del editor (misiones sobre una maqueta del editor)
-3. Nodos y escenas (árbol de nodos, reto de instanciar escenas)
-4. Tu primer script en GDScript (ordenar el script, encontrar el error, simulador de `delta`, reto de la bandera)
+El temario completo (9 módulos, 52 lecciones) está en [PLAN.md](PLAN.md). Lecciones disponibles:
+
+**Módulo 1 · Primeros pasos en 3D**
+1. ¿Qué es Godot?
+2. El editor y el visor 3D
+3. Nodos y escenas en 3D
+4. Tu primer script en GDScript
 
 ## Estructura
 
@@ -28,7 +30,7 @@ lecciones/*.html    Una página por lección
 ## Añadir una lección
 
 1. Copia una lección de `lecciones/` y cambia el atributo `data-leccion` del `<body>` por un id nuevo.
-2. Añade la entrada en `js/curso.js` con el mismo id.
+2. En `js/curso.js`, añade `archivo` a la entrada con ese id (las que no tienen `archivo` salen como «Próximamente»).
 
 Retos disponibles (todos cuentan para superar la lección):
 
@@ -37,6 +39,7 @@ Retos disponibles (todos cuentan para superar la lección):
 - **Ordenar**: `<div class="ordenar">` (añade `data-codigo` si son líneas de código) con `<ul class="piezas">` en el orden correcto; se barajan solas.
 - **Relacionar**: `<div class="relacionar">` con `<ul class="pares"><li><span>A</span><span>B</span></li>…</ul>`.
 - **Encuentra el error**: `<div class="error-codigo" data-linea="N">` con un `<pre><code>` y `<p class="explicacion">`.
+- **Hazlo en tu juego**: `<div class="en-tu-juego"><ul><li>Paso…</li></ul></div>`; se supera al marcar todos los pasos.
 - **Reto propio**: cualquier elemento con clase `reto`; llama a `GuiaGodot.resuelto(elemento)` cuando se supere.
 
 Otros elementos: `<pre><code class="gdscript">` (código resaltado con botón de copiar), `.esencial`, `.consejo`, `.aviso`, `.widget`.

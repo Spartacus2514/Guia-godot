@@ -16,26 +16,26 @@
 
       <div class="esencial">
         <ul>
-          <li><strong>Godot</strong> es un motor para crear juegos 2D y 3D.</li>
+          <li><strong>Godot</strong> es un motor para crear juegos 2D y 3D, como tu granja.</li>
           <li>Es <strong>gratis y libre</strong> (licencia MIT): sin pagos ni royalties, aunque vendas tu juego.</li>
           <li>No se instala: <strong>descargas, descomprimes y abres</strong>.</li>
-          <li>Se programa en <strong>GDScript</strong>, un lenguaje parecido a Python.</li>
+          <li>Se programa en <strong>GDScript</strong>, un lenguaje sencillo pensado para juegos. Será tu primer lenguaje y lo aprenderás aquí desde cero.</li>
         </ul>
       </div>
 
       <div class="quiz" data-respuesta="c">
-        <p class="pregunta">Vendes tu juego hecho con Godot. ¿Cuánto pagas al motor?</p>
+        <p class="pregunta">Terminas tu juego de granja y lo vendes. ¿Cuánto pagas a Godot?</p>
         <button data-opcion="a">Un 5 % de los ingresos.</button>
         <button data-opcion="b">Una licencia anual.</button>
         <button data-opcion="c">Nada.</button>
         <p class="explicacion">La licencia MIT permite cualquier uso, también comercial, gratis.</p>
       </div>
 
-      <h2>Tu primer proyecto</h2>
+      <h2>El proyecto</h2>
       <p>Descárgalo en <a href="https://godotengine.org/download" target="_blank" rel="noopener">godotengine.org/download</a> (versión <strong>estándar</strong>; la <em>.NET</em> es solo para C#).</p>
 
       <div class="ordenar">
-        <p>Ordena los pasos para crear tu primer proyecto:</p>
+        <p>Ordena los pasos para crear un proyecto:</p>
         <ul class="piezas">
           <li>Descargar Godot (versión estándar)</li>
           <li>Descomprimir y abrir el ejecutable</li>
@@ -45,23 +45,38 @@
         </ul>
       </div>
 
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Tu juego es en 3D y para PC. ¿Qué renderizador eliges al crear el proyecto?</p>
+        <button data-opcion="a">Forward+</button>
+        <button data-opcion="b">Compatibility</button>
+        <button data-opcion="c">Da igual.</button>
+        <p class="explicacion"><em>Forward+</em> (el que viene por defecto) es el más completo para 3D en PC: mejores luces, sombras y efectos. <em>Compatibility</em> es para web u ordenadores muy antiguos.</p>
+      </div>
+
       <h2>Los archivos que verás</h2>
       <div class="relacionar">
         <p>Une cada archivo o ruta con lo que es:</p>
         <ul class="pares">
           <li><span><code>project.godot</code></span><span>Configuración del proyecto</span></li>
-          <li><span><code>.tscn</code></span><span>Una escena</span></li>
+          <li><span><code>.tscn</code></span><span>Una escena (tu granja, el granjero, una vaca…)</span></li>
           <li><span><code>.gd</code></span><span>Un script de GDScript</span></li>
+          <li><span><code>.glb</code></span><span>Un modelo 3D (por ejemplo, de Blender)</span></li>
           <li><span><code>res://</code></span><span>La carpeta raíz del proyecto</span></li>
         </ul>
       </div>
 
-      <div class="quiz" data-respuesta="b">
-        <p class="pregunta">Quieres que tu juego se pueda jugar en el navegador. ¿Qué renderizador eliges al crear el proyecto?</p>
-        <button data-opcion="a">Forward+</button>
-        <button data-opcion="b">Compatibility</button>
-        <button data-opcion="c">Da igual.</button>
-        <p class="explicacion"><em>Compatibility</em> es el que se exporta a la web y el que mejor va en ordenadores antiguos. Para escritorio, <em>Forward+</em> (por defecto) está bien.</p>
+      <div class="consejo">
+        <strong>Ordena tu proyecto desde el principio</strong>
+        Un juego como el tuyo tendrá cientos de archivos. Una estructura que funciona bien:
+        <code>escenas/</code>, <code>scripts/</code>, <code>modelos/</code>, <code>texturas/</code>, <code>sonidos/</code>, <code>datos/</code>.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Abre tu proyecto en Godot (o créalo con <em>Forward+</em> si aún no lo tienes).</li>
+          <li>Comprueba la versión en la esquina inferior derecha del editor: debe empezar por <strong>4.</strong> (también está en <em>Ayuda → Acerca de Godot</em>).</li>
+          <li>Crea las carpetas <code>escenas</code>, <code>scripts</code> y <code>modelos</code> en el Sistema de archivos (clic derecho → Crear nueva → Carpeta).</li>
+        </ul>
       </div>
 
       <div id="navegacion"></div>

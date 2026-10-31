@@ -653,3 +653,81 @@ pre { tab-size: 4; }
 
 /* Evita que los bloques de código anchos ensanchen la página en móvil */
 .leccion > * { min-width: 0; }
+
+/* ---------- Plan del curso en la portada ---------- */
+
+.fase {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--azul-claro);
+  margin: 2.2rem 0 0.8rem;
+}
+details.tarjeta-modulo.proximamente { opacity: 0.75; padding-top: 1rem; padding-bottom: 1rem; }
+details.tarjeta-modulo.proximamente[open] { opacity: 1; }
+.proximamente summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+}
+.proximamente summary::-webkit-details-marker { display: none; }
+.proximamente summary h2 { margin: 0; font-size: 1.15rem; }
+.proximamente summary::after { content: "▾"; color: var(--texto-suave); }
+.proximamente[open] summary::after { content: "▴"; }
+.chip {
+  margin-left: auto;
+  font-size: 0.75rem;
+  background: var(--fondo-3);
+  color: var(--texto-suave);
+  border-radius: 99px;
+  padding: 0.15rem 0.6rem;
+  white-space: nowrap;
+}
+.pendiente { color: var(--texto-suave); }
+
+/* ---------- Hazlo en tu juego ---------- */
+
+.en-tu-juego {
+  background: linear-gradient(135deg, #24321f, var(--fondo-2));
+  border: 1px solid #4b6b3a;
+  border-radius: var(--radio);
+  padding: 1.2rem 1.4rem;
+  margin: 1.8rem 0;
+}
+.en-tu-juego::before {
+  content: "🌾 Hazlo en tu juego";
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ad66b;
+  margin-bottom: 0.4rem;
+}
+.en-tu-juego ul { list-style: none; padding: 0; margin: 0; }
+.en-tu-juego li { margin: 0.5rem 0; }
+.en-tu-juego label { display: flex; gap: 0.7rem; align-items: flex-start; cursor: pointer; }
+.en-tu-juego input[type="checkbox"] {
+  flex: none;
+  width: 1.2rem; height: 1.2rem;
+  margin-top: 0.25rem;
+  accent-color: var(--verde);
+}
+.en-tu-juego li:has(input:checked) { color: var(--texto-suave); text-decoration: line-through; }
+.en-tu-juego.superado::after {
+  content: "✓";
+  position: absolute;
+  top: 0.8rem; right: 1rem;
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* Huerto de instancias (lección 3) */
+.modelos { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.modelos .pieza { font-size: 1.3rem; padding: 0.2rem 0.5rem; }
+#molde, .huerto .enemigo { background: #6b4a2b; }
+.huerto { background: #3d2c1b; border-radius: 6px; padding: 0.5rem; }
