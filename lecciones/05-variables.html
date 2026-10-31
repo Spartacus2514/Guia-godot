@@ -31,6 +31,16 @@ var lloviendo: bool = false                  # true (sí) o false (no)</code></p
 
       <p>El <code>: int</code> después del nombre es el <strong>tipo</strong>. Es opcional, pero ponlo siempre: así Godot te avisa si te equivocas antes de ejecutar el juego.</p>
 
+      <div class="consejo">
+        <strong>¿Para qué sirve <code>@export</code>?</strong>
+        Para cambiar un valor <strong>desde el editor, sin tocar el código</strong>. Dos usos que tendrás en tu juego:
+        <ul>
+          <li><strong>Ajustar mientras pruebas:</strong> con <code>@export var velocidad: float = 5.0</code> en el granjero, si al jugar lo notas lento, lo subes en el Inspector y vuelves a probar.</li>
+          <li><strong>Que cada copia de una escena sea distinta:</strong> todas las vacas usan el mismo script, pero con <code>@export var nombre: String</code> cada una puede llamarse distinto («Lola», «Pinta»…). Igual con la vida de cada enemigo o el precio de cada objeto.</li>
+        </ul>
+        En esta lección lo practicamos con el nombre de la granja porque se comprueba fácil. En el juego final, ese nombre lo elegirá el jugador en un menú.
+      </div>
+
       <div class="paso-a-paso">
         <pre><code>var dinero = 500
 var precio = 80
