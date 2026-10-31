@@ -7,6 +7,8 @@
   const curso = window.CURSO;
   const idLeccion = document.body.dataset.leccion;
   const esLeccion = idLeccion !== undefined;
+  // Páginas extra (repaso, chuleta): usan el índice lateral pero no cuentan retos.
+  const esExtra = document.body.dataset.extra !== undefined;
 
   // ---------- Utilidades ----------
 
@@ -381,7 +383,9 @@
     document.querySelectorAll(".error-codigo").forEach((ej) => {
       ej.classList.add("reto");
       const correcta = Number(ej.dataset.linea);
-      const code = ej.querySelector("pre code");
+      // El código a examinar es el último bloque (antes puede haber otros, como un árbol de nodos).
+      const bloques = ej.querySelectorAll("pre code");
+      const code = bloques[bloques.length - 1];
       const lineas = code.textContent.replace(/\n$/, "").split("\n");
       code.innerHTML = "";
       lineas.forEach((texto, k) => {
@@ -608,7 +612,10 @@
     const lateral = document.getElementById("lateral");
     if (!lateral) return;
     const progreso = leerProgreso();
-    let html = `<a class="volver" href="../index.html">← ${curso.titulo}</a>`;
+    const extra = document.body.dataset.extra;
+    let html = `<a class="volver" href="../index.html">← ${curso.titulo}</a>
+      <a class="enlace-extra${extra === "repaso" ? " actual" : ""}" href="repaso.html">🔁 Repaso</a>
+      <a class="enlace-extra${extra === "chuleta" ? " actual" : ""}" href="chuleta.html">📒 Chuleta y glosario</a>`;
     modulosDisponibles().forEach((m) => {
       html += `<h3>${m.titulo}</h3><ol>`;
       m.lecciones.filter((l) => l.archivo).forEach((l) => {
@@ -659,7 +666,12 @@
   window.GuiaGodot = { resaltar, resuelto, sacudir };
 
   if (esLeccion) pintarLeccion();
-  else pintarPortada();
+  else if (esExtra) {
+    pintarLateral();
+    const menu = document.getElementById("boton-menu");
+    const lateral = document.getElementById("lateral");
+    if (menu && lateral) menu.onclick = () => lateral.classList.toggle("abierto");
+  } else pintarPortada();
   iniciarErrores();
   iniciarPasoAPaso();
   iniciarOrdenar();

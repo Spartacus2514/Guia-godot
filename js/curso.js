@@ -15,7 +15,8 @@ window.CURSO = {
         { id: "01-introduccion", titulo: "¿Qué es Godot?", archivo: "01-introduccion.html", duracion: "5 min" },
         { id: "02-interfaz", titulo: "El editor y el visor 3D", archivo: "02-interfaz.html", duracion: "6 min" },
         { id: "03-nodos-escenas", titulo: "Nodos y escenas en 3D", archivo: "03-nodos-escenas.html", duracion: "8 min" },
-        { id: "04-primer-script", titulo: "Tu primer script en GDScript", archivo: "04-primer-script.html", duracion: "10 min" }
+        { id: "04-primer-script", titulo: "Tu primer script en GDScript", archivo: "04-primer-script.html", duracion: "10 min" },
+        { id: "04b-examen-m1", titulo: "Examen del módulo 1", archivo: "04b-examen-m1.html", duracion: "10 min" }
       ]
     },
     {
@@ -29,6 +30,7 @@ window.CURSO = {
         { id: "09-diccionarios", titulo: "Diccionarios", archivo: "09-diccionarios.html", duracion: "8 min" },
         { id: "10-vector3", titulo: "Vector3: posiciones en 3D", archivo: "10-vector3.html", duracion: "8 min" },
         { id: "11-senales", titulo: "Señales", archivo: "11-senales.html", duracion: "10 min" },
+        { id: "11b-depurar", titulo: "Cuando algo falla", archivo: "11b-depurar.html", duracion: "12 min" },
         { id: "12-examen-m2", titulo: "Examen del módulo 2", archivo: "12-examen-m2.html", duracion: "15 min" }
       ]
     },

@@ -18,6 +18,11 @@ Aprender Godot 4 y GDScript **desde cero** (primer lenguaje de programación) co
 5. Todos los ejemplos son de la granja: dinero, energía, cultivos, vacas, rocas, enemigos…
 6. Cada módulo de la fase 1 acaba con un **examen** que mezcla todo.
 
+## Herramientas fijas
+
+- **Repaso** (`lecciones/repaso.html`): repetición espaciada con preguntas de las lecciones superadas (banco en `js/repaso-datos.js`, unas 5 por lección). Cada lección nueva debe añadir sus preguntas.
+- **Chuleta y glosario** (`lecciones/chuleta.html`): toda la sintaxis aprendida, errores frecuentes traducidos y términos en inglés. Cada lección nueva debe añadir lo suyo.
+
 ## Fase 1 · La base
 
 ### Módulo 1 · Primeros pasos en 3D ✅
@@ -27,6 +32,7 @@ Aprender Godot 4 y GDScript **desde cero** (primer lenguaje de programación) co
 | El editor y el visor 3D | Paneles, navegar en 3D, mover/rotar/escalar, F5/F6 | Te mueves con soltura por tus escenas |
 | Nodos y escenas en 3D | Nodo, árbol, escena, instanciar, luz y cámara | `granja.tscn` con suelo, sol y cámara |
 | Tu primer script | `extends`, `_ready`, `_process`, `delta`, ejes X/Y/Z | Un objeto que gira en la granja |
+| Examen del módulo 1 | Repaso mezclado | Comprobar que `granja.tscn` está completa |
 
 ### Módulo 2 · GDScript desde cero ✅
 | Lección | Concepto | En tu juego |
@@ -38,6 +44,7 @@ Aprender Godot 4 y GDScript **desde cero** (primer lenguaje de programación) co
 | Diccionarios | `Dictionary`, claves y valores, recorrerlos | El inventario: `{"nabo": 3, "patata": 5}` |
 | Vector3 | Posiciones, direcciones, distancia, `normalized()` | ¿Está la vaca cerca del granjero? |
 | Señales | `signal`, `emit`, conectar en el editor y por código | `cultivo_listo` avisa cuando algo se puede cosechar |
+| Cuando algo falla | Tipos de error, leer mensajes, `print` espía, puntos de ruptura | Provocar y arreglar errores en tu script |
 | Examen del módulo 2 | Repaso mezclado | Un script de granja con todo lo aprendido |
 
 ### Módulo 3 · El granjero

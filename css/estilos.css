@@ -927,7 +927,7 @@ pre.codigo-vivo { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 @media (max-width: 860px) {
   /* Barra superior fija con fondo, para que el contador y el menú no tapen el texto */
-  body[data-leccion]::before {
+  body[data-leccion]::before, body[data-extra]::before {
     content: "";
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -937,4 +937,121 @@ pre.codigo-vivo { white-space: pre-wrap; overflow-wrap: anywhere; }
     z-index: 4;
   }
   .codigo-vivo input[type="number"], .codigo-vivo input[type="text"] { width: 3.4em; }
+}
+
+/* ---------- Enlaces a repaso y chuleta ---------- */
+
+#lateral .enlace-extra {
+  display: block;
+  color: var(--texto);
+  text-decoration: none;
+  background: var(--fondo-3);
+  border-radius: 8px;
+  padding: 0.35rem 0.7rem;
+  margin: 0.35rem 0;
+  font-size: 0.92rem;
+}
+#lateral .enlace-extra.actual { outline: 2px solid var(--azul-claro); }
+.herramientas { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.tarjeta-herramienta {
+  display: block;
+  background: var(--fondo-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1rem 1.2rem;
+  color: var(--texto);
+  text-decoration: none;
+}
+.tarjeta-herramienta:hover { border-color: var(--azul); }
+.tarjeta-herramienta strong { display: block; font-size: 1.1rem; margin-bottom: 0.2rem; }
+.tarjeta-herramienta span { color: var(--texto-suave); font-size: 0.9rem; }
+.tarjeta-herramienta .aviso-pendientes { color: var(--amarillo); font-weight: 600; }
+@media (max-width: 600px) { .herramientas { grid-template-columns: 1fr; } }
+
+/* ---------- Repaso ---------- */
+
+.repaso-cabecera p { color: var(--texto-suave); margin: 0.4rem 0 1rem; }
+.repaso-cabecera strong { color: var(--texto); }
+.repaso-tarjeta {
+  background: var(--fondo-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1.2rem 1.4rem;
+  animation: aparecer 0.25s ease-out;
+}
+.repaso-tarjeta .barra { margin-top: 0; }
+.repaso-leccion { font-size: 0.8rem; color: var(--azul-claro); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin: 0.6rem 0 0.2rem; }
+.repaso-tarjeta .pregunta { font-weight: 600; font-size: 1.05rem; }
+.opcion-repaso {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--fondo-3);
+  color: var(--texto);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.65rem 0.9rem;
+  margin: 0.45rem 0;
+  font: inherit;
+  cursor: pointer;
+}
+.opcion-repaso:hover:not(:disabled) { border-color: var(--azul); }
+.opcion-repaso.correcta { border-color: var(--verde); background: #234a32; }
+.opcion-repaso.incorrecta { border-color: var(--rojo); background: #4a2427; }
+.opcion-repaso:disabled { cursor: default; }
+.repaso-explicacion { color: var(--texto-suave); }
+.repaso-tarjeta .boton { margin: 0.3rem 0.4rem 0.3rem 0; }
+
+/* ---------- Chuleta ---------- */
+
+.buscador {
+  width: 100%;
+  font: inherit;
+  font-size: 1.05rem;
+  background: var(--fondo-2);
+  color: var(--texto);
+  border: 2px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 0.7rem 1rem;
+  margin: 0.5rem 0 1rem;
+}
+.buscador:focus { outline: none; border-color: var(--azul); }
+.indice-chuleta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.indice-chuleta a {
+  background: var(--fondo-3);
+  border-radius: 99px;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--texto);
+  text-decoration: none;
+}
+.indice-chuleta a:hover { background: #2b4a63; }
+.bloque-chuleta { scroll-margin-top: 4rem; }
+.entrada {
+  background: var(--fondo-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 0.8rem 1.1rem;
+  margin: 0.8rem 0;
+}
+.entrada h3 { margin: 0.1rem 0 0.4rem; font-size: 1rem; }
+.entrada pre { margin: 0.5rem 0; }
+.entrada p { margin: 0.4rem 0; color: var(--texto-suave); }
+.error-texto { font-family: var(--mono); color: var(--rojo); font-size: 0.88rem; overflow-wrap: anywhere; }
+.sin-resultados { color: var(--texto-suave); }
+.tabla-glosario { width: 100%; border-collapse: collapse; }
+.tabla-glosario td, .tabla-glosario th { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--borde); vertical-align: top; }
+.tabla-glosario th { color: var(--texto-suave); font-size: 0.85rem; }
+.tabla-glosario td:nth-child(2) { font-family: var(--mono); color: var(--azul-claro); }
+
+/* El atributo hidden siempre gana, aunque el elemento tenga display propio */
+[hidden] { display: none !important; }
+
+/* Glosario en móvil: cada fila se apila como una ficha */
+@media (max-width: 600px) {
+  .tabla-glosario thead { display: none; }
+  .tabla-glosario, .tabla-glosario tbody, .tabla-glosario tr, .tabla-glosario td { display: block; width: 100%; }
+  .tabla-glosario tr { border-bottom: 1px solid var(--borde); padding: 0.5rem 0; }
+  .tabla-glosario td { border: none; padding: 0.1rem 0; }
+  .tabla-glosario td:first-child { font-weight: 600; }
 }

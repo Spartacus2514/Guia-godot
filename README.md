@@ -9,23 +9,27 @@ Curso interactivo en HTML para aprender **Godot 4** y **GDScript** desde cero co
 
 ## Contenido
 
-El temario completo (9 módulos, 52 lecciones) está en [PLAN.md](PLAN.md). Lecciones disponibles:
+El temario completo (9 módulos, 54 lecciones) está en [PLAN.md](PLAN.md). Lecciones disponibles:
 
 **Módulo 1 · Primeros pasos en 3D**
 1. ¿Qué es Godot?
 2. El editor y el visor 3D
 3. Nodos y escenas en 3D
 4. Tu primer script en GDScript
+5. Examen del módulo 1
 
 **Módulo 2 · GDScript desde cero**
-5. Variables y tipos
-6. Condiciones: if, elif, else
-7. Funciones
-8. Arrays y bucles
-9. Diccionarios
-10. Vector3: posiciones en 3D
-11. Señales
-12. Examen del módulo 2
+1. Variables y tipos
+2. Condiciones: if, elif, else
+3. Funciones
+4. Arrays y bucles
+5. Diccionarios
+6. Vector3: posiciones en 3D
+7. Señales
+8. Cuando algo falla
+9. Examen del módulo 2
+
+**Herramientas**: 🔁 Repaso (repetición espaciada con preguntas de las lecciones superadas) y 📒 Chuleta y glosario (sintaxis, errores frecuentes traducidos y términos en inglés).
 
 ## Estructura
 

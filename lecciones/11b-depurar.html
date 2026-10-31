@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuando algo falla · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="11b-depurar">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 8</span>
+      <h1>Cuando algo falla</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Los errores son <strong>normales</strong>: los profesionales también los tienen a diario. Lo que marca la diferencia es saber leerlos.</li>
+          <li><strong>Sintaxis</strong>: Godot marca la línea en rojo mientras escribes y el juego no arranca.</li>
+          <li><strong>Ejecución</strong>: el juego arranca, pero se para en una línea y el panel <em>Depurador</em> explica por qué.</li>
+          <li><strong>Lógico</strong>: no sale ningún error, pero el juego hace otra cosa. Se investiga con <code>print</code> o con un <strong>punto de ruptura</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="relacionar">
+        <p>¿Qué tipo de error es cada situación?</p>
+        <ul class="pares">
+          <li><span>Mientras escribes, Godot marca una línea en rojo</span><span>De sintaxis</span></li>
+          <li><span>El juego se para y te lleva a una línea con un mensaje</span><span>De ejecución</span></li>
+          <li><span>Todo funciona, pero los nabos se venden a 0 monedas</span><span>Lógico</span></li>
+        </ul>
+      </div>
+
+      <h2>Leer un mensaje de error</h2>
+      <p>Salen en inglés, pero casi siempre basta con reconocer unas pocas <strong>palabras clave</strong>. Además, haciendo clic en el error, Godot te lleva a la línea.</p>
+
+      <div class="relacionar">
+        <p>Une cada palabra clave con lo que te está diciendo:</p>
+        <ul class="pares">
+          <li><span><code>not declared</code></span><span>Esa variable no existe aquí</span></li>
+          <li><span><code>not found</code></span><span>No encuentra ese nodo o esa función</span></li>
+          <li><span><code>null</code></span><span>Estás usando algo vacío</span></li>
+          <li><span><code>out of bounds</code></span><span>Esa posición no existe en la lista</span></li>
+          <li><span><code>expected</code></span><span>Falta algo: un <code>:</code>, la sangría…</span></li>
+          <li><span><code>invalid operands</code></span><span>Operación entre tipos que no encajan</span></li>
+        </ul>
+      </div>
+
+      <div class="error-codigo" data-linea="3">
+        <p><strong>Caso de detective.</strong> Al pulsar <kbd>F6</kbd>, la Salida muestra esto:</p>
+        <p class="error-texto">E  Node not found: "Timer" (relative to "/root/Granja/Datos").<br>E  Cannot call method 'start' on a null value.</p>
+        <p>Así es el árbol de la escena:</p>
+        <pre><code>Granja
+└─ Datos
+   └─ Temporizador (Timer)</code></pre>
+        <p>Y este es el script de <code>Datos</code>. Toca la línea donde está <strong>la causa</strong>:</p>
+        <pre><code>extends Node
+
+@onready var reloj = $Timer
+
+func _ready():
+	reloj.start()
+	print("Granja lista")</code></pre>
+        <p class="explicacion">El juego se rompe en la línea 6, pero la <strong>causa</strong> está en la 3: el nodo se llama <code>Temporizador</code>, no <code>Timer</code>. Como no lo encuentra, <code>reloj</code> queda vacío (<code>null</code>), y al usarlo en la línea 6, falla. Moraleja: el primer error de la lista suele ser el que importa.</p>
+      </div>
+
+      <h2>Errores lógicos: espiar con print</h2>
+      <p>El nabo tarda 3 días en crecer, pero el día 3 no sale «¡Nabo listo!» y Godot no da ningún error. Hemos puesto un <code>print</code> espía para ver qué pasa:</p>
+
+      <div class="paso-a-paso">
+        <pre><code>var dias = 0
+
+func _ready():
+	for i in range(3):
+		pasar_dia()
+
+func pasar_dia():
+	dias += 1
+	print("Día ", dias, " · dias > 3 es ", dias > 3)
+	if dias > 3:
+		print("¡Nabo listo!")</code></pre>
+        <script type="application/json">[
+          {"l": 1, "v": {"dias": "0"}, "n": "Empezamos en el día 0."},
+          {"l": 4, "v": {"dias": "0", "i": "0"}, "n": "Simulamos 3 días con un bucle."},
+          {"l": 8, "v": {"dias": "1", "i": "0"}, "n": "Pasa el día 1."},
+          {"l": 9, "v": {"dias": "1", "i": "0"}, "s": ["Día 1 · dias > 3 es false"], "n": "El <code>print</code> espía muestra el día y el resultado de la condición."},
+          {"l": 10, "v": {"dias": "1", "i": "0"}, "n": "Falso: no está listo. Normal, es el día 1."},
+          {"l": 8, "v": {"dias": "2", "i": "1"}, "n": "Día 2."},
+          {"l": 9, "v": {"dias": "2", "i": "1"}, "s": ["Día 2 · dias > 3 es false"], "n": "Todavía falso. Bien."},
+          {"l": 8, "v": {"dias": "3", "i": "2"}, "n": "Día 3: ahora debería estar listo…"},
+          {"l": 9, "v": {"dias": "3", "i": "2"}, "s": ["Día 3 · dias > 3 es false"], "n": "¡Pillado! El espía dice que con <code>dias</code> = 3 la condición es <strong>falsa</strong>."},
+          {"l": 10, "v": {"dias": "3", "i": "2"}, "n": "3 no es <em>mayor</em> que 3: el <code>if</code> se salta. Sin el <code>print</code> no lo habríamos visto. ¿Cómo lo arreglas? Responde abajo."}
+        ]</script>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">¿Cómo arreglas la condición para que el nabo esté listo el día 3?</p>
+        <button data-opcion="a"><code>if dias &lt; 3:</code></button>
+        <button data-opcion="b"><code>if dias &gt;= 3:</code></button>
+        <button data-opcion="c"><code>if dias = 3:</code></button>
+        <p class="explicacion"><code>&gt;=</code> es «mayor <strong>o igual</strong>». Este error (pasarse o quedarse corto por uno) es tan común que tiene nombre en inglés: <em>off by one</em>. Cuando el error esté arreglado, <strong>quita el print espía</strong>.</p>
+      </div>
+
+      <h2>El depurador: pausar el juego</h2>
+      <p>Si llenar la Salida de <code>print</code> se te queda corto, usa un <strong>punto de ruptura</strong>: haz clic a la izquierda del número de línea (sale un punto rojo) o pulsa <kbd>F9</kbd>. Al llegar ahí, el juego se pausa y el panel <em>Depurador</em> te enseña qué vale cada variable. Con <kbd>F10</kbd> avanzas línea a línea, y con <kbd>F11</kbd> entras dentro de una función. Es el «paso a paso» de este curso, pero dentro de Godot.</p>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Quieres ver cuánto vale <code>energia</code> justo antes de que el granjero se desmaye, sin llenar la Salida de mensajes. ¿Qué haces?</p>
+        <button data-opcion="a">Borrar la función y escribirla otra vez.</button>
+        <button data-opcion="b">Poner 20 <code>print</code> por todo el script.</button>
+        <button data-opcion="c">Poner un punto de ruptura en esa línea y mirar el Depurador.</button>
+        <p class="explicacion">El juego se pausa justo ahí y ves todas las variables a la vez.</p>
+      </div>
+
+      <div class="ordenar">
+        <p>Ordena el método para arreglar cualquier error:</p>
+        <ul class="piezas">
+          <li>Leer el mensaje entero (sobre todo el primero)</li>
+          <li>Hacer clic en el error para ir a la línea</li>
+          <li>Mirar qué valen las variables (print o punto de ruptura)</li>
+          <li>Cambiar una sola cosa</li>
+          <li>Probar otra vez con F6</li>
+        </ul>
+      </div>
+
+      <div class="consejo">
+        <strong>Cómo pedir ayuda (a Claude o en un foro)</strong>
+        Copia el <strong>mensaje de error exacto</strong> (en el Depurador, clic derecho sobre el error para copiarlo), el <strong>script</strong> y una frase de <strong>qué esperabas</strong> y <strong>qué ha pasado</strong>. Con eso, la respuesta llega a la primera. La <a href="chuleta.html#errores">chuleta</a> tiene los errores más frecuentes traducidos.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>datos_granja.gd</code>, quita el tabulador de una línea de dentro de <code>_ready()</code>. Lee el error rojo, búscalo en la <a href="chuleta.html#errores">chuleta</a> y arréglalo.</li>
+          <li>Añade <code>$Reloj.start()</code> al principio de <code>_ready()</code> y pulsa <kbd>F6</kbd>. Lee el <code>Node not found</code> y borra la línea.</li>
+          <li>Pon un punto de ruptura (<kbd>F9</kbd>) en la primera línea de <code>gastar_energia</code>. Pulsa <kbd>F6</kbd>, mira <code>energia</code> y <code>cantidad</code> en el Depurador y avanza con <kbd>F10</kbd>.</li>
+          <li>Quita el punto de ruptura y continúa el juego con el botón de continuar del Depurador.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
