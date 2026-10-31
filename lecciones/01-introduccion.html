@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Qué es Godot? · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="01-introduccion">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Lección 1</span>
+      <h1>¿Qué es Godot?</h1>
+
+      <div class="esencial">
+        <ul>
+          <li><strong>Godot</strong> es un motor para crear juegos 2D y 3D.</li>
+          <li>Es <strong>gratis y libre</strong> (licencia MIT): sin pagos ni royalties, aunque vendas tu juego.</li>
+          <li>No se instala: <strong>descargas, descomprimes y abres</strong>.</li>
+          <li>Se programa en <strong>GDScript</strong>, un lenguaje parecido a Python.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Vendes tu juego hecho con Godot. ¿Cuánto pagas al motor?</p>
+        <button data-opcion="a">Un 5 % de los ingresos.</button>
+        <button data-opcion="b">Una licencia anual.</button>
+        <button data-opcion="c">Nada.</button>
+        <p class="explicacion">La licencia MIT permite cualquier uso, también comercial, gratis.</p>
+      </div>
+
+      <h2>Tu primer proyecto</h2>
+      <p>Descárgalo en <a href="https://godotengine.org/download" target="_blank" rel="noopener">godotengine.org/download</a> (versión <strong>estándar</strong>; la <em>.NET</em> es solo para C#).</p>
+
+      <div class="ordenar">
+        <p>Ordena los pasos para crear tu primer proyecto:</p>
+        <ul class="piezas">
+          <li>Descargar Godot (versión estándar)</li>
+          <li>Descomprimir y abrir el ejecutable</li>
+          <li>En el gestor de proyectos, pulsar «Crear»</li>
+          <li>Poner nombre y elegir una carpeta vacía</li>
+          <li>Pulsar «Crear y editar»</li>
+        </ul>
+      </div>
+
+      <h2>Los archivos que verás</h2>
+      <div class="relacionar">
+        <p>Une cada archivo o ruta con lo que es:</p>
+        <ul class="pares">
+          <li><span><code>project.godot</code></span><span>Configuración del proyecto</span></li>
+          <li><span><code>.tscn</code></span><span>Una escena</span></li>
+          <li><span><code>.gd</code></span><span>Un script de GDScript</span></li>
+          <li><span><code>res://</code></span><span>La carpeta raíz del proyecto</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Quieres que tu juego se pueda jugar en el navegador. ¿Qué renderizador eliges al crear el proyecto?</p>
+        <button data-opcion="a">Forward+</button>
+        <button data-opcion="b">Compatibility</button>
+        <button data-opcion="c">Da igual.</button>
+        <p class="explicacion"><em>Compatibility</em> es el que se exporta a la web y el que mejor va en ordenadores antiguos. Para escritorio, <em>Forward+</em> (por defecto) está bien.</p>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

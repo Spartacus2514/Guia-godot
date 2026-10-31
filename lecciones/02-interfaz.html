@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La interfaz del editor · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="02-interfaz">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Lección 2</span>
+      <h1>La interfaz del editor</h1>
+
+      <div class="esencial">
+        <ul>
+          <li><strong>Escena</strong>: el árbol de nodos que estás editando.</li>
+          <li><strong>Sistema de archivos</strong>: los archivos del proyecto (<code>res://</code>).</li>
+          <li><strong>Visor</strong>: donde colocas las cosas con el ratón.</li>
+          <li><strong>Inspector</strong>: las propiedades del nodo seleccionado.</li>
+          <li><strong>Panel inferior</strong>: la Salida (tus <code>print()</code> y los errores) y el Depurador.</li>
+          <li><strong>Barra superior</strong>: cambiar entre 2D / 3D / Script y ejecutar el juego.</li>
+        </ul>
+      </div>
+
+      <div class="widget reto" id="mision">
+        <p class="widget-titulo">🕹️ Reto: misiones en el editor</p>
+        <p class="widget-info" id="mision-texto"></p>
+        <div class="editor-maqueta" id="maqueta">
+          <div class="zona" data-zona="menu">
+            <span>Menús</span>
+            <span class="espacios"><span>2D</span><span>3D</span><span>Script</span></span>
+            <span>▶ ⏹</span>
+          </div>
+          <div class="zona" data-zona="escena">Escena</div>
+          <div class="zona" data-zona="archivos">Sistema de archivos</div>
+          <div class="zona" data-zona="visor">Visor</div>
+          <div class="zona" data-zona="inspector">Inspector</div>
+          <div class="zona" data-zona="inferior">Salida · Depurador</div>
+        </div>
+      </div>
+
+      <h2>Ejecutar el juego</h2>
+      <div class="relacionar">
+        <p>Une cada atajo con lo que hace (en macOS: <kbd>⌘</kbd>+<kbd>B</kbd> y <kbd>⌘</kbd>+<kbd>R</kbd>):</p>
+        <ul class="pares">
+          <li><span><kbd>F5</kbd></span><span>Ejecutar el proyecto (escena principal)</span></li>
+          <li><span><kbd>F6</kbd></span><span>Ejecutar solo la escena abierta</span></li>
+          <li><span><kbd>F8</kbd></span><span>Detener el juego</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Estás creando un enemigo en su propia escena y quieres probarlo ya, sin pasar por el menú del juego. ¿Qué pulsas?</p>
+        <button data-opcion="a"><kbd>F5</kbd></button>
+        <button data-opcion="b"><kbd>F6</kbd></button>
+        <button data-opcion="c"><kbd>F8</kbd></button>
+        <p class="explicacion"><kbd>F6</kbd> prueba la escena actual. Lo usarás muchísimo.</p>
+      </div>
+
+      <div class="consejo">
+        <strong>Truco</strong>
+        ¿Has desordenado los paneles? <em>Editor → Disposición del editor → Por defecto</em>.
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const misiones = [
+        ["inspector", "Quieres cambiar el color de un nodo. ¿Dónde vas?"],
+        ["archivos", "Tienes que encontrar la imagen <code>jugador.png</code> que acabas de importar."],
+        ["inferior", "Tu <code>print(\"hola\")</code> no aparece en pantalla. ¿Dónde se ve?"],
+        ["escena", "Quieres añadir un nodo hijo al jugador."],
+        ["menu", "Quieres pasar a editar el código del script."],
+        ["visor", "Quieres arrastrar al jugador con el ratón para colocarlo en el nivel."]
+      ];
+      const widget = document.getElementById("mision");
+      const texto = document.getElementById("mision-texto");
+      const zonas = document.querySelectorAll("#maqueta .zona");
+      let actual = 0;
+
+      function mostrar() {
+        if (actual >= misiones.length) {
+          texto.innerHTML = "🎉 <strong>¡Todas las misiones completadas!</strong> Ya te mueves por el editor.";
+          window.GuiaGodot.resuelto(widget);
+          return;
+        }
+        texto.innerHTML = `<strong>Misión ${actual + 1}/${misiones.length}:</strong> ${misiones[actual][1]}`;
+      }
+
+      zonas.forEach((z) => {
+        z.addEventListener("click", () => {
+          if (actual >= misiones.length) return;
+          zonas.forEach((x) => x.classList.remove("activa", "fallo"));
+          if (z.dataset.zona === misiones[actual][0]) {
+            z.classList.add("activa");
+            actual++;
+            setTimeout(mostrar, 250);
+          } else {
+            z.classList.add("fallo");
+            window.GuiaGodot.sacudir(z);
+          }
+        });
+      });
+      mostrar();
+    })();
+  </script>
+</body>
+</html>

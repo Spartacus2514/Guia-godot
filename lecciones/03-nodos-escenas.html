@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nodos y escenas · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="03-nodos-escenas">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Lección 3</span>
+      <h1>Nodos y escenas</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Un <strong>nodo</strong> es una pieza con una sola función: mostrar una imagen, chocar, sonar…</li>
+          <li>Los nodos forman un <strong>árbol</strong>. Los <strong>hijos se mueven con su padre</strong>.</li>
+          <li>Una <strong>escena</strong> (<code>.tscn</code>) es un árbol de nodos guardado: jugador, enemigo, nivel…</li>
+          <li><strong>Instanciar</strong> = meter una escena dentro de otra. Es un molde: si cambias el molde, cambian todas las copias.</li>
+        </ul>
+      </div>
+
+      <div class="widget">
+        <p class="widget-titulo">🌳 Así es una escena de jugador (toca los nodos)</p>
+        <ul class="arbol" id="arbol">
+          <li>
+            <button class="nodo" data-nodo="jugador"><span class="icono">🧍</span>Jugador <span class="tipo">CharacterBody2D</span></button>
+            <ul>
+              <li><button class="nodo" data-nodo="sprite"><span class="icono">🖼️</span>Sprite <span class="tipo">Sprite2D</span></button></li>
+              <li><button class="nodo" data-nodo="colision"><span class="icono">🔷</span>Colision <span class="tipo">CollisionShape2D</span></button></li>
+              <li><button class="nodo" data-nodo="camara"><span class="icono">🎥</span>Camara <span class="tipo">Camera2D</span></button></li>
+              <li><button class="nodo" data-nodo="sonido"><span class="icono">🔊</span>SonidoSalto <span class="tipo">AudioStreamPlayer2D</span></button></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="widget-info" id="info-nodo"><p>Toca un nodo.</p></div>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada tipo de nodo con su función:</p>
+        <ul class="pares">
+          <li><span><code>Sprite2D</code></span><span>Muestra una imagen</span></li>
+          <li><span><code>CollisionShape2D</code></span><span>Da forma física para chocar</span></li>
+          <li><span><code>Camera2D</code></span><span>Decide qué se ve en pantalla</span></li>
+          <li><span><code>CharacterBody2D</code></span><span>Personaje que mueves por código</span></li>
+          <li><span><code>Label</code></span><span>Muestra un texto</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Mueves <code>Jugador</code> 100 px a la derecha. ¿Qué pasa con su hijo <code>Sprite</code>?</p>
+        <button data-opcion="a">Se mueve con él.</button>
+        <button data-opcion="b">Se queda donde estaba.</button>
+        <button data-opcion="c">Desaparece.</button>
+        <p class="explicacion">La posición de un hijo es relativa a su padre.</p>
+      </div>
+
+      <h2>Instanciar escenas</h2>
+      <div class="widget reto" id="instancias">
+        <p class="widget-titulo">🧪 Reto: crea copias desde un molde</p>
+        <p class="widget-info" id="inst-mision"></p>
+        <div class="instancias-paneles">
+          <div class="panel-escena">
+            <p class="etq">enemigo.tscn <span class="tipo">(el molde)</span></p>
+            <div class="enemigo grande" id="molde">👾</div>
+            <p class="etq">Color del molde:</p>
+            <div class="colores">
+              <button data-color="#e8676b" style="background:#e8676b" aria-label="Rojo"></button>
+              <button data-color="#5fcf80" style="background:#5fcf80" aria-label="Verde"></button>
+              <button data-color="#c792ea" style="background:#c792ea" aria-label="Morado"></button>
+              <button data-color="#f0c55a" style="background:#f0c55a" aria-label="Amarillo"></button>
+            </div>
+          </div>
+          <div class="panel-escena">
+            <p class="etq">nivel_1.tscn</p>
+            <div class="nivel" id="nivel"></div>
+            <button class="boton" id="instanciar">+ Instanciar enemigo.tscn</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Tienes 20 monedas instanciadas desde <code>moneda.tscn</code> y quieres que todas brillen más. ¿Qué haces?</p>
+        <button data-opcion="a">Editar las 20 una a una.</button>
+        <button data-opcion="b">Borrarlas y crearlas de nuevo.</button>
+        <button data-opcion="c">Editar <code>moneda.tscn</code> una vez.</button>
+        <p class="explicacion">Los cambios en el molde llegan a todas las instancias. Por eso cada cosa que se repite merece su propia escena.</p>
+      </div>
+
+      <div class="consejo">
+        <strong>Hazlo en Godot (2 min)</strong>
+        Escena 2D → renombra la raíz a <code>Principal</code> → <kbd>Ctrl</kbd>+<kbd>A</kbd> añade un <code>Sprite2D</code> → arrastra <code>icon.svg</code> a su <em>Texture</em> → <kbd>Ctrl</kbd>+<kbd>S</kbd> como <code>principal.tscn</code> → <kbd>F6</kbd>.
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const nodos = {
+        jugador: ["Jugador · CharacterBody2D", "La raíz. Un cuerpo físico para personajes que mueves por código con move_and_slide()."],
+        sprite: ["Sprite · Sprite2D", "La imagen del jugador. Solo es visual, no choca con nada."],
+        colision: ["Colision · CollisionShape2D", "La forma física. Sin ella, CharacterBody2D no sabe con qué chocar (Godot te avisa con ⚠️)."],
+        camara: ["Camara · Camera2D", "Qué parte del mundo se ve. Como es hija del jugador, le sigue sola."],
+        sonido: ["SonidoSalto · AudioStreamPlayer2D", "Un sonido con posición: suena más fuerte cuanto más cerca de la cámara."]
+      };
+      const info = document.getElementById("info-nodo");
+      document.querySelectorAll("#arbol .nodo").forEach((el) => {
+        el.addEventListener("click", () => {
+          document.querySelectorAll("#arbol .nodo").forEach((n) => n.classList.remove("activo"));
+          el.classList.add("activo");
+          const [titulo, texto] = nodos[el.dataset.nodo];
+          info.innerHTML = `<h4>${titulo}</h4><p>${texto}</p>`;
+        });
+      });
+
+      // Reto de instancias
+      const widget = document.getElementById("instancias");
+      const mision = document.getElementById("inst-mision");
+      const nivel = document.getElementById("nivel");
+      const molde = document.getElementById("molde");
+      let color = "#e8676b";
+      let copias = 0;
+      molde.style.background = color;
+
+      function actualizarMision(cambiado) {
+        if (copias < 3) {
+          mision.innerHTML = `<strong>Paso 1:</strong> instancia 3 enemigos en el nivel (${copias}/3).`;
+        } else if (!cambiado) {
+          mision.innerHTML = "<strong>Paso 2:</strong> ahora cambia el color <em>del molde</em> y mira el nivel.";
+        } else {
+          mision.innerHTML = "🎉 <strong>¡Eso es instanciar!</strong> Un cambio en el molde y todas las copias se actualizan.";
+          window.GuiaGodot.resuelto(widget);
+        }
+      }
+
+      document.getElementById("instanciar").addEventListener("click", () => {
+        if (copias >= 8) return;
+        copias++;
+        const e = document.createElement("div");
+        e.className = "enemigo";
+        e.textContent = "👾";
+        e.style.background = color;
+        nivel.appendChild(e);
+        actualizarMision(false);
+      });
+
+      widget.querySelectorAll(".colores button").forEach((b) => {
+        b.addEventListener("click", () => {
+          color = b.dataset.color;
+          molde.style.background = color;
+          nivel.querySelectorAll(".enemigo").forEach((e) => (e.style.background = color));
+          if (copias >= 3) actualizarMision(true);
+        });
+      });
+
+      actualizarMision(false);
+    })();
+  </script>
+</body>
+</html>

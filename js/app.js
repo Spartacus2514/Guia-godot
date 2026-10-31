@@ -1,0 +1,520 @@
+// Lógica compartida del curso: progreso, navegación, retos interactivos
+// (quiz, completar, ordenar, relacionar, encontrar el error) y resaltado de GDScript.
+(function () {
+  "use strict";
+
+  const CLAVE_PROGRESO = "guia-godot-progreso";
+  const curso = window.CURSO;
+  const idLeccion = document.body.dataset.leccion;
+  const esLeccion = idLeccion !== undefined;
+
+  // ---------- Utilidades ----------
+
+  function leerProgreso() {
+    try {
+      return JSON.parse(localStorage.getItem(CLAVE_PROGRESO)) || {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function guardarProgreso(progreso) {
+    try {
+      localStorage.setItem(CLAVE_PROGRESO, JSON.stringify(progreso));
+    } catch (e) {
+      // Sin almacenamiento: el curso funciona igual, sin recordar el progreso.
+    }
+  }
+
+  function todasLasLecciones() {
+    return curso.modulos.flatMap((m) => m.lecciones);
+  }
+
+  function porcentaje(lecciones, progreso) {
+    if (!lecciones.length) return 0;
+    return Math.round((lecciones.filter((l) => progreso[l.id]).length / lecciones.length) * 100);
+  }
+
+  function barajar(lista) {
+    const a = lista.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function sacudir(el) {
+    el.classList.remove("sacudir");
+    void el.offsetWidth;
+    el.classList.add("sacudir");
+  }
+
+  // ---------- Resaltado de GDScript ----------
+
+  const PALABRAS_CLAVE = new Set(
+    ("extends class_name func var const signal enum static if elif else for while match break continue " +
+      "pass return in and or not is as self super await true false null void").split(" ")
+  );
+  const TIPOS = new Set(
+    ("int float bool String Vector2 Vector3 Color Array Dictionary Node Node2D Node3D Sprite2D " +
+      "CharacterBody2D CharacterBody3D RigidBody2D Area2D CollisionShape2D Camera2D Label Button Control " +
+      "AnimatedSprite2D Timer Input PackedScene").split(" ")
+  );
+
+  function escapar(texto) {
+    return texto.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function resaltar(codigo) {
+    const patron = /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(@\w+)|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_]\w*\b)(\s*\()?/gm;
+    let salida = "";
+    let ultimo = 0;
+    let m;
+    while ((m = patron.exec(codigo)) !== null) {
+      salida += escapar(codigo.slice(ultimo, m.index));
+      ultimo = patron.lastIndex;
+      if (m[1]) salida += `<span class="t-comentario">${escapar(m[1])}</span>`;
+      else if (m[2]) salida += `<span class="t-cadena">${escapar(m[2])}</span>`;
+      else if (m[3]) salida += `<span class="t-anotacion">${m[3]}</span>`;
+      else if (m[4]) salida += `<span class="t-numero">${m[4]}</span>`;
+      else if (m[5]) {
+        const palabra = m[5];
+        let clase = "";
+        if (PALABRAS_CLAVE.has(palabra)) clase = "t-clave";
+        else if (TIPOS.has(palabra)) clase = "t-tipo";
+        else if (m[6]) clase = "t-funcion";
+        salida += clase ? `<span class="${clase}">${palabra}</span>` : palabra;
+        if (m[6]) salida += m[6];
+      }
+    }
+    return salida + escapar(codigo.slice(ultimo));
+  }
+
+  function iniciarCodigo() {
+    document.querySelectorAll("pre > code.gdscript").forEach((bloque) => {
+      bloque.innerHTML = resaltar(bloque.textContent);
+      const copiar = document.createElement("button");
+      copiar.className = "copiar";
+      copiar.textContent = "Copiar";
+      copiar.addEventListener("click", () => {
+        navigator.clipboard.writeText(bloque.textContent).then(() => {
+          copiar.textContent = "¡Copiado!";
+          setTimeout(() => (copiar.textContent = "Copiar"), 1500);
+        });
+      });
+      bloque.parentElement.appendChild(copiar);
+    });
+  }
+
+  // ---------- Registro de retos ----------
+  // Todo elemento con clase "reto" cuenta para superar la lección.
+  // Los widgets propios de una lección llaman a GuiaGodot.resuelto(elemento).
+
+  function resuelto(el) {
+    if (el.classList.contains("superado")) return;
+    el.classList.add("superado");
+    actualizarRetos();
+  }
+
+  function actualizarRetos() {
+    if (!esLeccion) return;
+    const retos = document.querySelectorAll(".reto");
+    const hechos = document.querySelectorAll(".reto.superado").length;
+    const total = retos.length;
+
+    const chip = document.getElementById("contador-retos");
+    if (chip) {
+      chip.querySelector(".texto").textContent = `🎯 ${hechos}/${total} retos`;
+      chip.querySelector(".barra-relleno").style.width = (total ? (hechos / total) * 100 : 100) + "%";
+    }
+
+    if (total && hechos === total) {
+      const p = leerProgreso();
+      if (!p[idLeccion]) {
+        p[idLeccion] = true;
+        guardarProgreso(p);
+        pintarLateral();
+      }
+      const final = document.getElementById("final-leccion");
+      if (final) final.hidden = false;
+      if (chip) chip.classList.add("completo");
+    }
+  }
+
+  // ---------- Quiz ----------
+  // <div class="quiz" data-respuesta="b">
+  //   <p class="pregunta">…</p> <button data-opcion="a">…</button> … <p class="explicacion">…</p>
+  // </div>
+
+  function iniciarQuizzes() {
+    document.querySelectorAll(".quiz").forEach((quiz) => {
+      quiz.classList.add("reto");
+      const correcta = quiz.dataset.respuesta;
+      const opciones = quiz.querySelectorAll("button[data-opcion]");
+      opciones.forEach((boton) => {
+        boton.addEventListener("click", () => {
+          if (quiz.classList.contains("superado")) return;
+          if (boton.dataset.opcion === correcta) {
+            boton.classList.add("correcta");
+            opciones.forEach((b) => (b.disabled = true));
+            resuelto(quiz);
+          } else {
+            boton.classList.add("incorrecta");
+            boton.disabled = true;
+            sacudir(boton);
+          }
+        });
+      });
+    });
+  }
+
+  // ---------- Completar código ----------
+  // <div class="completar"><pre><code>… <input data-respuesta="valor|alternativa"> …</code></pre></div>
+
+  function iniciarCompletar() {
+    document.querySelectorAll(".completar").forEach((ej) => {
+      ej.classList.add("reto");
+      const entradas = ej.querySelectorAll("input[data-respuesta]");
+      entradas.forEach((e) => {
+        e.size = Math.max(3, e.dataset.respuesta.split("|")[0].length + 1);
+        e.spellcheck = false;
+        e.autocomplete = "off";
+        e.addEventListener("keydown", (ev) => {
+          if (ev.key === "Enter") comprobar();
+        });
+      });
+
+      const acciones = document.createElement("div");
+      acciones.className = "acciones";
+      acciones.innerHTML = `<button class="boton">Comprobar</button>
+        <button class="boton secundario" hidden>Ver solución</button>
+        <span class="resultado"></span>`;
+      ej.appendChild(acciones);
+      const [btnComprobar, btnSolucion] = acciones.querySelectorAll("button");
+      const resultado = acciones.querySelector(".resultado");
+
+      function comprobar() {
+        let aciertos = 0;
+        entradas.forEach((e) => {
+          const validas = e.dataset.respuesta.split("|").map((r) => r.trim());
+          const ok = validas.includes(e.value.trim());
+          e.classList.toggle("ok", ok);
+          e.classList.toggle("mal", !ok);
+          if (ok) aciertos++;
+        });
+        if (aciertos === entradas.length) {
+          resultado.textContent = "✅ ¡Correcto!";
+          resultado.className = "resultado ok";
+          resuelto(ej);
+        } else {
+          resultado.textContent = `${aciertos}/${entradas.length} bien`;
+          resultado.className = "resultado mal";
+          btnSolucion.hidden = false;
+          sacudir(ej);
+        }
+      }
+
+      btnComprobar.addEventListener("click", comprobar);
+      btnSolucion.addEventListener("click", () => {
+        entradas.forEach((e) => (e.value = e.dataset.respuesta.split("|")[0]));
+        comprobar();
+      });
+    });
+  }
+
+  // ---------- Ordenar ----------
+  // <div class="ordenar" data-codigo>   (data-codigo: las piezas son líneas de GDScript)
+  //   <p>Enunciado</p>
+  //   <ul class="piezas"><li>en el orden correcto</li>…</ul>
+  // </div>
+
+  function iniciarOrdenar() {
+    document.querySelectorAll(".ordenar").forEach((ej) => {
+      ej.classList.add("reto");
+      const esCodigo = ej.hasAttribute("data-codigo");
+      const lista = ej.querySelector(".piezas");
+      const piezas = [...lista.querySelectorAll("li")].map((li, i) => ({ texto: li.textContent, i }));
+      lista.remove();
+
+      const zona = document.createElement("div");
+      zona.className = "ordenar-zonas";
+      zona.innerHTML = `
+        <div><p class="etq">Tu respuesta</p><ol class="respuesta"></ol></div>
+        <div><p class="etq">Toca las piezas en orden</p><div class="disponibles"></div></div>
+        <p class="resultado"></p>`;
+      ej.appendChild(zona);
+      const respuesta = zona.querySelector(".respuesta");
+      const disponibles = zona.querySelector(".disponibles");
+      const resultado = zona.querySelector(".resultado");
+
+      function crearPieza(p) {
+        const b = document.createElement("button");
+        b.className = "pieza" + (esCodigo ? " codigo" : "");
+        b.dataset.i = p.i;
+        if (esCodigo) b.innerHTML = resaltar(p.texto);
+        else b.textContent = p.texto;
+        b.addEventListener("click", () => {
+          if (ej.classList.contains("superado")) return;
+          if (b.parentElement === disponibles) {
+            const li = document.createElement("li");
+            li.appendChild(b);
+            respuesta.appendChild(li);
+          } else {
+            b.parentElement.remove();
+            disponibles.appendChild(b);
+          }
+          b.classList.remove("mal");
+          comprobar();
+        });
+        return b;
+      }
+
+      function comprobar() {
+        resultado.textContent = "";
+        resultado.className = "resultado";
+        if (disponibles.children.length) return;
+        const colocadas = [...respuesta.querySelectorAll(".pieza")];
+        let bien = true;
+        colocadas.forEach((b, pos) => {
+          const ok = Number(b.dataset.i) === pos;
+          b.classList.toggle("mal", !ok);
+          if (!ok) bien = false;
+        });
+        if (bien) {
+          colocadas.forEach((b) => b.classList.add("ok"));
+          resultado.textContent = "✅ ¡Orden correcto!";
+          resultado.className = "resultado ok";
+          resuelto(ej);
+        } else {
+          resultado.textContent = "Las piezas en rojo no van ahí. Tócalas para devolverlas.";
+          resultado.className = "resultado mal";
+          sacudir(respuesta);
+        }
+      }
+
+      let orden = barajar(piezas);
+      if (orden.every((p, k) => p.i === k) && orden.length > 1) orden = orden.reverse();
+      orden.forEach((p) => disponibles.appendChild(crearPieza(p)));
+    });
+  }
+
+  // ---------- Relacionar ----------
+  // <div class="relacionar">
+  //   <p>Enunciado</p>
+  //   <ul class="pares"><li><span>Izquierda</span><span>Derecha</span></li>…</ul>
+  // </div>
+
+  function iniciarRelacionar() {
+    document.querySelectorAll(".relacionar").forEach((ej) => {
+      ej.classList.add("reto");
+      const lista = ej.querySelector(".pares");
+      const pares = [...lista.querySelectorAll("li")].map((li, i) => {
+        const [a, b] = li.querySelectorAll("span");
+        return { a: a.innerHTML, b: b.innerHTML, i };
+      });
+      lista.remove();
+
+      const tablero = document.createElement("div");
+      tablero.className = "relacionar-columnas";
+      tablero.innerHTML = `<div class="col-a"></div><div class="col-b"></div>`;
+      ej.appendChild(tablero);
+      const colA = tablero.querySelector(".col-a");
+      const colB = tablero.querySelector(".col-b");
+      let seleccion = null;
+      let aciertos = 0;
+
+      function boton(html, i, lado) {
+        const b = document.createElement("button");
+        b.className = "pareja";
+        b.innerHTML = html;
+        b.dataset.i = i;
+        b.dataset.lado = lado;
+        b.addEventListener("click", () => elegir(b));
+        return b;
+      }
+
+      function elegir(b) {
+        if (b.disabled) return;
+        if (!seleccion || seleccion.dataset.lado === b.dataset.lado) {
+          if (seleccion) seleccion.classList.remove("elegida");
+          seleccion = b;
+          b.classList.add("elegida");
+          return;
+        }
+        if (seleccion.dataset.i === b.dataset.i) {
+          [seleccion, b].forEach((x) => {
+            x.classList.remove("elegida");
+            x.classList.add("ok");
+            x.disabled = true;
+          });
+          aciertos++;
+          if (aciertos === pares.length) resuelto(ej);
+        } else {
+          seleccion.classList.remove("elegida");
+          sacudir(b);
+          sacudir(seleccion);
+        }
+        seleccion = null;
+      }
+
+      barajar(pares).forEach((p) => colA.appendChild(boton(p.a, p.i, "a")));
+      barajar(pares).forEach((p) => colB.appendChild(boton(p.b, p.i, "b")));
+    });
+  }
+
+  // ---------- Encuentra el error ----------
+  // <div class="error-codigo" data-linea="3">   (línea con el error, empezando en 1)
+  //   <p>Enunciado</p>
+  //   <pre><code>…</code></pre>
+  //   <p class="explicacion">…</p>
+  // </div>
+
+  function iniciarErrores() {
+    document.querySelectorAll(".error-codigo").forEach((ej) => {
+      ej.classList.add("reto");
+      const correcta = Number(ej.dataset.linea);
+      const code = ej.querySelector("pre code");
+      const lineas = code.textContent.replace(/\n$/, "").split("\n");
+      code.innerHTML = "";
+      lineas.forEach((texto, k) => {
+        const linea = document.createElement("span");
+        linea.className = "linea";
+        linea.innerHTML = (resaltar(texto) || " ") + "\n";
+        linea.addEventListener("click", () => {
+          if (ej.classList.contains("superado")) return;
+          if (k + 1 === correcta) {
+            linea.classList.add("ok");
+            resuelto(ej);
+          } else {
+            linea.classList.add("mal");
+            sacudir(linea);
+          }
+        });
+        code.appendChild(linea);
+      });
+    });
+  }
+
+  // ---------- Portada ----------
+
+  function pintarPortada() {
+    const contenedor = document.getElementById("modulos");
+    if (!contenedor) return;
+    const progreso = leerProgreso();
+    const total = todasLasLecciones();
+
+    const barra = document.getElementById("progreso-global");
+    if (barra) {
+      const pct = porcentaje(total, progreso);
+      barra.querySelector(".barra-relleno").style.width = pct + "%";
+      barra.querySelector(".barra-texto").textContent =
+        `${total.filter((l) => progreso[l.id]).length} de ${total.length} lecciones superadas (${pct}%)`;
+    }
+
+    const siguiente = total.find((l) => !progreso[l.id]) || total[0];
+    const empezar = document.getElementById("empezar");
+    if (empezar) {
+      empezar.href = "lecciones/" + siguiente.archivo;
+      const hechas = total.filter((l) => progreso[l.id]).length;
+      empezar.textContent =
+        hechas === total.length ? "Repasar desde el principio →"
+        : hechas ? `Continuar: ${siguiente.titulo} →` : "Empezar ahora →";
+    }
+
+    contenedor.innerHTML = "";
+    curso.modulos.forEach((modulo) => {
+      const tarjeta = document.createElement("section");
+      tarjeta.className = "tarjeta-modulo";
+      tarjeta.innerHTML = `
+        <h2>${modulo.titulo}</h2>
+        <p>${modulo.descripcion || ""}</p>
+        <div class="barra"><div class="barra-relleno" style="width:${porcentaje(modulo.lecciones, progreso)}%"></div></div>
+        <ol class="lista-lecciones"></ol>`;
+      const lista = tarjeta.querySelector("ol");
+      modulo.lecciones.forEach((l) => {
+        const li = document.createElement("li");
+        if (progreso[l.id]) li.classList.add("hecha");
+        li.innerHTML = `<a href="lecciones/${l.archivo}">${l.titulo}</a>${l.duracion ? ` <span class="duracion">${l.duracion}</span>` : ""}`;
+        lista.appendChild(li);
+      });
+      contenedor.appendChild(tarjeta);
+    });
+
+    const reiniciar = document.getElementById("reiniciar-progreso");
+    if (reiniciar) {
+      reiniciar.onclick = () => {
+        if (confirm("¿Seguro que quieres borrar tu progreso?")) {
+          guardarProgreso({});
+          pintarPortada();
+        }
+      };
+    }
+  }
+
+  // ---------- Lección ----------
+
+  function pintarLateral() {
+    const lateral = document.getElementById("lateral");
+    if (!lateral) return;
+    const progreso = leerProgreso();
+    let html = `<a class="volver" href="../index.html">← ${curso.titulo}</a>`;
+    curso.modulos.forEach((m) => {
+      html += `<h3>${m.titulo}</h3><ol>`;
+      m.lecciones.forEach((l) => {
+        const clases = [l.id === idLeccion ? "actual" : "", progreso[l.id] ? "hecha" : ""].join(" ");
+        html += `<li class="${clases}"><a href="${l.archivo}">${l.titulo}</a></li>`;
+      });
+      html += "</ol>";
+    });
+    lateral.innerHTML = html;
+  }
+
+  function pintarLeccion() {
+    const lecciones = todasLasLecciones();
+    const indice = lecciones.findIndex((l) => l.id === idLeccion);
+    const anterior = lecciones[indice - 1];
+    const siguiente = lecciones[indice + 1];
+
+    pintarLateral();
+    const lateral = document.getElementById("lateral");
+    const menu = document.getElementById("boton-menu");
+    if (menu && lateral) menu.onclick = () => lateral.classList.toggle("abierto");
+
+    const main = document.querySelector("main.contenido");
+    const chip = document.createElement("div");
+    chip.id = "contador-retos";
+    chip.innerHTML = `<span class="texto"></span><div class="barra"><div class="barra-relleno"></div></div>`;
+    main.prepend(chip);
+
+    const nav = document.getElementById("navegacion");
+    if (!nav) return;
+    const enlaceSiguiente = siguiente
+      ? `<a class="boton" href="${siguiente.archivo}">Siguiente: ${siguiente.titulo} →</a>`
+      : `<a class="boton" href="../index.html">Volver al inicio</a>`;
+
+    const final = document.createElement("div");
+    final.id = "final-leccion";
+    final.hidden = true;
+    final.innerHTML = `<p>🎉 <strong>¡Lección superada!</strong> Has completado todos los retos.</p>${enlaceSiguiente}`;
+    nav.before(final);
+
+    nav.innerHTML = `
+      ${anterior ? `<a class="boton secundario" href="${anterior.archivo}">← ${anterior.titulo}</a>` : "<span></span>"}
+      ${siguiente ? `<a class="boton secundario" href="${siguiente.archivo}">${siguiente.titulo} →</a>` : `<a class="boton secundario" href="../index.html">Inicio</a>`}`;
+  }
+
+  // ---------- Arranque ----------
+
+  window.GuiaGodot = { resaltar, resuelto, sacudir };
+
+  if (esLeccion) pintarLeccion();
+  else pintarPortada();
+  iniciarErrores();
+  iniciarOrdenar();
+  iniciarRelacionar();
+  iniciarQuizzes();
+  iniciarCompletar();
+  iniciarCodigo();
+  actualizarRetos();
+})();
