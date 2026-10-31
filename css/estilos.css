@@ -1055,3 +1055,7 @@ pre.codigo-vivo { white-space: pre-wrap; overflow-wrap: anywhere; }
   .tabla-glosario td { border: none; padding: 0.1rem 0; }
   .tabla-glosario td:first-child { font-weight: 600; }
 }
+
+/* Preguntas «adivina»: se hacen antes de explicar algo, a propósito, y lo avisan */
+.quiz[data-tipo="adivina"]::before { content: "🤔 ¿Te atreves a adivinar? (aún no lo hemos visto)"; color: var(--amarillo); }
+.esencial > p { margin: 0.5rem 0; }

@@ -67,12 +67,16 @@ func _ready():
         <p class="explicacion">Las comillas lo convierten en texto. <code>500</code> es un número con el que puedes hacer cuentas; <code>"500"</code> es solo texto.</p>
       </div>
 
-      <div class="quiz" data-respuesta="b">
+      <div class="quiz" data-respuesta="b" data-tipo="adivina">
         <p class="pregunta">Repartes 7 zanahorias entre 2 vacas: <code>var por_vaca = 7 / 2</code>. ¿Cuánto vale <code>por_vaca</code>?</p>
         <button data-opcion="a"><code>3.5</code></button>
         <button data-opcion="b"><code>3</code></button>
         <button data-opcion="c">Da error.</button>
         <p class="explicacion">¡Trampa típica! Entero entre entero da <strong>entero</strong>: se pierden los decimales. Si quieres <code>3.5</code>, escribe <code>7 / 2.0</code>.</p>
+      </div>
+
+      <div class="esencial">
+        <p><strong>Texto y números no se mezclan con <code>+</code>.</strong> Para escribir ambos con <code>print</code>, sepáralos con comas: <code>print("Dinero: ", dinero)</code>. O convierte el número en texto con <code>str()</code>: <code>"Dinero: " + str(dinero)</code>.</p>
       </div>
 
       <div class="error-codigo" data-linea="4">

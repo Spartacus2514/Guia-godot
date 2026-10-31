@@ -18,7 +18,7 @@
         <ul>
           <li>Un <strong>diccionario</strong> guarda parejas <strong>clave: valor</strong>. Es perfecto para el inventario: <code>{"nabo": 3, "patata": 5}</code>.</li>
           <li>Leer: <code>inventario["nabo"]</code>. Cambiar o añadir: <code>inventario["fresa"] = 2</code>.</li>
-          <li>¿Existe la clave? <code>inventario.has("nabo")</code>. Leer sin riesgo: <code>inventario.get("melon", 0)</code> (devuelve 0 si no existe).</li>
+          <li><strong>Leer una clave que no existe da error</strong> (también con <code>+=</code>, que primero lee). ¿Existe? <code>inventario.has("nabo")</code>. Leer sin riesgo: <code>inventario.get("melon", 0)</code> (devuelve 0 si no existe).</li>
           <li>Quitar: <code>inventario.erase("nabo")</code>. Recorrer: <code>for objeto in inventario:</code> te da cada <strong>clave</strong>.</li>
         </ul>
       </div>

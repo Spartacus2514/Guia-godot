@@ -20,6 +20,7 @@
           <li>Quien avisa <strong>emite</strong> la señal sin saber quién escucha. Quien quiere enterarse la <strong>conecta</strong> a una de sus funciones.</li>
           <li>Se declara con <code>signal nombre</code>, se lanza con <code>nombre.emit()</code> y se escucha con <code>nombre.connect(funcion)</code>.</li>
           <li><code>$Nabo</code> es el nodo hijo llamado «Nabo». Es como escribir su ruta en el árbol.</li>
+          <li>Al conectar, la función va <strong>sin paréntesis</strong>: <code>connect(_on_cultivo_listo)</code>. Con paréntesis la llamarías en ese momento, en vez de entregarla para que Godot la llame cuando llegue el aviso.</li>
         </ul>
       </div>
 
@@ -53,8 +54,18 @@ func _on_cultivo_listo(nombre: String):
         <p class="explicacion">Esa es la gracia: puedes añadir oyentes nuevos (un logro, un sonido, una misión) sin tocar el código del nabo. Así los sistemas de tu juego no se enredan entre sí.</p>
       </div>
 
+      <div class="esencial">
+        <p>Muchos nodos ya traen sus propias señales. Las más usadas:</p>
+        <ul>
+          <li><code>Timer</code> → <code>timeout</code>: se ha acabado el tiempo.</li>
+          <li><code>Button</code> → <code>pressed</code>: alguien ha pulsado el botón.</li>
+          <li><code>Area3D</code> → <code>body_entered</code>: algo ha entrado en la zona (por ejemplo, el granjero en la puerta de la mina).</li>
+          <li><code>AnimationPlayer</code> → <code>animation_finished</code>: ha terminado una animación.</li>
+        </ul>
+      </div>
+
       <div class="relacionar">
-        <p>Muchos nodos ya traen señales. Une cada nodo con su señal más usada:</p>
+        <p>Une cada nodo con su señal más usada:</p>
         <ul class="pares">
           <li><span><code>Timer</code></span><span><code>timeout</code>: se acabó el tiempo</span></li>
           <li><span><code>Button</code></span><span><code>pressed</code>: lo han pulsado</span></li>

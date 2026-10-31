@@ -11,6 +11,7 @@ Aprender Godot 4 y GDScript **desde cero** (primer lenguaje de programación) co
 
 ## Reglas de cada lección
 
+1. **Primero se explica, después se pregunta.** Ningún reto pregunta algo que no se haya explicado antes en la página. Si a propósito se pide adivinar algo nuevo, el quiz lleva `data-tipo="adivina"` y lo avisa.
 1. **Una idea** por lección, de 5 a 10 minutos.
 2. **Lo esencial** en 3 a 5 líneas, sin relleno.
 3. **De 3 a 5 retos** interactivos (quiz, ordenar, relacionar, encontrar el error, completar código o un widget propio).
