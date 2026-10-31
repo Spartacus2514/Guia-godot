@@ -266,8 +266,18 @@ pre:hover .copiar { opacity: 1; }
 .quiz button.correcta { border-color: var(--verde); background: #234a32; }
 .quiz button.incorrecta { border-color: var(--rojo); background: #4a2427; opacity: 0.8; }
 .quiz button:disabled { cursor: default; }
-.quiz .explicacion { display: none; color: var(--texto-suave); margin-bottom: 0; }
-.quiz.resuelto .explicacion { display: block; }
+.quiz .explicacion { display: none; margin-bottom: 0; }
+/* Al acertar se muestra la explicación, destacada para que se vea bien. */
+.quiz.superado .explicacion {
+  display: block;
+  background: var(--fondo-3);
+  border-left: 3px solid var(--verde);
+  border-radius: 0 8px 8px 0;
+  padding: 0.6rem 0.9rem;
+  margin-top: 0.8rem;
+  animation: aparecer 0.3s ease-out;
+}
+.quiz.superado .explicacion::before { content: "💡 "; }
 
 /* ---------- Completar código ---------- */
 
