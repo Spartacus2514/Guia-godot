@@ -83,7 +83,7 @@
 
       <div class="en-tu-juego">
         <ul>
-          <li>En <code>datos_granja.gd</code>, crea dos variables: <code>var casa := Vector3(0, 0, 0)</code> y <code>var pozo := Vector3(6, 0, -8)</code>.</li>
+          <li>En <code>datos_granja.gd</code>, crea dos variables: <code>var casa: Vector3 = Vector3(0, 0, 0)</code> y <code>var pozo: Vector3 = Vector3(6, 0, -8)</code>.</li>
           <li>En <code>_ready()</code>, imprime <code>casa.distance_to(pozo)</code>. ¿Sale 10?</li>
           <li>En el script del objeto que gira (lección 4), añade en <code>_process</code>: <code>position += Vector3.UP * 0.5 * delta</code>. Pulsa <kbd>F6</kbd>: sube medio metro por segundo.</li>
           <li>Cámbialo por <code>Vector3.FORWARD</code> y mira hacia dónde se va.</li>

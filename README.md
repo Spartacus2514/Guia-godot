@@ -2,7 +2,7 @@
 
 Curso interactivo en HTML para aprender **Godot 4** y **GDScript** desde cero construyendo un juego de granja en 3D (estilo Harvest Moon): poca teoría y muchos retos. Cada lección se supera al completar todos sus retos.
 
-Todo el código GDScript del curso está comprobado con **Godot 4.7.2**: los bloques de las lecciones pasan el análisis de Godot, el script del examen del módulo 2 da la salida que indica la lección y los mensajes de error de la chuleta son los reales.
+Todo el código GDScript del curso está comprobado con **Godot 4.7.2**: los bloques de las lecciones pasan el análisis de Godot, el script del examen del módulo 2 da la salida que indica la lección, el granjero del módulo 3 se ha probado simulando las teclas (camina, choca, la cámara le sigue, se anima e interactúa) y los mensajes de error de la chuleta son los reales.
 
 ## Cómo verlo
 
@@ -11,7 +11,7 @@ Todo el código GDScript del curso está comprobado con **Godot 4.7.2**: los blo
 
 ## Contenido
 
-El temario completo (9 módulos, 54 lecciones) está en [PLAN.md](PLAN.md). Lecciones disponibles:
+El temario completo (9 módulos, 55 lecciones) está en [PLAN.md](PLAN.md). Lecciones disponibles:
 
 **Módulo 1 · Primeros pasos en 3D**
 1. ¿Qué es Godot?
@@ -30,6 +30,15 @@ El temario completo (9 módulos, 54 lecciones) está en [PLAN.md](PLAN.md). Lecc
 7. Señales
 8. Cuando algo falla
 9. Examen del módulo 2
+
+**Módulo 3 · El granjero**
+1. Controles: el mapa de entrada
+2. Caminar con CharacterBody3D
+3. La cámara que sigue al granjero
+4. Moverse según la cámara y girar el modelo
+5. Animaciones: quieto y caminando
+6. Interactuar con lo que tienes delante
+7. Examen del módulo 3
 
 **Herramientas**: 🔁 Repaso (repetición espaciada con preguntas de las lecciones superadas) y 📒 Chuleta y glosario (sintaxis, errores frecuentes traducidos y términos en inglés).
 

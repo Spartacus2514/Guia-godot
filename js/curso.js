@@ -38,12 +38,13 @@ window.CURSO = {
       titulo: "Módulo 3 · El granjero",
       descripcion: "Tu personaje camina por el mundo 3D, la cámara le sigue y puede interactuar con las cosas.",
       lecciones: [
-        { id: "13-controles", titulo: "Controles: el mapa de entrada" },
-        { id: "14-characterbody3d", titulo: "Caminar con CharacterBody3D" },
-        { id: "15-girar-camara", titulo: "Moverse según la cámara y girar el modelo" },
-        { id: "16-camara", titulo: "La cámara que sigue al granjero" },
-        { id: "17-animaciones", titulo: "Animaciones: quieto y caminando" },
-        { id: "18-interactuar", titulo: "Interactuar con lo que tienes delante" }
+        { id: "13-controles", titulo: "Controles: el mapa de entrada", archivo: "13-controles.html", duracion: "8 min" },
+        { id: "14-characterbody3d", titulo: "Caminar con CharacterBody3D", archivo: "14-characterbody3d.html", duracion: "12 min" },
+        { id: "15-camara", titulo: "La cámara que sigue al granjero", archivo: "15-camara.html", duracion: "10 min" },
+        { id: "16-girar-modelo", titulo: "Moverse según la cámara y girar el modelo", archivo: "16-girar-modelo.html", duracion: "12 min" },
+        { id: "17-animaciones", titulo: "Animaciones: quieto y caminando", archivo: "17-animaciones.html", duracion: "10 min" },
+        { id: "18-interactuar", titulo: "Interactuar con lo que tienes delante", archivo: "18-interactuar.html", duracion: "12 min" },
+        { id: "18b-examen-m3", titulo: "Examen del módulo 3", archivo: "18b-examen-m3.html", duracion: "15 min" }
       ]
     },
     {

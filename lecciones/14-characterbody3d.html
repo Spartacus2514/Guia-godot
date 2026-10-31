@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caminar con CharacterBody3D · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="14-characterbody3d">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Lección 2</span>
+      <h1>Caminar con CharacterBody3D</h1>
+
+      <div class="esencial">
+        <ul>
+          <li><code>CharacterBody3D</code> es el nodo de los personajes: tú le das una <strong>velocidad</strong> y él se mueve <strong>chocando</strong> con lo que encuentre.</li>
+          <li><code>velocity</code> es un <code>Vector3</code> con los <strong>metros por segundo</strong> en cada eje. <code>move_and_slide()</code> mueve al personaje según esa velocidad, lo para al chocar y lo <strong>desliza</strong> por las paredes.</li>
+          <li><code>velocity</code> y <code>move_and_slide()</code> vienen con el nodo: solo existen si el script empieza por <code>extends CharacterBody3D</code>.</li>
+          <li>Ese código va en <code>_physics_process(delta)</code>: como <code>_process</code>, pero a ritmo fijo (60 veces por segundo), que es el que usa la física.</li>
+          <li>Para chocar, el granjero necesita una <code>CollisionShape3D</code> (una cápsula), y las vallas, un <code>StaticBody3D</code> con su forma. Un modelo solo se ve: no choca.</li>
+        </ul>
+      </div>
+
+      <p>La escena del granjero, por ahora con una cápsula de modelo (en la lección de animaciones pondrás el tuyo):</p>
+      <pre><code>Granjero (CharacterBody3D)
+├─ Modelo (MeshInstance3D con una cápsula)
+└─ Colision (CollisionShape3D con una cápsula)</code></pre>
+
+      <pre><code class="gdscript">extends CharacterBody3D
+
+@export var velocidad: float = 4.0      # metros por segundo
+
+
+func _physics_process(delta: float) -> void:
+	# Gravedad: si está en el aire, cae cada vez más rápido.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# La dirección de las teclas (lección anterior), pasada a 3D.
+	var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	var direccion := Vector3(entrada.x, 0, entrada.y)
+
+	velocity.x = direccion.x * velocidad
+	velocity.z = direccion.z * velocidad
+
+	move_and_slide()</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li><code>Vector3(entrada.x, 0, entrada.y)</code>: la x sigue siendo izquierda/derecha y la <strong>y del Vector2 pasa a la Z</strong> del Vector3. La Y de 3D (arriba) es 0: no queremos volar. Y como en 3D adelante es −Z, la y = −1 de «adelante» encaja sola.</li>
+          <li>Solo se cambian <code>velocity.x</code> y <code>velocity.z</code>. La <code>velocity.y</code> es de la gravedad: si escribieras <code>velocity = direccion * velocidad</code>, la borrarías en cada fotograma.</li>
+          <li><code>get_gravity()</code> da la gravedad del mundo: <code>(0.0, -9.8, 0.0)</code>. Multiplicada por <code>delta</code>, la caída se acelera un poco en cada fotograma.</li>
+          <li>Con <code>velocity</code> <strong>no multiplicas por <code>delta</code></strong> al moverte: <code>move_and_slide()</code> lo hace por ti.</li>
+        </ul>
+      </div>
+
+      <div class="paso-a-paso">
+        <pre><code>func _physics_process(delta):
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	var entrada = Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	var direccion = Vector3(entrada.x, 0, entrada.y)
+	velocity.x = direccion.x * velocidad
+	velocity.z = direccion.z * velocidad
+	move_and_slide()</code></pre>
+        <script type="application/json">[
+          {"l": 1, "v": {"delta": "0.0167", "position": "(0.0, 0.0, 0.0)"}, "n": "Un fotograma de física. El granjero está en el suelo, en el origen, y mantienes pulsada la <kbd>D</kbd>. <code>delta</code> = 1/60 de segundo."},
+          {"l": 2, "v": {"delta": "0.0167", "position": "(0.0, 0.0, 0.0)"}, "n": "Está en el suelo: <code>is_on_floor()</code> es <code>true</code>, así que <code>not is_on_floor()</code> es <code>false</code> y la gravedad se salta."},
+          {"l": 4, "v": {"delta": "0.0167", "position": "(0.0, 0.0, 0.0)", "entrada": "(1.0, 0.0)"}, "n": "Solo pulsas derecha: x = 1, y = 0."},
+          {"l": 5, "v": {"delta": "0.0167", "position": "(0.0, 0.0, 0.0)", "entrada": "(1.0, 0.0)", "direccion": "(1.0, 0.0, 0.0)"}, "n": "La x pasa igual, la y del Vector2 va a la Z, y la Y de 3D es 0."},
+          {"l": 6, "v": {"delta": "0.0167", "position": "(0.0, 0.0, 0.0)", "entrada": "(1.0, 0.0)", "direccion": "(1.0, 0.0, 0.0)", "velocity": "(4.0, 0.0, 0.0)"}, "n": "1 × 4 = 4 metros por segundo hacia la derecha."},
+          {"l": 7, "v": {"delta": "0.0167", "position": "(0.0, 0.0, 0.0)", "entrada": "(1.0, 0.0)", "direccion": "(1.0, 0.0, 0.0)", "velocity": "(4.0, 0.0, 0.0)"}, "n": "0 × 4 = 0: en Z no se mueve."},
+          {"l": 8, "v": {"delta": "0.0167", "position": "(0.0667, 0.0, 0.0)", "entrada": "(1.0, 0.0)", "direccion": "(1.0, 0.0, 0.0)", "velocity": "(4.0, 0.0, 0.0)"}, "n": "<code>move_and_slide()</code> avanza <code>velocity × delta</code>: 4 × 0.0167 ≈ 0.067 m en este fotograma. En un segundo (60 fotogramas), 4 metros."}
+        ]</script>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">¿Por qué el script cambia <code>velocity.x</code> y <code>velocity.z</code> por separado en vez de escribir <code>velocity = direccion * velocidad</code>?</p>
+        <button data-opcion="a">Porque así no se borra <code>velocity.y</code>, que es la caída por la gravedad.</button>
+        <button data-opcion="b">Porque <code>velocity</code> no se puede cambiar entera.</button>
+        <button data-opcion="c">Porque es más rápido de ejecutar.</button>
+        <p class="explicacion"><code>direccion.y</code> siempre es 0. Con <code>velocity = direccion * velocidad</code>, la caída volvería a 0 en cada fotograma: al salir del borde de una caja, el granjero se quedaría <strong>flotando en el aire</strong>. Lo hemos comprobado en Godot.</p>
+      </div>
+
+      <h2>¿Por qué no <code>position +=</code>?</h2>
+      <p>En la lección de Vector3 movías cosas con <code>position += …</code>. Eso las <strong>teletransporta</strong> un poco en cada fotograma, sin mirar si hay algo delante: atraviesan vallas y paredes. <code>move_and_slide()</code> sí comprueba los choques.</p>
+
+      <div class="widget reto" id="valla">
+        <p class="widget-titulo">🚧 Reto: que el granjero choque con la valla</p>
+        <p class="widget-info" id="valla-mision">Ejecuta los dos códigos hacia la valla y compara. Para superar el reto, consigue que el granjero <strong>choque con la valla y se deslice a lo largo de ella</strong>.</p>
+        <div class="controles">
+          <label>Código:
+            <select id="valla-codigo">
+              <option value="position">A · position += direccion * velocidad * delta</option>
+              <option value="velocity">B · velocity.x = …, velocity.z = … y move_and_slide()</option>
+            </select>
+          </label>
+          <label>Teclas:
+            <select id="valla-teclas">
+              <option value="recto">W (adelante)</option>
+              <option value="diagonal">W + D (adelante y derecha)</option>
+            </select>
+          </label>
+        </div>
+        <div class="mapa-contenedor">
+          <div class="mapa" id="valla-mapa">
+            <span class="eje eje-z">↑ −Z (adelante)</span>
+            <div class="tabla-valla" id="valla-tabla"></div>
+            <div class="ficha granjero" id="valla-granjero">🧑‍🌾</div>
+          </div>
+        </div>
+        <div class="controles">
+          <button class="boton" id="valla-ejecutar">▶ Ejecutar 2 segundos</button>
+        </div>
+        <div class="consola" id="valla-consola"></div>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Usas <code>move_and_slide()</code>, pero el granjero atraviesa la valla nueva. La valla es solo un <code>MeshInstance3D</code> con una caja. ¿Qué le falta?</p>
+        <button data-opcion="a">Un script con <code>move_and_slide()</code>.</button>
+        <button data-opcion="b">Ser hija del granjero.</button>
+        <button data-opcion="c">Un <code>StaticBody3D</code> con su <code>CollisionShape3D</code>.</button>
+        <p class="explicacion">El <code>MeshInstance3D</code> solo se ve. Para que algo choque necesita un cuerpo físico (<code>StaticBody3D</code> si no se mueve) y una forma de colisión.</p>
+      </div>
+
+      <div class="consejo">
+        <strong>Tutoriales antiguos</strong>
+        En Godot 3 se escribía <code>move_and_slide(velocity)</code>. En Godot 4, <code>velocity</code> ya es parte del nodo y se escribe <code>move_and_slide()</code>, <strong>sin nada dentro</strong>. Si copias código viejo, Godot te dirá <span class="error-texto">Too many arguments for "move_and_slide()" call.</span>
+      </div>
+
+      <div class="error-codigo" data-linea="1">
+        <p>Godot marca en rojo las líneas 7 y 8: <span class="error-texto">Identifier "velocity" not declared in the current scope.</span> y <span class="error-texto">Function "move_and_slide()" not found in base self.</span> ¿Dónde está la <strong>causa</strong>?</p>
+        <pre><code>extends Node3D
+
+@export var velocidad: float = 4.0
+
+func _physics_process(delta: float) -> void:
+	var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	velocity.x = entrada.x * velocidad
+	move_and_slide()</code></pre>
+        <p class="explicacion"><code>velocity</code> y <code>move_and_slide()</code> solo existen en un <code>CharacterBody3D</code>. Este script extiende <code>Node3D</code>, así que no los conoce. La solución es <code>extends CharacterBody3D</code> (y que el nodo del granjero sea un CharacterBody3D).</p>
+      </div>
+
+      <div class="completar">
+        <p>Completa la gravedad y el movimiento:</p>
+        <pre><code>func _physics_process(delta: float) -> void:
+	if not <input data-respuesta="is_on_floor">():
+		velocity += <input data-respuesta="get_gravity">() * delta
+	var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	velocity.x = entrada.x * velocidad
+	velocity.z = entrada.<input data-respuesta="y"> * velocidad
+	<input data-respuesta="move_and_slide">()</code></pre>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Crea una escena nueva con raíz <code>CharacterBody3D</code> y llámala <code>Granjero</code>. Godot muestra ⚠️ porque aún no tiene forma: es normal.</li>
+          <li>Añade un <code>MeshInstance3D</code> llamado <code>Modelo</code> con <em>Mesh</em> → <strong>Nuevo CapsuleMesh</strong>, y un <code>CollisionShape3D</code> llamado <code>Colision</code> con <em>Shape</em> → <strong>Nuevo CapsuleShape3D</strong>. Pon a los dos <em>Position Y</em> = 1 para que los pies queden en el suelo.</li>
+          <li>Añade a la raíz un script <code>scripts/granjero.gd</code> y escribe el de arriba. Si Godot lo rellena con una plantilla, bórrala: así entiendes cada línea. Guarda la escena como <code>escenas/granjero.tscn</code>.</li>
+          <li>En <code>granja.tscn</code>, el suelo también necesita chocar: selecciónalo y, en la barra del visor, <strong>Malla → Crear Forma de Colisión…</strong> → <em>Ubicación</em>: <strong>Hijo de Cuerpo Estático</strong>, <em>Tipo</em>: <strong>Trimesh</strong> → Crear.</li>
+          <li>Arrastra <code>granjero.tscn</code> a la granja, un poco por encima del suelo. Pulsa <kbd>F6</kbd>: cae, se apoya y camina con WASD.</li>
+          <li>Haz una valla: un <code>MeshInstance3D</code> con un <em>BoxMesh</em> de 3 × 1 × 0.2 y su forma de colisión, como el suelo. Camina contra ella en diagonal: se desliza.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("valla");
+      const mision = document.getElementById("valla-mision");
+      const selCodigo = document.getElementById("valla-codigo");
+      const selTeclas = document.getElementById("valla-teclas");
+      const ficha = document.getElementById("valla-granjero");
+      const tabla = document.getElementById("valla-tabla");
+      const consola = document.getElementById("valla-consola");
+      const boton = document.getElementById("valla-ejecutar");
+      const LIMITE = 5;                         // el mapa va de -5 a 5 metros
+      const VALLA = { x1: -4, x2: 4, z: -3 };   // valla de 8 m en z = -3
+      const RADIO = 0.5, GROSOR = 0.2, VELOCIDAD = 4;
+      const INICIO = { x: -2, z: 2 };
+      let corriendo = false;
+
+      const aPorcentaje = (v) => ((v + LIMITE) / (2 * LIMITE)) * 100 + "%";
+      function colocar(p) {
+        ficha.style.left = aPorcentaje(Math.max(-LIMITE, Math.min(LIMITE, p.x)));
+        ficha.style.top = aPorcentaje(Math.max(-LIMITE, Math.min(LIMITE, p.z)));
+      }
+      tabla.style.left = aPorcentaje(VALLA.x1);
+      tabla.style.width = ((VALLA.x2 - VALLA.x1) / (2 * LIMITE)) * 100 + "%";
+      tabla.style.top = aPorcentaje(VALLA.z);
+      ficha.style.transition = "none";
+      colocar(INICIO);
+
+      const num = (n) => (Math.abs(n) < 0.005 ? "0.0" : n.toFixed(2));
+
+      boton.addEventListener("click", () => {
+        if (corriendo) return;
+        corriendo = true;
+        const conVelocity = selCodigo.value === "velocity";
+        const diagonal = selTeclas.value === "diagonal";
+        const d = diagonal ? Math.SQRT1_2 : 1;
+        const dir = { x: diagonal ? d : 0, z: -d };
+        const p = { ...INICIO };
+        const tope = VALLA.z + GROSOR / 2 + RADIO;   // hasta dónde llega el centro del granjero
+        let choco = false, deslizo = false, frame = 0;
+        consola.textContent = "";
+
+        function paso() {
+          for (let i = 0; i < 2; i++) {             // 2 fotogramas de física por dibujo
+            frame++;
+            p.x += dir.x * VELOCIDAD / 60;
+            const z = p.z + dir.z * VELOCIDAD / 60;
+            const dentro = p.x > VALLA.x1 - RADIO && p.x < VALLA.x2 + RADIO;
+            if (conVelocity && dentro && p.z >= tope && z < tope) {
+              p.z = tope; choco = true;
+            } else if (!(conVelocity && choco && dentro)) {
+              p.z = z;
+            }
+            if (choco && dir.x) deslizo = true;
+          }
+          colocar(p);
+          if (frame < 120) { requestAnimationFrame(paso); return; }
+          corriendo = false;
+          const fuera = Math.abs(p.z) > LIMITE ? " (¡se ha salido del mapa!)" : "";
+          consola.textContent = `position = (${num(p.x)}, 0.0, ${num(p.z)})${fuera}\n`;
+          if (!conVelocity) {
+            consola.textContent += "Ha atravesado la valla: position += no mira si hay algo delante.";
+            window.GuiaGodot.sacudir(tabla);
+          } else if (!deslizo) {
+            consola.textContent += "Choca y se para en z = -2.4: la valla está en -3, con su grosor y el radio de la cápsula. Ahora prueba en diagonal.";
+          } else {
+            consola.textContent += "Choca y se desliza: la parte de la velocidad que va contra la valla se anula, y la que va a lo largo, sigue.";
+            if (!widget.classList.contains("superado")) {
+              mision.innerHTML = "🎉 <strong>¡Eso es move_and_slide()!</strong> Choca y se desliza por la valla, sin que tengas que programarlo.";
+              window.GuiaGodot.resuelto(widget);
+            }
+          }
+          setTimeout(() => { ficha.style.transition = "none"; colocar(INICIO); }, 1500);
+        }
+        colocar(p);
+        requestAnimationFrame(paso);
+      });
+    })();
+  </script>
+</body>
+</html>

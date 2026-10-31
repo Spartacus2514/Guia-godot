@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La cámara que sigue al granjero · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="15-camara">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Lección 3</span>
+      <h1>La cámara que sigue al granjero</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>La <code>Camera3D</code> va dentro de un <code>SpringArm3D</code> («brazo con muelle»), y el brazo es <strong>hijo del granjero</strong>. Como los hijos siguen al padre, la cámara le sigue sola, sin código.</li>
+          <li>El brazo sale hacia <strong>atrás</strong> (su eje +Z) y mide <code>spring_length</code> metros. La cámara se coloca en la punta, mirando al granjero.</li>
+          <li>Inclínalo hacia abajo con <em>Rotation X</em> negativa (unos −50°) y tendrás la vista desde arriba de los juegos de granja. Con su <em>Position Y</em> (1.5) lo subes a la altura del pecho: ahí es adonde apunta la cámara.</li>
+          <li>Si algo se mete entre el granjero y la cámara (una casa, un árbol), el brazo <strong>se encoge</strong>: la cámara nunca se queda detrás de una pared.</li>
+        </ul>
+      </div>
+
+      <pre><code>Granjero (CharacterBody3D)
+├─ Modelo (MeshInstance3D)
+├─ Colision (CollisionShape3D)
+└─ BrazoCamara (SpringArm3D)   ← Position Y = 1.5 · Rotation X = -50 · Spring Length = 8
+   └─ Camara (Camera3D)</code></pre>
+
+      <div class="widget reto" id="brazo">
+        <p class="widget-titulo">🎥 Reto: coloca la cámara (vista de lado)</p>
+        <p class="widget-info" id="brazo-mision"></p>
+        <svg class="vista-lado" id="brazo-svg" viewBox="-3 -15 17 16" role="img" aria-label="Vista de lado del granjero, el brazo y la cámara">
+          <rect x="-3" y="0" width="17" height="1" class="suelo-lado"/>
+          <rect id="brazo-casa" x="3" y="-6" width="3" height="6" class="casa-lado"/>
+          <polygon id="brazo-tejado" points="2.6,-6 4.5,-7.6 6.4,-6" class="casa-lado"/>
+          <line id="brazo-vision" class="vision-lado"/>
+          <line id="brazo-linea" class="brazo-lado"/>
+          <text x="-0.75" y="-0.05" class="emoji-lado">🧑‍🌾</text>
+          <text id="brazo-cam" class="emoji-lado">🎥</text>
+          <text x="-2.8" y="-14" class="etq-lado">↑ Y</text>
+          <text x="8.6" y="0.8" class="etq-lado">+Z (detrás) →</text>
+        </svg>
+        <div class="controles">
+          <label>Rotation X: <input type="range" id="brazo-angulo" min="-80" max="-10" step="5" value="-20"> <span id="brazo-angulo-v"></span></label>
+          <label>Spring Length: <input type="range" id="brazo-largo" min="2" max="12" step="1" value="4"> <span id="brazo-largo-v"></span></label>
+          <label><input type="checkbox" id="brazo-con-casa"> 🏠 Casa detrás del granjero</label>
+        </div>
+        <pre class="codigo-vivo"><code id="brazo-codigo"></code></pre>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">El granjero entra en el establo y, entre él y la cámara, queda una pared. ¿Qué hace el <code>SpringArm3D</code>?</p>
+        <button data-opcion="a">Nada: la pared tapa al granjero.</button>
+        <button data-opcion="b">Se encoge y pone la cámara delante de la pared.</button>
+        <button data-opcion="c">Gira la cámara hacia el otro lado.</button>
+        <p class="explicacion">Lanza un rayo desde el granjero hacia atrás y, si choca con algo, acorta el brazo justo antes del choque. Cuando la pared deja de estar en medio, vuelve a su largo.</p>
+      </div>
+
+      <h2>Usar un nodo hijo desde el código: @onready</h2>
+      <p>Para girar la cámara desde el script, guardamos el brazo en una variable:</p>
+      <pre><code class="gdscript">@onready var brazo: SpringArm3D = $BrazoCamara</code></pre>
+      <div class="esencial">
+        <ul>
+          <li><code>$BrazoCamara</code> es el hijo con ese nombre (lo viste con las señales).</li>
+          <li><code>@onready</code> hace que la variable se rellene <strong>cuando la escena está lista</strong>, justo antes de <code>_ready()</code>. Sin él, Godot intentaría buscar el hijo cuando todavía no existe, y da error.</li>
+          <li>Así escribes <code>$BrazoCamara</code> una sola vez y, además, Godot sabe que es un <code>SpringArm3D</code> y te sugiere sus propiedades al escribir.</li>
+        </ul>
+      </div>
+
+      <div class="error-codigo" data-linea="3">
+        <p>Este script no arranca. Toca la línea culpable:</p>
+        <pre><code>extends CharacterBody3D
+
+var brazo: SpringArm3D = $BrazoCamara
+
+func _physics_process(delta: float) -> void:
+	brazo.rotation.y += 1.0 * delta</code></pre>
+        <p class="explicacion">Falta <code>@onready</code> delante de <code>var</code>. Cuando se crea la variable, los hijos todavía no están en la escena.<br>Godot dice: <span class="error-texto">The default value uses "$" which won't return nodes in the scene tree before "_ready()" is called. Use the "@onready" annotation to solve this.</span> (te dice hasta la solución).</p>
+      </div>
+
+      <h2>Girar la cámara con Q y R</h2>
+      <pre><code class="gdscript">var giro := Input.get_axis("camara_izquierda", "camara_derecha")
+brazo.rotation.y += giro * 2.0 * delta</code></pre>
+      <div class="esencial">
+        <ul>
+          <li><code>Input.get_axis(negativa, positiva)</code> es como <code>get_vector</code>, pero de <strong>un solo eje</strong>: −1 con la primera acción, +1 con la segunda y 0 con ninguna (o con las dos).</li>
+          <li>Girar el brazo en Y hace que la cámara dé vueltas alrededor del granjero, sin perder la inclinación.</li>
+          <li>En el código, los ángulos van en <strong>radianes</strong>, no en grados: media vuelta (180°) es <code>PI</code>, unos 3.14. Aquí, 2 radianes por segundo, poco más de un cuarto de vuelta (90° = <code>PI / 2</code> ≈ 1.57). En el Inspector, en cambio, los ves en grados.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Mantienes pulsada la R (<code>camara_derecha</code>) y nada más. ¿Cuánto vale <code>giro</code>?</p>
+        <button data-opcion="a"><code>1.0</code></button>
+        <button data-opcion="b"><code>-1.0</code></button>
+        <button data-opcion="c"><code>0.0</code></button>
+        <p class="explicacion">La segunda acción de <code>get_axis</code> es la positiva. Con Q sería −1.0 y con las dos a la vez, 0.0.</p>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada propiedad con lo que cambia:</p>
+        <ul class="pares">
+          <li><span><code>spring_length</code></span><span>Lo lejos que está la cámara</span></li>
+          <li><span><code>rotation.x</code> del brazo</span><span>Lo inclinada que mira hacia abajo</span></li>
+          <li><span><code>rotation.y</code> del brazo</span><span>Desde qué lado mira (gira alrededor)</span></li>
+          <li><span><code>position.y</code> del brazo</span><span>A qué altura del granjero apunta</span></li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa: guarda el brazo cuando la escena esté lista y gíralo con Q y R.</p>
+        <pre><code>extends CharacterBody3D
+
+<input data-respuesta="@onready"> var brazo: SpringArm3D = <input data-respuesta="$BrazoCamara">
+
+func _physics_process(delta: float) -> void:
+	var giro := Input.<input data-respuesta="get_axis">("camara_izquierda", "camara_derecha")
+	brazo.rotation.<input data-respuesta="y"> += giro * 2.0 * delta</code></pre>
+      </div>
+
+      <div class="aviso">
+        <strong>Un problema que arreglamos en la siguiente lección</strong>
+        Gira la cámara media vuelta y pulsa W: el granjero va <em>hacia la cámara</em>. Las teclas siguen apuntando a la −Z del mundo, no hacia donde mira la cámara.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>granjero.tscn</code>, añade un <code>SpringArm3D</code> llamado <code>BrazoCamara</code> como hijo de <code>Granjero</code>, y dentro una <code>Camera3D</code> llamada <code>Camara</code>.</li>
+          <li>En el brazo: <em>Position Y</em> = 1.5, <em>Rotation X</em> = −50 y <em>Spring Length</em> = 8. Selecciona la cámara y marca <strong>Vista Previa</strong> en el visor para ver lo que ve.</li>
+          <li>En <code>granja.tscn</code>, borra la cámara fija de la lección 3: ahora manda la del granjero. Pulsa <kbd>F6</kbd> y camina: la cámara te sigue.</li>
+          <li>Crea en el Mapa de Entrada <code>camara_izquierda</code> (<kbd>Q</kbd>) y <code>camara_derecha</code> (<kbd>R</kbd>), y añade a <code>granjero.gd</code> la variable con <code>@onready</code> y las dos líneas del giro al principio de <code>_physics_process</code>.</li>
+          <li>Camina hasta una pared (la valla vale si la haces alta) con ella entre tú y la cámara: el brazo se encoge.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("brazo");
+      const mision = document.getElementById("brazo-mision");
+      const angulo = document.getElementById("brazo-angulo");
+      const largo = document.getElementById("brazo-largo");
+      const conCasa = document.getElementById("brazo-con-casa");
+      const linea = document.getElementById("brazo-linea");
+      const vision = document.getElementById("brazo-vision");
+      const cam = document.getElementById("brazo-cam");
+      const codigo = document.getElementById("brazo-codigo");
+      const casa = [document.getElementById("brazo-casa"), document.getElementById("brazo-tejado")];
+      const ALTURA = 1.5;                         // Position Y del brazo
+      const CASA = { z: 3, alto: 6 };             // pared de la casa más cercana y su altura
+      let fase = 0;
+
+      // Hasta dónde llega el brazo: si el rayo choca con la pared de la casa, se encoge.
+      function calcular() {
+        const g = -Number(angulo.value) * Math.PI / 180;
+        const L = Number(largo.value);
+        const dir = { z: Math.cos(g), y: Math.sin(g) };
+        let real = L;
+        if (conCasa.checked) {
+          const t = CASA.z / dir.z;
+          if (t < L && ALTURA + t * dir.y < CASA.alto) real = Math.max(0, t - 0.2);
+        }
+        return { g, L, real, z: dir.z * real, y: ALTURA + dir.y * real };
+      }
+
+      function pintar() {
+        const c = calcular();
+        document.getElementById("brazo-angulo-v").textContent = angulo.value + "°";
+        document.getElementById("brazo-largo-v").textContent = largo.value + " m";
+        casa.forEach((e) => (e.style.display = conCasa.checked ? "" : "none"));
+        // En el SVG, la y va hacia abajo: se dibuja -y.
+        linea.setAttribute("x1", 0); linea.setAttribute("y1", -ALTURA);
+        linea.setAttribute("x2", c.z); linea.setAttribute("y2", -c.y);
+        vision.setAttribute("x1", c.z); vision.setAttribute("y1", -c.y);
+        vision.setAttribute("x2", 0); vision.setAttribute("y2", -ALTURA);
+        cam.setAttribute("x", c.z - 0.6); cam.setAttribute("y", -c.y + 0.5);
+        const encogido = c.real < c.L - 0.01;
+        codigo.innerHTML = [
+          `brazo.rotation_degrees.x = ${angulo.value}`,
+          `brazo.spring_length = ${c.L}.0`,
+          `brazo.get_hit_length()  # → ${c.real.toFixed(1)}  (largo real${encogido ? ": ¡encogido por la casa!" : ""})`
+        ].map((t) => `<span class="linea">${window.GuiaGodot.resaltar(t)}\n</span>`).join("");
+        comprobar(c, encogido);
+      }
+
+      function comprobar(c, encogido) {
+        if (widget.classList.contains("superado")) return;
+        const a = Number(angulo.value);
+        const vistaGranja = a <= -40 && a >= -60 && c.L >= 6 && c.L <= 10;
+        if (fase === 0 && vistaGranja) fase = 1;
+        if (fase === 0) {
+          mision.innerHTML = "<strong>Misión 1/2:</strong> consigue una vista de juego de granja: el brazo inclinado entre <strong>−40° y −60°</strong> y la cámara a entre <strong>6 y 10 metros</strong>.";
+        } else if (fase === 1 && conCasa.checked && encogido) {
+          mision.innerHTML = "🎉 <strong>¡Así funciona el SpringArm3D!</strong> La casa se ha metido en medio y el brazo se ha encogido para no quedarse detrás de la pared.";
+          window.GuiaGodot.resuelto(widget);
+        } else if (fase === 1 && conCasa.checked) {
+          mision.innerHTML = "<strong>Misión 2/2:</strong> con este ángulo, la cámara pasa por encima del tejado y el brazo no choca. Baja un poco la inclinación (acércala a −40°).";
+        } else {
+          mision.innerHTML = "✅ ¡Buena vista!<br><strong>Misión 2/2:</strong> ahora pon la 🏠 casa detrás del granjero y mira qué hace el brazo.";
+        }
+      }
+
+      [angulo, largo, conCasa].forEach((e) => e.addEventListener("input", pintar));
+      pintar();
+    })();
+  </script>
+</body>
+</html>

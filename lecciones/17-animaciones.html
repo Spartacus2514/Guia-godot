@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animaciones: quieto y caminando · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="17-animaciones">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Lección 5</span>
+      <h1>Animaciones: quieto y caminando</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Los modelos <code>.glb</code> (hechos en Blender o descargados) traen sus animaciones dentro, en un nodo <code>AnimationPlayer</code>.</li>
+          <li><code>animaciones.play("nombre")</code> reproduce una. Si esa animación <strong>ya está sonando</strong>, volver a llamarla <strong>no la reinicia</strong>: por eso puedes llamarla en cada fotograma.</li>
+          <li>El nombre tiene que ser <strong>exacto</strong>, mayúsculas incluidas. Para ver los de tu modelo: <code>print(animaciones.get_animation_list())</code>.</li>
+          <li>Caminar y estar quieto tienen que repetirse <strong>en bucle</strong>. Se activa al importar el modelo: <em>Loop Mode</em> → <strong>Linear</strong>.</li>
+        </ul>
+      </div>
+
+      <pre><code>Granjero (CharacterBody3D)
+├─ Modelo (granjero.glb)       ← tu modelo, en lugar de la cápsula
+│  └─ AnimationPlayer          ← viene dentro del modelo
+├─ Colision (CollisionShape3D)
+└─ BrazoCamara (SpringArm3D)
+   └─ Camara (Camera3D)</code></pre>
+
+      <pre><code class="gdscript">@onready var animaciones: AnimationPlayer = $Modelo/AnimationPlayer
+
+
+func animar(direccion: Vector3) -> void:
+	if direccion != Vector3.ZERO:
+		animaciones.play("caminar")
+	else:
+		animaciones.play("quieto")</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li><code>$Modelo/AnimationPlayer</code> es una <strong>ruta</strong>, como las carpetas: el <code>AnimationPlayer</code> que está dentro de <code>Modelo</code>.</li>
+          <li>Se llama desde <code>_physics_process</code> con <code>animar(direccion)</code>: si te mueves, «caminar»; si no, «quieto».</li>
+          <li>Los nombres los pone quien hizo el modelo. En los packs suelen venir en inglés: <code>"Idle"</code> (quieto), <code>"Walk"</code> (caminar), <code>"Run"</code> (correr)…</li>
+        </ul>
+      </div>
+
+      <div class="widget reto" id="anim">
+        <p class="widget-titulo">🎬 Reto: usa los nombres de tu modelo</p>
+        <p class="widget-info" id="anim-mision">Este modelo trae estas animaciones. Escribe los nombres en el código para que <strong>camine</strong> al moverse y se quede <strong>quieto</strong> al parar. Prueba los dos casos.</p>
+        <pre class="codigo-vivo"><code>print(animaciones.get_animation_list())
+<span class="t-comentario"># → ["Hoe", "Idle", "Run", "Walk"]</span></code></pre>
+        <pre class="codigo-vivo"><code><span class="t-clave">func</span> <span class="t-funcion">animar</span>(direccion: <span class="t-tipo">Vector3</span>) -&gt; <span class="t-tipo">void</span>:
+	<span class="t-clave">if</span> direccion != <span class="t-tipo">Vector3</span>.ZERO:
+		animaciones.<span class="t-funcion">play</span>(<span class="t-cadena">"<input type="text" id="anim-mover" value="caminar" spellcheck="false" autocapitalize="off" autocomplete="off">"</span>)
+	<span class="t-clave">else</span>:
+		animaciones.<span class="t-funcion">play</span>(<span class="t-cadena">"<input type="text" id="anim-quieto" value="quieto" spellcheck="false" autocapitalize="off" autocomplete="off">"</span>)</code></pre>
+        <div class="escenario-anim">
+          <span class="muneco" id="anim-muneco">🧍</span>
+          <span id="anim-estado">Sin animación</span>
+        </div>
+        <div class="controles">
+          <button class="boton" id="anim-caminar">▶ Probar caminando (W pulsada)</button>
+          <button class="boton secundario" id="anim-parar">▶ Probar quieto</button>
+        </div>
+        <div class="consola" id="anim-consola"></div>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta"><code>animar()</code> se llama en cada fotograma, así que mientras caminas se ejecuta <code>animaciones.play("caminar")</code> 60 veces por segundo. ¿Qué pasa?</p>
+        <button data-opcion="a">La animación se reinicia todo el rato y el granjero tiembla.</button>
+        <button data-opcion="b">Godot da error por llamar demasiado a <code>play</code>.</button>
+        <button data-opcion="c">Nada raro: si ya está sonando, sigue por donde iba.</button>
+        <p class="explicacion"><code>play</code> solo empieza de cero si cambias a otra animación. Por eso basta con decir, en cada fotograma, cuál quieres.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Al caminar, el granjero da un paso y se queda congelado, aunque sigue moviéndose. ¿Qué le pasa a la animación?</p>
+        <button data-opcion="a">No está en bucle: se reproduce una vez y se para en el último fotograma.</button>
+        <button data-opcion="b">El nombre está mal escrito.</button>
+        <button data-opcion="c">Falta <code>@onready</code>.</button>
+        <p class="explicacion">Con un nombre mal escrito no se movería nada y saldría un error. Aquí sí empieza: falta activar <em>Loop Mode</em> → <em>Linear</em> en la importación.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="6">
+        <p>El granjero no se anima al caminar y el Depurador dice <span class="error-texto">Animation not found: "Caminar".</span> Las animaciones de este modelo son <code>["caminar", "quieto"]</code>. Toca la línea culpable:</p>
+        <pre><code>@onready var animaciones: AnimationPlayer = $Modelo/AnimationPlayer
+
+
+func animar(direccion: Vector3) -> void:
+	if direccion != Vector3.ZERO:
+		animaciones.play("Caminar")
+	else:
+		animaciones.play("quieto")</code></pre>
+        <p class="explicacion">Godot distingue mayúsculas: <code>"Caminar"</code> y <code>"caminar"</code> son nombres distintos. Copia el nombre tal cual sale en <code>get_animation_list()</code>.</p>
+      </div>
+
+      <div class="ordenar" data-codigo>
+        <p>Ordena la función que elige la animación:</p>
+        <ul class="piezas">
+          <li>func animar(direccion: Vector3) -> void:</li>
+          <li>&#9;if direccion != Vector3.ZERO:</li>
+          <li>&#9;&#9;animaciones.play("caminar")</li>
+          <li>&#9;else:</li>
+          <li>&#9;&#9;animaciones.play("quieto")</li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa: guarda el reproductor de animaciones del modelo y muestra sus nombres.</p>
+        <pre><code>@onready var animaciones: <input data-respuesta="AnimationPlayer"> = $Modelo/AnimationPlayer
+
+func _ready() -> void:
+	print(animaciones.<input data-respuesta="get_animation_list">())</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>Que el cambio no sea brusco</strong>
+        <code>animaciones.play("caminar", 0.2)</code> mezcla la animación anterior con la nueva durante 0.2 segundos. Pruébalo con las dos: el paso de quieto a caminar queda mucho más natural.
+      </div>
+
+      <div class="consejo">
+        <strong>¿Aún no tienes modelo?</strong>
+        Hay packs de personajes animados gratis con licencia <strong>CC0</strong> (puedes usarlos hasta en un juego que vendas), como los de <strong>Quaternius</strong> (quaternius.com) o <strong>Kenney</strong> (kenney.nl). Elige uno que traiga «Idle» y «Walk» en formato <code>.glb</code> o <code>.gltf</code>. Si animas en Blender: termina el nombre de la animación en <code>-loop</code> (por ejemplo <code>caminar-loop</code>) y Godot la importará ya en bucle y con el nombre <code>caminar</code>.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Copia el <code>.glb</code> de tu granjero en la carpeta <code>modelos/</code> del proyecto.</li>
+          <li>Haz doble clic en él (en Sistema de Archivos): se abren los <strong>Ajustes Avanzados de Importación</strong>. Selecciona las animaciones de caminar y de estar quieto, pon <em>Loop Mode</em> en <strong>Linear</strong> y pulsa <strong>Reimportar</strong>.</li>
+          <li>En <code>granjero.tscn</code>, borra la cápsula <code>Modelo</code> (con su nariz). Arrastra el <code>.glb</code> sobre <code>Granjero</code> y renómbralo <code>Modelo</code>. Si sale enorme o diminuto, cambia su <em>Scale</em>: la cápsula de colisión mide 2 metros de alto.</li>
+          <li>Añade el <code>@onready</code> de <code>animaciones</code> y, en <code>_ready()</code>, <code>print(animaciones.get_animation_list())</code>. Pulsa <kbd>F6</kbd> y apunta los nombres exactos.</li>
+          <li>Escribe <code>animar()</code> con esos nombres y llámala después de <code>girar_modelo(direccion, delta)</code>. Pulsa <kbd>F6</kbd> y camina. Cuando funcione, borra el <code>print</code>.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("anim");
+      const mision = document.getElementById("anim-mision");
+      const mover = document.getElementById("anim-mover");
+      const quieto = document.getElementById("anim-quieto");
+      const muneco = document.getElementById("anim-muneco");
+      const estado = document.getElementById("anim-estado");
+      const consola = document.getElementById("anim-consola");
+      const LISTA = { Hoe: ["⛏️", "Cava con la azada"], Idle: ["🧍", "Quieto, respirando"], Run: ["🏃", "Corriendo"], Walk: ["🚶", "Caminando"] };
+      const bien = { mover: false, quieto: false };
+
+      function probar(moviendo) {
+        if (widget.classList.contains("superado")) return;
+        const nombre = (moviendo ? mover : quieto).value.trim();
+        const linea = `animaciones.play("${nombre}")`;
+        muneco.classList.remove("andando", "corriendo");
+        if (!LISTA[nombre]) {
+          const parecido = Object.keys(LISTA).find((n) => n.toLowerCase() === nombre.toLowerCase());
+          consola.innerHTML = `${linea}\n<span class="error">E  Animation not found: "${nombre}".</span>` +
+            (parecido ? `\n(Casi: el nombre es "${parecido}". Las mayúsculas cuentan.)` : "\n(Ese nombre no está en la lista del modelo.)");
+          muneco.textContent = "🧍";
+          estado.textContent = "Sin animación: el modelo se queda rígido";
+          window.GuiaGodot.sacudir(muneco);
+          if (moviendo) bien.mover = false; else bien.quieto = false;
+          return;
+        }
+        const [icono, texto] = LISTA[nombre];
+        muneco.textContent = icono;
+        estado.textContent = `▶ ${nombre}: ${texto}`;
+        if (nombre === "Walk" || nombre === "Run") muneco.classList.add(nombre === "Run" ? "corriendo" : "andando");
+        consola.textContent = linea;
+        if (moviendo) {
+          bien.mover = nombre === "Walk";
+          if (nombre === "Run") consola.textContent += "\nFunciona, pero corre en vez de caminar. Para caminar, el nombre es otro.";
+          else if (nombre !== "Walk") consola.textContent += "\nSuena, pero no es la animación de caminar.";
+        } else {
+          bien.quieto = nombre === "Idle";
+          if (nombre !== "Idle") consola.textContent += "\nSuena, pero no es la de estar quieto.";
+        }
+        if (bien.mover && bien.quieto) {
+          mision.innerHTML = "🎉 <strong>¡Animado!</strong> Camina con «Walk» y respira quieto con «Idle». En tu juego harás lo mismo con los nombres de tu modelo.";
+          window.GuiaGodot.resuelto(widget);
+        } else if (bien.mover || bien.quieto) {
+          consola.textContent += `\n✅ Bien. Ahora prueba ${bien.mover ? "quieto" : "caminando"}.`;
+        }
+      }
+
+      document.getElementById("anim-caminar").addEventListener("click", () => probar(true));
+      document.getElementById("anim-parar").addEventListener("click", () => probar(false));
+    })();
+  </script>
+</body>
+</html>

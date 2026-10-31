@@ -1081,3 +1081,122 @@ pre.codigo-vivo { white-space: pre-wrap; overflow-wrap: anywhere; }
   cursor: pointer;
   padding: 0.3rem;
 }
+
+/* ---------- Módulo 3 ---------- */
+
+/* Mando virtual (controles) */
+.mando { display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center; justify-content: center; margin: 0.8rem 0; }
+.cruceta {
+  display: grid;
+  grid-template-areas: ". arriba ." "izquierda . derecha" ". abajo .";
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(3, 52px);
+  gap: 4px;
+}
+.tecla {
+  background: var(--fondo-3);
+  color: var(--texto);
+  border: 1px solid var(--borde);
+  border-bottom-width: 4px;
+  border-radius: 8px;
+  font: 600 0.95rem var(--mono);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.tecla.pulsada { background: var(--azul); border-color: var(--azul-claro); border-bottom-width: 1px; transform: translateY(3px); color: #fff; }
+.brujula {
+  position: relative;
+  width: 150px; height: 150px;
+  border-radius: 50%;
+  border: 1px solid var(--borde);
+  background:
+    linear-gradient(to right, transparent calc(50% - 0.5px), var(--borde) calc(50% - 0.5px), var(--borde) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom, transparent calc(50% - 0.5px), var(--borde) calc(50% - 0.5px), var(--borde) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+    var(--fondo);
+}
+.brujula-etq { position: absolute; font-size: 0.65rem; color: var(--texto-suave); font-family: var(--mono); }
+.brujula-etq.arriba { top: 4px; left: 50%; transform: translateX(-50%); }
+.brujula-punto {
+  position: absolute;
+  width: 18px; height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: var(--amarillo);
+  box-shadow: 0 0 10px var(--amarillo);
+  transition: left 0.25s, top 0.25s;
+}
+
+/* Valla del reto de move_and_slide */
+.tabla-valla {
+  position: absolute;
+  height: 6px;
+  margin-top: -3px;
+  background: repeating-linear-gradient(to right, #c79a5b 0 10px, #8a6232 10px 13px);
+  border-radius: 2px;
+}
+
+/* Vista de lado de la cámara */
+.vista-lado { display: block; width: 100%; max-width: 420px; margin: 0.8rem auto; background: #1a2733; border: 1px solid var(--borde); border-radius: 8px; }
+.suelo-lado { fill: #2f4a22; }
+.casa-lado { fill: #8a5a3c; stroke: #5d3b26; stroke-width: 0.08; }
+.brazo-lado { stroke: var(--amarillo); stroke-width: 0.12; stroke-linecap: round; }
+.vision-lado { stroke: var(--azul-claro); stroke-width: 0.06; stroke-dasharray: 0.3 0.25; }
+.emoji-lado { font-size: 1.3px; }
+.etq-lado { font-size: 0.7px; fill: var(--texto-suave); font-family: var(--mono); }
+
+/* Dial del reto de lerp_angle */
+.dial-contenedor { display: flex; justify-content: center; margin: 0.8rem 0; }
+.dial {
+  position: relative;
+  width: 170px; height: 170px;
+  border-radius: 50%;
+  border: 1px solid var(--borde);
+  background: radial-gradient(circle, #2f4a22 60%, #263d1c 61%);
+}
+.dial-aguja, .dial-objetivo {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 4px; height: 45%;
+  margin-left: -2px;
+  transform-origin: top center;
+  border-radius: 2px;
+}
+.dial-aguja { background: var(--amarillo); box-shadow: 0 0 6px var(--amarillo); transition: transform 0.04s linear; }
+.dial-objetivo { background: repeating-linear-gradient(to bottom, var(--azul-claro) 0 6px, transparent 6px 10px); opacity: 0.8; }
+.dial-centro { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 1.6rem; }
+
+/* Animaciones del modelo */
+.escenario-anim { display: flex; align-items: center; gap: 0.8rem; margin: 0.8rem 0; padding: 0.6rem 0.9rem; background: var(--fondo); border-radius: 8px; color: var(--texto-suave); }
+.muneco { font-size: 2.2rem; display: inline-block; }
+.muneco.andando { animation: andar 0.6s ease-in-out infinite; }
+.muneco.corriendo { animation: andar 0.3s ease-in-out infinite; }
+@keyframes andar { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-5px) rotate(4deg); } }
+
+/* Rayo de interacción */
+.rayo-linea {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 15%; height: 3px;
+  margin-top: -1.5px;
+  transform-origin: left center;
+  background: linear-gradient(to right, rgba(255, 90, 90, 0.9), rgba(255, 90, 90, 0.25));
+  border-radius: 2px;
+  z-index: 1;
+  transition: transform 0.2s;
+}
+
+/* Móvil: el código largo dentro del texto y los selectores no deben ensanchar la página */
+:not(pre) > code { overflow-wrap: anywhere; }
+.en-tu-juego label > span { min-width: 0; }
+.relacionar-columnas > div { min-width: 0; }
+.pareja { overflow-wrap: anywhere; }
+.controles label { max-width: 100%; flex-wrap: wrap; }
+.controles select { max-width: 100%; min-width: 0; }
+/* Sin ligaduras en el código: que != y -> se vean tal como se escriben */
+code, pre, kbd, .pieza.codigo, .consola { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+.brujula-etq { white-space: nowrap; }
+#anim .codigo-vivo input[type="text"] { width: 8ch; }
+/* Mapa con zoom: 6 metros de lado y cuadros de 1 metro */
+.mapa.mapa-cerca { background-size: 100% 100%, 100% 100%, 16.6667% 16.6667%, 16.6667% 16.6667%; }
+.mapa.mapa-cerca .rayo-linea { width: 25%; height: 5px; margin-top: -2.5px; }
+.mapa.mapa-cerca .ficha { font-size: 1.7rem; }

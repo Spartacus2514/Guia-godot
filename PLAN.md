@@ -48,15 +48,16 @@ Aprender Godot 4 y GDScript **desde cero** (primer lenguaje de programación) co
 | Cuando algo falla | Tipos de error, leer mensajes, `print` espía, puntos de ruptura | Provocar y arreglar errores en tu script |
 | Examen del módulo 2 | Repaso mezclado | Un script de granja con todo lo aprendido |
 
-### Módulo 3 · El granjero
+### Módulo 3 · El granjero ✅
 | Lección | Concepto | En tu juego |
 |---|---|---|
-| Controles | Mapa de entrada (Input Map), `Input.get_vector` | Acciones `mover_*`, `interactuar`, `usar_herramienta` |
-| Caminar | `CharacterBody3D`, `velocity`, `move_and_slide`, gravedad | El granjero camina y no atraviesa vallas |
-| Moverse según la cámara | Dirección relativa a la cámara, `look_at`, interpolación | El modelo mira hacia donde camina |
-| La cámara | `SpringArm3D` + `Camera3D`, vista estilo Harvest Moon | Cámara que sigue al granjero |
-| Animaciones | Importar `.glb`, `AnimationPlayer`, quieto/caminar | El granjero anima al moverse |
-| Interactuar | `RayCast3D`/`Area3D`, grupos, `has_method` | Pulsar un botón delante de algo y que responda |
+| Controles | Mapa de entrada, `is_action_pressed`/`just_pressed`, `Input.get_vector`, `Vector2`, `:=` | Acciones `mover_*`, `interactuar`, `usar_herramienta` |
+| Caminar | `CharacterBody3D`, `velocity`, `move_and_slide`, `_physics_process`, gravedad, colisiones | El granjero camina y no atraviesa vallas |
+| La cámara | `SpringArm3D` + `Camera3D`, `@onready`, `Input.get_axis`, radianes | Cámara estilo Harvest Moon que sigue al granjero y gira con Q/R |
+| Moverse según la cámara y girar el modelo | `rotated`, `atan2`, `lerp`, `lerp_angle`, girar solo el modelo | W siempre va al fondo de la pantalla; el modelo mira hacia donde camina |
+| Animaciones | Importar `.glb`, `AnimationPlayer`, `play`, bucle, nombres exactos | El granjero anima quieto/caminar |
+| Interactuar | `RayCast3D`, `has_method`, grupos | Pulsar E delante del buzón y que responda |
+| Examen del módulo 3 | Repaso mezclado | **Hito 1**: el granjero completo (`granjero.gd` comprobado en Godot 4.7.2) |
 
 ## Fase 2 · Los sistemas de tu juego
 
