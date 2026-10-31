@@ -731,3 +731,210 @@ details.tarjeta-modulo.proximamente[open] { opacity: 1; }
 .modelos .pieza { font-size: 1.3rem; padding: 0.2rem 0.5rem; }
 #molde, .huerto .enemigo { background: #6b4a2b; }
 .huerto { background: #3d2c1b; border-radius: 6px; padding: 0.5rem; }
+
+/* ---------- Paso a paso ---------- */
+
+.paso-a-paso {
+  background: var(--fondo-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 1.2rem 1.4rem;
+  margin: 1.8rem 0;
+}
+.paso-a-paso::before {
+  content: "▶️ Ejecuta paso a paso";
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--azul-claro);
+  margin-bottom: 0.4rem;
+}
+.paso-a-paso.superado::after {
+  content: "✓";
+  position: absolute;
+  top: 0.8rem; right: 1rem;
+  color: var(--verde);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.paso-a-paso pre { margin-bottom: 0.8rem; }
+.paso-a-paso code { counter-reset: linea; }
+.paso-a-paso .linea {
+  display: block;
+  border-left: 3px solid transparent;
+  margin-left: -0.6rem;
+  padding-left: 0.4rem;
+}
+.paso-a-paso .linea::before {
+  counter-increment: linea;
+  content: counter(linea);
+  display: inline-block;
+  width: 1.6em;
+  color: #556070;
+  font-size: 0.85em;
+}
+.paso-a-paso .linea.activa { background: #2b4a63; border-left-color: var(--amarillo); }
+.traza-nota {
+  background: var(--fondo-3);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin: 0 0 0.8rem;
+  min-height: 2.6rem;
+}
+.traza-paneles { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.traza-paneles .etq { margin: 0 0 0.3rem; font-size: 0.8rem; color: var(--texto-suave); text-transform: uppercase; letter-spacing: 0.05em; }
+.traza-vars {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  background: #15191e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.traza-vars td { padding: 0.3rem 0.6rem; border-bottom: 1px solid var(--fondo-3); word-break: break-word; }
+.traza-vars td:first-child { color: var(--azul-claro); width: 40%; }
+.traza-vars tr.cambio td { background: #4a4220; }
+.traza-vars .vacio { color: var(--texto-suave); font-family: inherit; }
+.traza-salida {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  background: #0f1216;
+  color: #c8f7c5;
+  border-radius: 8px;
+  padding: 0.4rem 0.6rem;
+  min-height: 2.2rem;
+}
+.traza-salida.vacia::before { content: "(nada todavía)"; color: var(--texto-suave); font-family: system-ui, sans-serif; }
+.traza-controles { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-top: 0.8rem; }
+.traza-controles .boton:disabled { opacity: 0.4; cursor: default; filter: none; }
+.traza-contador { color: var(--texto-suave); font-size: 0.85rem; margin-left: auto; }
+
+/* Código con líneas resaltables, usado por los widgets del módulo 2 */
+.codigo-vivo .linea { display: block; border-left: 3px solid transparent; margin-left: -0.6rem; padding-left: 0.5rem; transition: background 0.2s; }
+.codigo-vivo .linea.activa { background: #2b4a63; border-left-color: var(--amarillo); }
+.consola {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  background: #0f1216;
+  color: #c8f7c5;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  min-height: 2.4rem;
+  margin-top: 0.6rem;
+}
+.consola .error { color: var(--rojo); }
+.consola:empty::before { content: "Salida vacía"; color: var(--texto-suave); font-family: system-ui, sans-serif; }
+
+@media (max-width: 600px) {
+  .traza-paneles { grid-template-columns: 1fr; }
+}
+.codigo-vivo input[type="number"], .codigo-vivo input[type="text"] {
+  width: 4.5em;
+  font-family: var(--mono);
+  font-size: 0.92em;
+  background: var(--fondo-3);
+  color: var(--texto);
+  border: 1px dashed var(--azul-claro);
+  border-radius: 4px;
+}
+.nota-pequena { color: var(--texto-suave); font-size: 0.9rem; margin-bottom: 0; }
+
+/* Inventario (lección de diccionarios) */
+.etq-inventario { font-family: var(--mono); font-size: 0.85rem; color: var(--texto-suave); margin: 0.8rem 0 0.3rem; }
+.inventario-estado { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 2.4rem; }
+.ranura {
+  background: #3d2c1b;
+  border: 1px solid #6b4a2b;
+  border-radius: 8px;
+  padding: 0.3rem 0.7rem;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  animation: aparecer 0.25s ease-out;
+}
+.ranura strong { color: var(--amarillo); }
+.ranura.vacia { color: var(--texto-suave); background: var(--fondo-3); border-color: var(--borde); }
+.inventario-botones { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.8rem 0; }
+#inv-consola { max-height: 9rem; overflow-y: auto; margin-bottom: 0.8rem; }
+
+/* Mapa visto desde arriba (lección de Vector3) */
+.mapa-contenedor { display: flex; justify-content: center; margin: 0.8rem 0; }
+.mapa {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 1;
+  background-color: #2f4a22;
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0) calc(50% - 1px), rgba(255,255,255,0.35) calc(50% - 1px), rgba(255,255,255,0.35) calc(50% + 1px), rgba(0,0,0,0) calc(50% + 1px)),
+    linear-gradient(to bottom, rgba(0,0,0,0) calc(50% - 1px), rgba(255,255,255,0.35) calc(50% - 1px), rgba(255,255,255,0.35) calc(50% + 1px), rgba(0,0,0,0) calc(50% + 1px)),
+    linear-gradient(to right, rgba(255,255,255,0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.12) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 10% 10%, 10% 10%;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+}
+.mapa .eje { position: absolute; font-size: 0.7rem; color: #e3e7ec; opacity: 0.8; font-family: var(--mono); }
+.mapa .eje-x { right: 4px; top: calc(50% + 3px); }
+.mapa .eje-z { left: calc(50% + 4px); top: 3px; }
+.ficha {
+  position: absolute;
+  width: 30px; height: 30px;
+  margin-left: -15px; margin-top: -15px;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: left 0.5s ease, top 0.5s ease;
+}
+.ficha.granjero { z-index: 2; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.6)); }
+
+/* Oyentes de señales */
+.oyentes { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem; margin: 0.8rem 0; }
+.oyente {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  background: var(--fondo-3);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+.oyente input { accent-color: var(--azul); }
+.oyente.conectado { border-color: var(--azul); }
+.oyente-icono { font-size: 1.3rem; }
+.oyente .bocadillo { flex-basis: 100%; font-family: system-ui, sans-serif; font-size: 0.8rem; color: var(--amarillo); }
+.oyente .bocadillo:empty { display: none; }
+.oyente.reacciona { animation: saltar 0.4s ease-out; }
+@keyframes saltar { 0%, 100% { transform: none; } 40% { transform: translateY(-6px); } }
+
+/* Las piezas de código largas se parten en varias líneas en pantallas estrechas */
+.ordenar-zonas > div { min-width: 0; }
+.pieza.codigo { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 100%; }
+main.contenido { overflow-wrap: break-word; }
+
+/* Código de los widgets: parte las líneas largas en vez de obligar a deslizar */
+pre.codigo-vivo { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+@media (max-width: 860px) {
+  /* Barra superior fija con fondo, para que el contador y el menú no tapen el texto */
+  body[data-leccion]::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3.4rem;
+    background: rgba(29, 34, 41, 0.96);
+    border-bottom: 1px solid var(--borde);
+    z-index: 4;
+  }
+  .codigo-vivo input[type="number"], .codigo-vivo input[type="text"] { width: 3.4em; }
+}

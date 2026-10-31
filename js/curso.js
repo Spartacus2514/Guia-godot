@@ -22,14 +22,14 @@ window.CURSO = {
       titulo: "Módulo 2 · GDScript desde cero",
       descripcion: "Programar desde cero, con ejemplos de tu granja: dinero, energía, inventario.",
       lecciones: [
-        { id: "05-variables", titulo: "Variables y tipos" },
-        { id: "06-condiciones", titulo: "Condiciones: if, elif, else" },
-        { id: "07-funciones", titulo: "Funciones" },
-        { id: "08-arrays-bucles", titulo: "Arrays y bucles" },
-        { id: "09-diccionarios", titulo: "Diccionarios" },
-        { id: "10-vector3", titulo: "Vector3: posiciones en 3D" },
-        { id: "11-senales", titulo: "Señales" },
-        { id: "12-examen-m2", titulo: "Examen del módulo 2" }
+        { id: "05-variables", titulo: "Variables y tipos", archivo: "05-variables.html", duracion: "8 min" },
+        { id: "06-condiciones", titulo: "Condiciones: if, elif, else", archivo: "06-condiciones.html", duracion: "8 min" },
+        { id: "07-funciones", titulo: "Funciones", archivo: "07-funciones.html", duracion: "10 min" },
+        { id: "08-arrays-bucles", titulo: "Arrays y bucles", archivo: "08-arrays-bucles.html", duracion: "10 min" },
+        { id: "09-diccionarios", titulo: "Diccionarios", archivo: "09-diccionarios.html", duracion: "8 min" },
+        { id: "10-vector3", titulo: "Vector3: posiciones en 3D", archivo: "10-vector3.html", duracion: "8 min" },
+        { id: "11-senales", titulo: "Señales", archivo: "11-senales.html", duracion: "10 min" },
+        { id: "12-examen-m2", titulo: "Examen del módulo 2", archivo: "12-examen-m2.html", duracion: "15 min" }
       ]
     },
     {

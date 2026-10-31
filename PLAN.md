@@ -28,7 +28,7 @@ Aprender Godot 4 y GDScript **desde cero** (primer lenguaje de programación) co
 | Nodos y escenas en 3D | Nodo, árbol, escena, instanciar, luz y cámara | `granja.tscn` con suelo, sol y cámara |
 | Tu primer script | `extends`, `_ready`, `_process`, `delta`, ejes X/Y/Z | Un objeto que gira en la granja |
 
-### Módulo 2 · GDScript desde cero
+### Módulo 2 · GDScript desde cero ✅
 | Lección | Concepto | En tu juego |
 |---|---|---|
 | Variables y tipos | `int`, `float`, `bool`, `String`, tipado, `const`, `@export` | `dinero`, `energia` y `nombre_granja` editables en el Inspector |

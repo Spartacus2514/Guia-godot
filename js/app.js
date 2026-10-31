@@ -403,6 +403,85 @@
     });
   }
 
+  // ---------- Paso a paso ----------
+  // Ejecuta un código línea a línea mostrando variables y salida.
+  // <div class="paso-a-paso">
+  //   <pre><code>…</code></pre>
+  //   <script type="application/json">[
+  //     {"l": 1, "v": {"dinero": "500"}, "s": ["texto impreso"], "n": "explicación"}, …
+  //   ]</script>
+  // </div>
+  // l = línea (desde 1), v = todas las variables visibles en ese paso (como texto),
+  // s = lo que imprime ese paso, n = explicación del paso.
+
+  function iniciarPasoAPaso() {
+    document.querySelectorAll(".paso-a-paso").forEach((ej) => {
+      ej.classList.add("reto");
+      const code = ej.querySelector("pre code");
+      const pasos = JSON.parse(ej.querySelector('script[type="application/json"]').textContent);
+      const lineas = code.textContent.replace(/\n$/, "").split("\n");
+      code.innerHTML = "";
+      const spans = lineas.map((texto) => {
+        const linea = document.createElement("span");
+        linea.className = "linea";
+        linea.innerHTML = (resaltar(texto) || " ") + "\n";
+        code.appendChild(linea);
+        return linea;
+      });
+
+      const panel = document.createElement("div");
+      panel.className = "traza";
+      panel.innerHTML = `
+        <p class="traza-nota"></p>
+        <div class="traza-paneles">
+          <div><p class="etq">Variables</p><table class="traza-vars"></table></div>
+          <div><p class="etq">Salida</p><div class="traza-salida"></div></div>
+        </div>
+        <div class="traza-controles">
+          <button class="boton secundario" data-accion="inicio" aria-label="Volver al principio">⏮</button>
+          <button class="boton secundario" data-accion="atras" aria-label="Paso anterior">◀</button>
+          <button class="boton" data-accion="adelante">▶ Siguiente paso</button>
+          <span class="traza-contador"></span>
+        </div>`;
+      ej.appendChild(panel);
+      const nota = panel.querySelector(".traza-nota");
+      const tabla = panel.querySelector(".traza-vars");
+      const salida = panel.querySelector(".traza-salida");
+      const contador = panel.querySelector(".traza-contador");
+      const [btnInicio, btnAtras, btnAdelante] = panel.querySelectorAll("button");
+      let actual = -1;
+
+      function pintar() {
+        spans.forEach((sp) => sp.classList.remove("activa"));
+        const paso = pasos[actual];
+        if (paso) spans[paso.l - 1].classList.add("activa");
+
+        const vars = (paso && paso.v) || {};
+        const previas = (pasos[actual - 1] && pasos[actual - 1].v) || {};
+        const nombres = Object.keys(vars);
+        tabla.innerHTML = nombres.length
+          ? nombres.map((n) => `<tr class="${previas[n] !== vars[n] ? "cambio" : ""}"><td>${escapar(n)}</td><td>${escapar(vars[n])}</td></tr>`).join("")
+          : `<tr><td class="vacio">(ninguna todavía)</td></tr>`;
+
+        const lineasSalida = pasos.slice(0, actual + 1).flatMap((p) => p.s || []);
+        salida.textContent = lineasSalida.join("\n");
+        salida.classList.toggle("vacia", !lineasSalida.length);
+
+        nota.innerHTML = paso ? paso.n || "" : "Pulsa <strong>▶</strong> para ejecutar el código línea a línea.";
+        contador.textContent = `Paso ${actual + 1}/${pasos.length}`;
+        btnInicio.disabled = btnAtras.disabled = actual < 0;
+        btnAdelante.disabled = actual >= pasos.length - 1;
+        btnAdelante.textContent = actual >= pasos.length - 1 ? "✓ Fin" : "▶ Siguiente paso";
+        if (actual === pasos.length - 1) resuelto(ej);
+      }
+
+      btnInicio.addEventListener("click", () => { actual = -1; pintar(); });
+      btnAtras.addEventListener("click", () => { actual = Math.max(-1, actual - 1); pintar(); });
+      btnAdelante.addEventListener("click", () => { actual = Math.min(pasos.length - 1, actual + 1); pintar(); });
+      pintar();
+    });
+  }
+
   // ---------- Hazlo en tu juego ----------
   // <div class="en-tu-juego"><ul><li>Paso…</li>…</ul></div>
   // Lista de pasos para aplicar la lección en tu proyecto; se supera al marcarlos todos.
@@ -582,6 +661,7 @@
   if (esLeccion) pintarLeccion();
   else pintarPortada();
   iniciarErrores();
+  iniciarPasoAPaso();
   iniciarOrdenar();
   iniciarRelacionar();
   iniciarQuizzes();

@@ -17,6 +17,16 @@ El temario completo (9 módulos, 52 lecciones) está en [PLAN.md](PLAN.md). Lecc
 3. Nodos y escenas en 3D
 4. Tu primer script en GDScript
 
+**Módulo 2 · GDScript desde cero**
+5. Variables y tipos
+6. Condiciones: if, elif, else
+7. Funciones
+8. Arrays y bucles
+9. Diccionarios
+10. Vector3: posiciones en 3D
+11. Señales
+12. Examen del módulo 2
+
 ## Estructura
 
 ```
@@ -39,6 +49,7 @@ Retos disponibles (todos cuentan para superar la lección):
 - **Ordenar**: `<div class="ordenar">` (añade `data-codigo` si son líneas de código) con `<ul class="piezas">` en el orden correcto; se barajan solas.
 - **Relacionar**: `<div class="relacionar">` con `<ul class="pares"><li><span>A</span><span>B</span></li>…</ul>`.
 - **Encuentra el error**: `<div class="error-codigo" data-linea="N">` con un `<pre><code>` y `<p class="explicacion">`.
+- **Paso a paso**: `<div class="paso-a-paso">` con un `<pre><code>` y un `<script type="application/json">` con los pasos (`l` línea, `v` variables, `s` salida, `n` explicación); se supera al llegar al final.
 - **Hazlo en tu juego**: `<div class="en-tu-juego"><ul><li>Paso…</li></ul></div>`; se supera al marcar todos los pasos.
 - **Reto propio**: cualquier elemento con clase `reto`; llama a `GuiaGodot.resuelto(elemento)` cuando se supere.
 

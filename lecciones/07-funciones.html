@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Funciones · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="07-funciones">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 3</span>
+      <h1>Funciones</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Una <strong>función</strong> es un bloque de código con nombre que puedes ejecutar (<strong>llamar</strong>) las veces que quieras: <code>gastar_energia(10)</code>.</li>
+          <li>Los <strong>parámetros</strong> son los datos que recibe, entre paréntesis.</li>
+          <li><code>return</code> devuelve un resultado y <strong>termina</strong> la función.</li>
+          <li>Las variables creadas <strong>dentro</strong> de una función solo existen ahí (son <strong>locales</strong>).</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript">var energia: int = 100
+var dinero: int = 500
+
+
+# No devuelve nada (-> void): solo hace algo.
+func gastar_energia(cantidad: int) -> void:
+	energia -= cantidad
+	if energia &lt; 0:
+		energia = 0
+
+
+# Devuelve un bool: responde a una pregunta.
+func puede_comprar(precio: int) -> bool:
+	return dinero >= precio</code></pre>
+
+      <div class="paso-a-paso">
+        <p>Mira cómo el programa <strong>salta</strong> a la función y vuelve:</p>
+        <pre><code>var energia = 100
+
+func _ready():
+	gastar_energia(30)
+	gastar_energia(50)
+	print("Energía: ", energia)
+
+func gastar_energia(cantidad):
+	energia -= cantidad</code></pre>
+        <script type="application/json">[
+          {"l": 1, "v": {"energia": "100"}, "n": "La variable de la granja empieza en 100."},
+          {"l": 4, "v": {"energia": "100"}, "n": "<code>_ready()</code> <strong>llama</strong> a <code>gastar_energia</code> pasándole 30."},
+          {"l": 8, "v": {"energia": "100", "cantidad": "30"}, "n": "Saltamos dentro de la función. El parámetro <code>cantidad</code> recibe el 30."},
+          {"l": 9, "v": {"energia": "70", "cantidad": "30"}, "n": "Resta 30. La función se acaba y volvemos a donde estábamos."},
+          {"l": 5, "v": {"energia": "70"}, "n": "<code>cantidad</code> ha desaparecido: era local. Segunda llamada, ahora con 50."},
+          {"l": 8, "v": {"energia": "70", "cantidad": "50"}, "n": "Otra vez dentro, con <code>cantidad</code> = 50. Misma función, otro dato."},
+          {"l": 9, "v": {"energia": "20", "cantidad": "50"}, "n": "Resta 50 y vuelve."},
+          {"l": 6, "v": {"energia": "20"}, "s": ["Energía: 20"], "n": "Has escrito la resta una vez y la has usado dos. Esa es la gracia de las funciones."}
+        ]</script>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada parte de <code>func puede_comprar(precio: int) -> bool:</code> con lo que significa:</p>
+        <ul class="pares">
+          <li><span><code>func</code></span><span>Aquí empieza una función</span></li>
+          <li><span><code>puede_comprar</code></span><span>El nombre para llamarla</span></li>
+          <li><span><code>(precio: int)</code></span><span>El dato que recibe</span></li>
+          <li><span><code>-> bool</code></span><span>El tipo de lo que devuelve</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">¿Qué imprime este código?</p>
+        <pre><code class="gdscript">func doble(n: int) -> int:
+	return n * 2
+
+func _ready():
+	print(doble(doble(3)))</code></pre>
+        <button data-opcion="a">6</button>
+        <button data-opcion="b">9</button>
+        <button data-opcion="c">12</button>
+        <p class="explicacion">Primero se calcula lo de dentro: <code>doble(3)</code> = 6. Luego <code>doble(6)</code> = 12.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">¿Qué pasa con las líneas que hay debajo de un <code>return</code> que se ejecuta?</p>
+        <button data-opcion="a">Se ejecutan normalmente.</button>
+        <button data-opcion="b">No se ejecutan: la función termina en el <code>return</code>.</button>
+        <button data-opcion="c">Dan error siempre.</button>
+        <p class="explicacion"><code>return</code> sale de la función en ese momento. Es útil para cortar pronto: <code>if not puede_comprar(precio): return</code>.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="5">
+        <p>Este script da error. Toca la línea culpable:</p>
+        <pre><code>func _ready():
+	var cosecha = 5
+
+func vender():
+	print("Vendo ", cosecha, " nabos")</code></pre>
+        <p class="explicacion"><code>cosecha</code> se creó <strong>dentro</strong> de <code>_ready()</code>: es local y no existe en <code>vender()</code>. Si la necesitas en varias funciones, declárala <strong>fuera</strong>, arriba del script, o pásala como parámetro.</p>
+      </div>
+
+      <div class="completar">
+        <p>Completa la función que dice si te llega el dinero para algo:</p>
+        <pre><code><input data-respuesta="func"> puede_comprar(precio: <input data-respuesta="int">) -> <input data-respuesta="bool">:
+	<input data-respuesta="return"> dinero >= precio</code></pre>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Añade a <code>datos_granja.gd</code> las funciones <code>gastar_energia</code> y <code>puede_comprar</code> del ejemplo de arriba (debajo de <code>_ready</code>).</li>
+          <li>En <code>_ready()</code>, llama a <code>gastar_energia(30)</code> dos veces y luego imprime la energía. ¿Sale 40?</li>
+          <li>Cambia tu <code>if</code> de la lección anterior para que use <code>if puede_comprar(PRECIO_NABO):</code>. Se lee casi como una frase.</li>
+          <li>Pulsa <kbd>F6</kbd> y comprueba la Salida.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
