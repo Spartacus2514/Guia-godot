@@ -123,7 +123,117 @@
   function resuelto(el) {
     if (el.classList.contains("superado")) return;
     el.classList.add("superado");
+    guardarReto(el);
     actualizarRetos();
+  }
+
+  // ---------- Guardar cada reto superado ----------
+  // Cada reto recibe una clave estable (su id, o su tipo y su número de orden: "quiz-2"),
+  // y las claves superadas de cada lección se guardan en el navegador.
+
+  const CLAVE_RETOS = `${CLAVE_PROGRESO}-retos-${idLeccion}`;
+  const TIPOS_RETO = ["quiz", "completar", "ordenar", "relacionar", "error-codigo", "paso-a-paso", "en-tu-juego", "widget"];
+  let retosConClave = false;
+
+  function leerRetos() {
+    try {
+      return JSON.parse(localStorage.getItem(CLAVE_RETOS)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function guardarReto(el) {
+    if (!esLeccion || !retosConClave || !el.dataset.clave) return;
+    const guardados = leerRetos();
+    if (guardados.includes(el.dataset.clave)) return;
+    guardados.push(el.dataset.clave);
+    try {
+      localStorage.setItem(CLAVE_RETOS, JSON.stringify(guardados));
+    } catch (e) {
+      // Sin almacenamiento: el reto cuenta, pero no se recordará al volver.
+    }
+  }
+
+  // Muestra un reto ya superado en su estado resuelto.
+  function restaurar(el) {
+    if (el.classList.contains("quiz")) {
+      el.querySelectorAll("button[data-opcion]").forEach((b) => {
+        if (b.dataset.opcion === el.dataset.respuesta) b.classList.add("correcta");
+        b.disabled = true;
+      });
+    } else if (el.classList.contains("completar")) {
+      el.querySelectorAll("input[data-respuesta]").forEach((e) => {
+        e.value = e.dataset.respuesta.split("|")[0];
+        e.classList.add("ok");
+      });
+      const r = el.querySelector(".resultado");
+      if (r) { r.textContent = "✅ ¡Correcto!"; r.className = "resultado ok"; }
+    } else if (el.classList.contains("ordenar")) {
+      const respuesta = el.querySelector(".respuesta");
+      const piezas = [...el.querySelectorAll(".pieza")].sort((a, b) => a.dataset.i - b.dataset.i);
+      respuesta.innerHTML = "";
+      piezas.forEach((b) => {
+        const li = document.createElement("li");
+        b.classList.add("ok");
+        li.appendChild(b);
+        respuesta.appendChild(li);
+      });
+      const r = el.querySelector(".resultado");
+      if (r) { r.textContent = "✅ ¡Orden correcto!"; r.className = "resultado ok"; }
+    } else if (el.classList.contains("relacionar")) {
+      el.querySelectorAll(".pareja").forEach((b) => { b.classList.add("ok"); b.disabled = true; });
+    } else if (el.classList.contains("error-codigo")) {
+      const lineas = el.querySelectorAll(".linea");
+      const linea = lineas[Number(el.dataset.linea) - 1];
+      if (linea) linea.classList.add("ok");
+    } else if (el.classList.contains("paso-a-paso")) {
+      const avanzar = el.querySelector('[data-accion="adelante"]');
+      while (avanzar && !avanzar.disabled) avanzar.click();
+    } else if (el.classList.contains("en-tu-juego")) {
+      el.querySelectorAll('input[type="checkbox"]').forEach((c) => (c.checked = true));
+    } else if (el.classList.contains("widget")) {
+      const info = el.querySelector(".widget-info");
+      if (info) info.innerHTML = "✅ <strong>Reto ya superado.</strong> Si quieres hacerlo otra vez, usa «Repetir los retos» al final de la lección.";
+    }
+    el.classList.add("superado");
+  }
+
+  function restaurarRetos() {
+    if (!esLeccion) return;
+    const contadores = {};
+    const retos = document.querySelectorAll(".reto");
+    retos.forEach((el) => {
+      const tipo = TIPOS_RETO.find((t) => el.classList.contains(t)) || "reto";
+      contadores[tipo] = (contadores[tipo] || 0) + 1;
+      el.dataset.clave = el.id || `${tipo}-${contadores[tipo]}`;
+    });
+    retosConClave = true;
+
+    // Una lección ya superada (de antes de guardar retos sueltos) se muestra entera resuelta.
+    const leccionSuperada = !!leerProgreso()[idLeccion];
+    const guardados = leerRetos();
+    retos.forEach((el) => {
+      if (el.classList.contains("superado")) guardarReto(el);
+      else if (leccionSuperada || guardados.includes(el.dataset.clave)) {
+        restaurar(el);
+        guardarReto(el);
+      }
+    });
+  }
+
+  function repetirRetos() {
+    try {
+      localStorage.removeItem(CLAVE_RETOS);
+      localStorage.removeItem(`${CLAVE_PROGRESO}-pasos-${idLeccion}`);
+    } catch (e) {
+      // Nada que borrar.
+    }
+    // La lección deja de contar como superada hasta que vuelvas a completar sus retos.
+    const p = leerProgreso();
+    delete p[idLeccion];
+    guardarProgreso(p);
+    location.reload();
   }
 
   function actualizarRetos() {
@@ -658,7 +768,18 @@
 
     nav.innerHTML = `
       ${anterior ? `<a class="boton secundario" href="${anterior.archivo}">← ${anterior.titulo}</a>` : "<span></span>"}
-      ${siguiente ? `<a class="boton secundario" href="${siguiente.archivo}">${siguiente.titulo} →</a>` : `<a class="boton secundario" href="../index.html">Inicio</a>`}`;
+      ${siguiente ? `<a class="boton secundario" href="${siguiente.archivo}">${siguiente.titulo} →</a>` : `<a class="boton secundario" href="../index.html">Inicio</a>`}
+      <button class="enlace-repetir" id="repetir-retos" type="button">↺ Repetir los retos de esta lección</button>`;
+    const repetir = document.getElementById("repetir-retos");
+    repetir.onclick = () => {
+      if (repetir.dataset.confirmar) return repetirRetos();
+      repetir.dataset.confirmar = "1";
+      repetir.textContent = "¿Seguro? Pulsa otra vez para empezar los retos de cero";
+      setTimeout(() => {
+        delete repetir.dataset.confirmar;
+        repetir.textContent = "↺ Repetir los retos de esta lección";
+      }, 4000);
+    };
   }
 
   // ---------- Arranque ----------
@@ -680,5 +801,12 @@
   iniciarCompletar();
   iniciarEnTuJuego(); // el último: puede resolverse al cargar y necesita todos los retos registrados
   iniciarCodigo();
-  actualizarRetos();
+  // Los widgets propios de cada lección se inician en scripts posteriores a este,
+  // así que los retos guardados se restauran cuando ya se ha cargado toda la página.
+  function alCargar() {
+    restaurarRetos();
+    actualizarRetos();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", alCargar);
+  else alCargar();
 })();
