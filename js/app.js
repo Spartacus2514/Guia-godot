@@ -654,14 +654,27 @@
         `${total.filter((l) => progreso[l.id]).length} de ${total.length} lecciones superadas (${pct}%) · ${planificadas} lecciones en el plan completo`;
     }
 
-    const siguiente = total.find((l) => !progreso[l.id]) || total[0];
+    // Botón principal: vuelve a la última lección abierta (al mismo punto de la página)
+    // si no la terminaste; si la terminaste, va a la siguiente sin terminar.
     const empezar = document.getElementById("empezar");
     if (empezar) {
-      empezar.href = "lecciones/" + siguiente.archivo;
       const hechas = total.filter((l) => progreso[l.id]).length;
-      empezar.textContent =
-        hechas === total.length ? "Repasar desde el principio →"
-        : hechas ? `Continuar: ${siguiente.titulo} →` : "Empezar ahora →";
+      const ultima = leerUltima();
+      const leccionUltima = ultima && total.find((l) => l.id === ultima.id);
+      if (leccionUltima && !progreso[leccionUltima.id]) {
+        empezar.href = "lecciones/" + leccionUltima.archivo + "#continuar";
+        empezar.textContent = `Continuar donde lo dejaste: ${leccionUltima.titulo} →`;
+      } else {
+        const desde = leccionUltima ? total.indexOf(leccionUltima) + 1 : 0;
+        const siguiente = total.slice(desde).find((l) => !progreso[l.id]) || total.find((l) => !progreso[l.id]);
+        if (siguiente) {
+          empezar.href = "lecciones/" + siguiente.archivo;
+          empezar.textContent = hechas ? `Continuar: ${siguiente.titulo} →` : "Empezar ahora →";
+        } else {
+          empezar.href = "lecciones/" + total[0].archivo;
+          empezar.textContent = "Repasar desde el principio →";
+        }
+      }
     }
 
     contenedor.innerHTML = "";
@@ -737,11 +750,51 @@
     lateral.innerHTML = html;
   }
 
+  // ---------- Última lección y punto de la página ----------
+
+  const CLAVE_ULTIMA = "guia-godot-ultima";
+
+  function leerUltima() {
+    try {
+      return JSON.parse(localStorage.getItem(CLAVE_ULTIMA));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function guardarUltima(y) {
+    try {
+      localStorage.setItem(CLAVE_ULTIMA, JSON.stringify({ id: idLeccion, y: Math.round(y) }));
+    } catch (e) {
+      // Sin almacenamiento: el botón «Continuar» irá a la primera lección sin terminar.
+    }
+  }
+
+  function recordarPosicion() {
+    const anterior = leerUltima();
+    guardarUltima(anterior && anterior.id === idLeccion ? anterior.y : 0);
+    let pendiente = null;
+    window.addEventListener("scroll", () => {
+      clearTimeout(pendiente);
+      pendiente = setTimeout(() => guardarUltima(window.scrollY), 300);
+    }, { passive: true });
+  }
+
+  // Al llegar desde «Continuar donde lo dejaste», baja hasta donde estabas.
+  function volverAPosicion() {
+    if (location.hash !== "#continuar") return;
+    const ultima = leerUltima();
+    if (ultima && ultima.id === idLeccion && ultima.y > 0) {
+      requestAnimationFrame(() => window.scrollTo(0, ultima.y));
+    }
+  }
+
   function pintarLeccion() {
     const lecciones = todasLasLecciones();
     const indice = lecciones.findIndex((l) => l.id === idLeccion);
     const anterior = lecciones[indice - 1];
     const siguiente = lecciones[indice + 1];
+    recordarPosicion();
 
     pintarLateral();
     const lateral = document.getElementById("lateral");
@@ -806,6 +859,7 @@
   function alCargar() {
     restaurarRetos();
     actualizarRetos();
+    if (esLeccion) volverAPosicion();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", alCargar);
   else alCargar();
