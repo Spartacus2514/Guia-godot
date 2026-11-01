@@ -49,6 +49,7 @@ index.html          Portada con el índice y el progreso
 css/estilos.css     Estilos de todo el curso
 js/curso.js         Índice del curso (módulos y lecciones)
 js/app.js           Progreso, navegación, quizzes, ejercicios y resaltado de GDScript
+js/nube.js          Progreso guardado en la cuenta de Claude (para usar varios aparatos)
 lecciones/*.html    Una página por lección
 ```
 
@@ -70,4 +71,4 @@ Retos disponibles (todos cuentan para superar la lección):
 
 Otros elementos: `<pre><code class="gdscript">` (código resaltado con botón de copiar), `.esencial`, `.consejo`, `.aviso`, `.widget`.
 
-El progreso se guarda en el `localStorage` del navegador.
+El progreso se guarda en el `localStorage` del navegador. Abierto como artifact de Claude, `js/nube.js` lo guarda también en la cuenta (`data/users/<id>/progreso`, privado), así que se puede seguir en otro aparato con el mismo enlace: sube lo que cambia en este navegador, baja lo que cambió en el otro y, si cambiaron los dos, los junta.

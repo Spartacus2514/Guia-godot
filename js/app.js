@@ -764,7 +764,7 @@
 
   function guardarUltima(y) {
     try {
-      localStorage.setItem(CLAVE_ULTIMA, JSON.stringify({ id: idLeccion, y: Math.round(y) }));
+      localStorage.setItem(CLAVE_ULTIMA, JSON.stringify({ id: idLeccion, y: Math.round(y), t: Date.now() }));
     } catch (e) {
       // Sin almacenamiento: el botón «Continuar» irá a la primera lección sin terminar.
     }
