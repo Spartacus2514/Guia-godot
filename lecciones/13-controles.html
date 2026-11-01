@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Controles: el mapa de entrada · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="13-controles">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Lección 1</span>
+      <h1>Controles: el mapa de entrada</h1>
+
+      <p>Empieza el módulo del granjero: al acabarlo caminará por tu granja, la cámara le seguirá y podrá hablar con las cosas. Lo primero es saber qué teclas pulsa el jugador.</p>
+
+      <div class="esencial">
+        <ul>
+          <li>Tu juego no pregunta «¿está pulsada la W?», sino por una <strong>acción</strong> con nombre: «¿está pulsada <code>mover_adelante</code>?».</li>
+          <li>Las acciones se crean en <strong>Proyecto → Configuración del Proyecto → Mapa de Entrada</strong>. Cada una puede tener varias teclas y botones del mando.</li>
+          <li>La ventaja: si mañana cambias una tecla o añades un mando, <strong>no tocas el código</strong>.</li>
+        </ul>
+      </div>
+
+      <h2>Preguntar por una acción</h2>
+      <pre><code class="gdscript">func _process(_delta):
+	if Input.is_action_pressed("mover_adelante"):
+		print("Caminando…")         # en CADA fotograma mientras la mantienes
+	if Input.is_action_just_pressed("interactuar"):
+		print("¡Hola, vaca!")       # UNA vez, en el instante de pulsarla</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li><code>Input.is_action_pressed("…")</code>: <code>true</code> <strong>mientras</strong> la mantienes pulsada. Para caminar.</li>
+          <li><code>Input.is_action_just_pressed("…")</code>: <code>true</code> solo en el <strong>instante</strong> de pulsarla. Para acciones de un golpe: hablar, regar, dar un hachazo.</li>
+          <li><code>Input.is_action_just_released("…")</code>: <code>true</code> solo en el instante de <strong>soltarla</strong>. Por ejemplo, para cargar un golpe y soltarlo.</li>
+          <li>El <code>_</code> de <code>_delta</code> le dice a Godot «no voy a usar este dato». Sin él, te avisa en amarillo de que no lo usas.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Quieres que, al pulsar Espacio, el granjero dé <strong>un</strong> golpe de azada. ¿Qué usas?</p>
+        <button data-opcion="a"><code>Input.is_action_pressed("usar_herramienta")</code></button>
+        <button data-opcion="b"><code>Input.is_action_just_pressed("usar_herramienta")</code></button>
+        <button data-opcion="c"><code>Input.is_action_just_released("caminar")</code></button>
+        <p class="explicacion">Con <code>is_action_pressed</code> daría un golpe <strong>en cada fotograma</strong> mientras mantienes la tecla: unos 60 por segundo. <code>just_pressed</code> solo es <code>true</code> en el instante de pulsar.</p>
+      </div>
+
+      <h2>Cuatro teclas, una dirección</h2>
+      <p>Para caminar no hace falta preguntar por las cuatro acciones una a una. <code>Input.get_vector</code> las junta en una sola dirección:</p>
+
+      <pre><code class="gdscript">var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li>Devuelve un <code>Vector2</code>: como un <code>Vector3</code>, pero con solo dos números, <code>(x, y)</code>.</li>
+          <li><strong>x</strong>: −1 izquierda, +1 derecha. <strong>y</strong>: −1 adelante, +1 atrás. Sin pulsar nada: <code>(0.0, 0.0)</code>.</li>
+          <li>El orden de las acciones importa: <strong>izquierda, derecha, adelante, atrás</strong> (primero la negativa y luego la positiva de cada eje).</li>
+          <li>En diagonal, Godot recorta el largo a 1: no da <code>(1, -1)</code> sino <code>(0.707107, -0.707107)</code>. Así no caminas más rápido en diagonal. Con un joystick a medio empujar, los números son más pequeños: el granjero irá más despacio.</li>
+          <li><code>:=</code> crea la variable y deja que Godot <strong>deduzca el tipo</strong> por lo que hay a la derecha. Es igual que <code>var entrada: Vector2 = …</code>, pero más corto.</li>
+        </ul>
+      </div>
+
+      <div class="widget reto" id="mando">
+        <p class="widget-titulo">🎮 Reto: pulsa acciones y mira qué responde Input</p>
+        <p class="widget-info" id="mando-mision"></p>
+        <p class="nota-pequena">Toca una tecla para dejarla pulsada y otra vez para soltarla. Así puedes pulsar dos a la vez.</p>
+        <div class="mando">
+          <div class="cruceta">
+            <button class="tecla" data-accion="mover_adelante" style="grid-area: arriba">W ▲</button>
+            <button class="tecla" data-accion="mover_izquierda" style="grid-area: izquierda">A ◀</button>
+            <button class="tecla" data-accion="mover_derecha" style="grid-area: derecha">D ▶</button>
+            <button class="tecla" data-accion="mover_atras" style="grid-area: abajo">S ▼</button>
+          </div>
+          <div class="brujula" aria-hidden="true">
+            <span class="brujula-etq arriba">adelante (−y)</span>
+            <span class="brujula-punto" id="mando-punto"></span>
+          </div>
+        </div>
+        <pre class="codigo-vivo"><code id="mando-codigo"></code></pre>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">El jugador mantiene pulsadas a la vez <strong>A</strong> (izquierda) y <strong>D</strong> (derecha). ¿Qué devuelve <code>get_vector</code>?</p>
+        <button data-opcion="a"><code>(-1.0, 0.0)</code>: gana la primera.</button>
+        <button data-opcion="b"><code>(1.0, 0.0)</code>: gana la última.</button>
+        <button data-opcion="c"><code>(0.0, 0.0)</code>: se anulan.</button>
+        <p class="explicacion">−1 y +1 suman 0: el granjero se queda quieto en ese eje, como acabas de ver en el reto.</p>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada función con lo que responde:</p>
+        <ul class="pares">
+          <li><span><code>is_action_pressed</code></span><span>¿La está manteniendo pulsada?</span></li>
+          <li><span><code>is_action_just_pressed</code></span><span>¿La acaba de pulsar en este instante?</span></li>
+          <li><span><code>is_action_just_released</code></span><span>¿La acaba de soltar?</span></li>
+          <li><span><code>get_vector</code></span><span>¿Hacia dónde quiere ir, juntando 4 acciones?</span></li>
+        </ul>
+      </div>
+
+      <div class="error-codigo" data-linea="2">
+        <p>El granjero no responde a la W y en el Depurador sale esto:</p>
+        <p class="error-texto">E  The InputMap action "mover_adelnte" doesn't exist. Did you mean "mover_adelante"?</p>
+        <p>Toca la línea culpable:</p>
+        <pre><code>func _process(_delta):
+	if Input.is_action_pressed("mover_adelnte"):
+		print("Caminando…")
+	if Input.is_action_just_pressed("interactuar"):
+		print("¡Hola, vaca!")</code></pre>
+        <p class="explicacion">Falta una «a»: <code>mover_adelnte</code>. El nombre tiene que ser <strong>idéntico</strong> al del Mapa de Entrada. El juego no se para: esa acción simplemente nunca está pulsada. Por suerte, Godot hasta te sugiere el nombre bueno: <em>Did you mean…?</em> («¿Querías decir…?»).</p>
+      </div>
+
+      <div class="completar">
+        <p>Completa: la dirección de las cuatro teclas, en su orden, y regar una sola vez al pulsar la herramienta.</p>
+        <pre><code>var entrada := Input.<input data-respuesta="get_vector">("mover_izquierda", "mover_<input data-respuesta="derecha">", "mover_adelante", "mover_atras")
+
+if Input.<input data-respuesta="is_action_just_pressed">("usar_herramienta"):
+	print("¡Riego!")</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>Mando y teclado a la vez</strong>
+        Una acción puede tener varios eventos: a <code>mover_adelante</code> añádele la W, la flecha ↑ y el joystick del mando hacia arriba. El código no cambia: <code>is_action_pressed("mover_adelante")</code> responde a cualquiera de ellos.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Abre <strong>Proyecto → Configuración del Proyecto</strong> y entra en la pestaña <strong>Mapa de Entrada</strong>.</li>
+          <li>Escribe <code>mover_izquierda</code> en el campo <em>Añadir Nueva Acción</em> y pulsa <strong>Añadir</strong>. En su fila, pulsa el <strong>+</strong> (<em>Añadir Evento</em>), pulsa la tecla <kbd>A</kbd> y luego <strong>Aceptar</strong>. Repite el <strong>+</strong> para añadir también la flecha <kbd>←</kbd>.</li>
+          <li>Igual con <code>mover_derecha</code> (<kbd>D</kbd> y <kbd>→</kbd>), <code>mover_adelante</code> (<kbd>W</kbd> y <kbd>↑</kbd>) y <code>mover_atras</code> (<kbd>S</kbd> y <kbd>↓</kbd>).</li>
+          <li>Crea <code>interactuar</code> con la <kbd>E</kbd> y <code>usar_herramienta</code> con <kbd>Espacio</kbd>. Si tienes mando, añade también sus botones.</li>
+          <li>Para probarlo, añade en <code>datos_granja.gd</code> una función <code>_process(_delta)</code> que haga <code>print(Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras"))</code> cuando pulses <code>interactuar</code> (con <code>is_action_just_pressed</code>).</li>
+          <li>Pulsa <kbd>F6</kbd>, haz clic en la ventana del juego y pulsa <kbd>E</kbd> mientras mantienes <kbd>W</kbd> y <kbd>D</kbd>. ¿Sale <code>(0.707107, -0.707107)</code>? Cuando funcione, borra esa función de prueba.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("mando");
+      const mision = document.getElementById("mando-mision");
+      const codigo = document.getElementById("mando-codigo");
+      const punto = document.getElementById("mando-punto");
+      const teclas = [...widget.querySelectorAll(".tecla")];
+      const pulsadas = new Set();
+      const D = Math.SQRT1_2;
+      const MISIONES = [
+        { x: 1, y: 0, texto: "haz que <code>get_vector</code> devuelva <code>(1.0, 0.0)</code>.", bien: "Derecha: x = 1." },
+        { x: 0, y: -1, texto: "ahora haz que devuelva <code>(0.0, -1.0)</code>.", bien: "Adelante es y = −1." },
+        { x: -D, y: -D, texto: "camina en diagonal hacia <strong>delante y a la izquierda</strong>.", bien: "Fíjate: no es (−1, −1). El largo se recorta a 1 para que en diagonal no vayas más rápido." },
+        { x: 0, y: 0, ambas: true, texto: "pulsa <strong>izquierda y derecha a la vez</strong> (y nada más) y mira qué pasa.", bien: "Se anulan: −1 + 1 = 0." }
+      ];
+      let fase = 0;
+
+      // Como lo escribe Godot: 1.0, 0.0, -0.707107…
+      function num(n) {
+        if (Math.abs(n) < 1e-9) return "0.0";
+        if (Number.isInteger(n)) return n.toFixed(1);
+        return String(Number(n.toPrecision(6)));
+      }
+
+      function vector() {
+        let x = (pulsadas.has("mover_derecha") ? 1 : 0) - (pulsadas.has("mover_izquierda") ? 1 : 0);
+        let y = (pulsadas.has("mover_atras") ? 1 : 0) - (pulsadas.has("mover_adelante") ? 1 : 0);
+        const largo = Math.hypot(x, y);
+        if (largo > 1) { x /= largo; y /= largo; }
+        return { x, y };
+      }
+
+      function pintar() {
+        const v = vector();
+        const lineas = ["mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras"].map((a) =>
+          `Input.is_action_pressed("${a}")  # → ${pulsadas.has(a)}`);
+        lineas.push(`Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")  # → (${num(v.x)}, ${num(v.y)})`);
+        codigo.innerHTML = lineas.map((t) => `<span class="linea">${window.GuiaGodot.resaltar(t)}\n</span>`).join("");
+        punto.style.left = 50 + v.x * 40 + "%";
+        punto.style.top = 50 + v.y * 40 + "%";
+        teclas.forEach((t) => t.classList.toggle("pulsada", pulsadas.has(t.dataset.accion)));
+      }
+
+      function pintarMision(extra) {
+        if (fase >= MISIONES.length) {
+          mision.innerHTML = `${extra} 🎉 <strong>¡Reto superado!</strong> Ya sabes leer lo que pulsa el jugador.`;
+          return;
+        }
+        mision.innerHTML = `${extra ? extra + "<br>" : ""}<strong>Misión ${fase + 1}/${MISIONES.length}:</strong> ${MISIONES[fase].texto}`;
+      }
+
+      function comprobar() {
+        if (widget.classList.contains("superado") || fase >= MISIONES.length) return;
+        const m = MISIONES[fase];
+        const v = vector();
+        const coincide = Math.abs(v.x - m.x) < 1e-6 && Math.abs(v.y - m.y) < 1e-6;
+        const ambas = !m.ambas || (pulsadas.size === 2 && pulsadas.has("mover_izquierda") && pulsadas.has("mover_derecha"));
+        if (coincide && ambas) {
+          fase++;
+          pintarMision(`✅ ${m.bien}`);
+          if (fase === MISIONES.length) window.GuiaGodot.resuelto(widget);
+        }
+      }
+
+      teclas.forEach((t) => {
+        t.addEventListener("click", () => {
+          const a = t.dataset.accion;
+          if (pulsadas.has(a)) pulsadas.delete(a); else pulsadas.add(a);
+          pintar();
+          comprobar();
+        });
+      });
+
+      pintar();
+      pintarMision("");
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

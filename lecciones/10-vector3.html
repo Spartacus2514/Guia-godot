@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vector3: posiciones en 3D · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="10-vector3">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 6</span>
+      <h1>Vector3: posiciones en 3D</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Un <code>Vector3</code> son tres números juntos: <code>Vector3(x, y, z)</code>. Sirve para <strong>posiciones</strong> y <strong>direcciones</strong>.</li>
+          <li><code>position = Vector3(3, 0, -2)</code> coloca el nodo ahí. <code>position += Vector3(1, 0, 0)</code> lo <strong>mueve</strong> 1 metro a la derecha desde donde esté.</li>
+          <li>En Godot, <strong>adelante es −Z</strong> (<code>Vector3.FORWARD</code>) y arriba es +Y (<code>Vector3.UP</code>). El origen, <code>(0, 0, 0)</code>, es <code>Vector3.ZERO</code>.</li>
+          <li><code>a.distance_to(b)</code> = metros entre dos puntos. <code>(b - a).normalized()</code> = la dirección de a hacia b.</li>
+        </ul>
+      </div>
+
+      <div class="widget reto" id="mapa">
+        <p class="widget-titulo">🗺️ Reto: muévete por la granja (vista desde arriba)</p>
+        <p class="widget-info" id="mapa-mision"></p>
+        <div class="mapa-contenedor">
+          <div class="mapa" id="mapa-zona">
+            <span class="eje eje-x">X →</span>
+            <span class="eje eje-z">↑ −Z (adelante)</span>
+            <div class="ficha" id="f-gallina" title="Gallina (3, 0, -2)">🐔</div>
+            <div class="ficha" id="f-pozo" title="Pozo (-1, 0, 2)">⛲</div>
+            <div class="ficha granjero" id="f-granjero">🧑‍🌾</div>
+          </div>
+        </div>
+        <pre class="codigo-vivo"><code id="mapa-codigo"></code></pre>
+        <div class="controles">
+          <button class="boton" id="mapa-ejecutar">▶ Ejecutar</button>
+          <button class="boton secundario" id="mapa-reiniciar">↺ Volver a empezar la misión</button>
+        </div>
+        <div class="consola" id="mapa-consola"></div>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Quieres que la vaca camine hacia <strong>delante</strong>. ¿Qué dirección usas?</p>
+        <button data-opcion="a"><code>Vector3(0, 0, 1)</code></button>
+        <button data-opcion="b"><code>Vector3(0, 1, 0)</code></button>
+        <button data-opcion="c"><code>Vector3(0, 0, -1)</code></button>
+        <p class="explicacion">En Godot, adelante es <strong>−Z</strong>. Por eso existe <code>Vector3.FORWARD</code>, que vale <code>(0, 0, -1)</code>: úsalo y no tendrás que recordarlo.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">El granjero está en <code>(0, 0, 0)</code> y la vaca en <code>(3, 0, 4)</code>. ¿Qué devuelve <code>granjero.distance_to(vaca)</code>?</p>
+        <button data-opcion="a"><code>7</code></button>
+        <button data-opcion="b"><code>5</code></button>
+        <button data-opcion="c"><code>12</code></button>
+        <p class="explicacion">Es la distancia en línea recta (el teorema de Pitágoras): √(3² + 4²) = 5 metros. No se suman los ejes.</p>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada expresión con lo que vale o lo que hace:</p>
+        <ul class="pares">
+          <li><span><code>Vector3.ZERO</code></span><span><code>(0, 0, 0)</code>: el origen</span></li>
+          <li><span><code>Vector3.UP</code></span><span><code>(0, 1, 0)</code>: hacia arriba</span></li>
+          <li><span><code>Vector3.FORWARD</code></span><span><code>(0, 0, -1)</code>: hacia delante</span></li>
+          <li><span><code>a.distance_to(b)</code></span><span>Metros entre a y b</span></li>
+          <li><span><code>(b - a).normalized()</code></span><span>Dirección de a hacia b, de largo 1</span></li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa: si el granjero está a menos de 2 metros de la vaca, puede ordeñarla.</p>
+        <pre><code>if position.<input data-respuesta="distance_to">(vaca.position) <input data-respuesta="<"> 2.0:
+	print("Puedes ordeñar")</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>position y global_position</strong>
+        <code>position</code> es relativa al <strong>padre</strong> (como viste con los hijos que siguen al padre). <code>global_position</code> es la posición en el <strong>mundo</strong>. Para medir distancias entre cosas de distintas partes de la escena, usa <code>global_position</code>.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>datos_granja.gd</code>, crea dos variables: <code>var casa: Vector3 = Vector3(0, 0, 0)</code> y <code>var pozo: Vector3 = Vector3(6, 0, -8)</code>.</li>
+          <li>En <code>_ready()</code>, imprime <code>casa.distance_to(pozo)</code>. ¿Sale 10?</li>
+          <li>En el script del objeto que gira (lección 4), añade en <code>_process</code>: <code>position += Vector3.UP * 0.5 * delta</code>. Pulsa <kbd>F6</kbd>: sube medio metro por segundo.</li>
+          <li>Cámbialo por <code>Vector3.FORWARD</code> y mira hacia dónde se va.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("mapa");
+      const mision = document.getElementById("mapa-mision");
+      const codigo = document.getElementById("mapa-codigo");
+      const consola = document.getElementById("mapa-consola");
+      const fichaGranjero = document.getElementById("f-granjero");
+      const GALLINA = { x: 3, z: -2 };
+      const POZO = { x: -1, z: 2 };
+      const LIMITE = 5; // el mapa va de -5 a 5 metros en X y en Z
+      let granjero = { x: 0, z: 0 };
+      let fase = 0;
+
+      function colocar(ficha, p) {
+        const x = Math.max(-LIMITE, Math.min(LIMITE, p.x));
+        const z = Math.max(-LIMITE, Math.min(LIMITE, p.z));
+        ficha.style.left = ((x + LIMITE) / (2 * LIMITE)) * 100 + "%";
+        ficha.style.top = ((z + LIMITE) / (2 * LIMITE)) * 100 + "%";
+      }
+
+      function distancia(a, b) {
+        return Math.hypot(a.x - b.x, a.z - b.z);
+      }
+
+      function pintarFase() {
+        if (fase === 0) {
+          mision.innerHTML = "<strong>Misión 1/2:</strong> coloca al granjero justo encima de la gallina 🐔 con <code>position = …</code>. Cada cuadro es 1 metro.";
+          codigo.innerHTML = '<span class="t-tipo">position</span> = <span class="t-tipo">Vector3</span>(<input type="number" id="v-x" value="0" step="1">, <span class="t-numero">0</span>, <input type="number" id="v-z" value="0" step="1">)';
+        } else if (fase === 1) {
+          mision.innerHTML = "<strong>Misión 2/2:</strong> ahora llega al pozo ⛲ <strong>moviéndote desde donde estás</strong> con <code>position += …</code>. Piensa cuánto te tienes que desplazar.";
+          codigo.innerHTML = '<span class="t-tipo">position</span> += <span class="t-tipo">Vector3</span>(<input type="number" id="v-x" value="0" step="1">, <span class="t-numero">0</span>, <input type="number" id="v-z" value="0" step="1">)';
+        } else {
+          mision.innerHTML = "🎉 <strong>¡Conseguido!</strong> <code>=</code> pone en un sitio; <code>+=</code> mueve desde donde estás. Para ir de la gallina al pozo has sumado <code>pozo − gallina</code> = <code>(-4, 0, 4)</code>.";
+        }
+      }
+
+      document.getElementById("mapa-ejecutar").addEventListener("click", () => {
+        if (fase > 1) return;
+        const vx = Number(document.getElementById("v-x").value) || 0;
+        const vz = Number(document.getElementById("v-z").value) || 0;
+        granjero = fase === 0 ? { x: vx, z: vz } : { x: granjero.x + vx, z: granjero.z + vz };
+        colocar(fichaGranjero, granjero);
+        const objetivo = fase === 0 ? GALLINA : POZO;
+        const nombre = fase === 0 ? "gallina" : "pozo";
+        const d = distancia(granjero, objetivo);
+        const fuera = Math.abs(granjero.x) > LIMITE || Math.abs(granjero.z) > LIMITE ? " (¡te has salido del mapa!)" : "";
+        // Como lo imprimiría Godot: los vectores siempre con decimales, por ejemplo (3.0, 0.0, -2.0).
+        const num = (n) => (Number.isInteger(n) ? n.toFixed(1) : String(n));
+        consola.textContent = `position = (${num(granjero.x)}, 0.0, ${num(granjero.z)})${fuera}\nposition.distance_to(${nombre}) ≈ ${d.toFixed(2)}`;
+        if (d < 0.001) {
+          fase++;
+          pintarFase();
+          if (fase === 2) window.GuiaGodot.resuelto(widget);
+        } else {
+          window.GuiaGodot.sacudir(fichaGranjero);
+        }
+      });
+
+      document.getElementById("mapa-reiniciar").addEventListener("click", () => {
+        if (fase > 1) return;
+        granjero = fase === 0 ? { x: 0, z: 0 } : { ...GALLINA };
+        colocar(fichaGranjero, granjero);
+        consola.textContent = "";
+      });
+
+      colocar(document.getElementById("f-gallina"), GALLINA);
+      colocar(document.getElementById("f-pozo"), POZO);
+      colocar(fichaGranjero, granjero);
+      pintarFase();
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

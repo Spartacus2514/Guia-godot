@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrays y bucles · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="08-arrays-bucles">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 4</span>
+      <h1>Arrays y bucles</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Un <strong>array</strong> es una lista: <code>["nabo", "patata", "fresa"]</code>. Cada elemento tiene una posición (<strong>índice</strong>) que <strong>empieza en 0</strong>.</li>
+          <li><code>for elemento in lista:</code> repite el código una vez <strong>por cada elemento</strong>.</li>
+          <li><code>for i in range(5):</code> repite 5 veces (con <code>i</code> = 0, 1, 2, 3, 4).</li>
+          <li><code>while condición:</code> repite <strong>mientras</strong> se cumpla. <code>break</code> sale del bucle antes de tiempo.</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript">var cultivos: Array[String] = ["nabo", "patata", "fresa"]
+
+func _ready():
+	print(cultivos[0])           # nabo (el primero es el 0)
+	cultivos.append("maíz")      # añade al final
+	print(cultivos.size())       # 4 elementos
+	print(cultivos.has("fresa")) # true
+	cultivos.erase("patata")     # quita "patata"</code></pre>
+
+      <div class="paso-a-paso">
+        <p>Riega todos los cultivos con un bucle <code>for</code>:</p>
+        <pre><code>var cultivos = ["nabo", "patata", "fresa"]
+var regados = 0
+
+func _ready():
+	for cultivo in cultivos:
+		print("Riego: ", cultivo)
+		regados += 1
+	print("Regados: ", regados)</code></pre>
+        <script type="application/json">[
+          {"l": 1, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]"}, "n": "Una lista con tres cultivos."},
+          {"l": 2, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "0"}, "n": "Un contador que empieza en 0."},
+          {"l": 5, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "0", "cultivo": "\"nabo\""}, "n": "<strong>Vuelta 1:</strong> <code>cultivo</code> toma el primer elemento."},
+          {"l": 6, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "0", "cultivo": "\"nabo\""}, "s": ["Riego: nabo"], "n": "Se ejecuta lo de dentro del bucle."},
+          {"l": 7, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "1", "cultivo": "\"nabo\""}, "n": "El contador sube. Fin de la vuelta: volvemos arriba."},
+          {"l": 5, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "1", "cultivo": "\"patata\""}, "n": "<strong>Vuelta 2:</strong> ahora <code>cultivo</code> vale el segundo elemento."},
+          {"l": 6, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "1", "cultivo": "\"patata\""}, "s": ["Riego: patata"], "n": "Mismo código, otro dato."},
+          {"l": 7, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "2", "cultivo": "\"patata\""}, "n": "El contador sube a 2."},
+          {"l": 5, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "2", "cultivo": "\"fresa\""}, "n": "<strong>Vuelta 3:</strong> el último elemento."},
+          {"l": 6, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "2", "cultivo": "\"fresa\""}, "s": ["Riego: fresa"], "n": "Riega la fresa."},
+          {"l": 7, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "3", "cultivo": "\"fresa\""}, "n": "El contador llega a 3."},
+          {"l": 8, "v": {"cultivos": "[\"nabo\", \"patata\", \"fresa\"]", "regados": "3"}, "s": ["Regados: 3"], "n": "No quedan elementos: el bucle termina y seguimos con la línea de después (sin sangría extra)."}
+        ]</script>
+      </div>
+
+      <div class="widget reto" id="rangos">
+        <p class="widget-titulo">🔢 Reto: domina range()</p>
+        <p class="widget-info" id="rango-mision"></p>
+        <pre class="codigo-vivo"><code>for i in range(<input type="number" id="r-inicio" value="0">, <input type="number" id="r-fin" value="5">, <input type="number" id="r-paso" value="1">):
+	print(i)</code></pre>
+        <button class="boton" id="r-ejecutar">▶ Ejecutar</button>
+        <div class="consola" id="r-consola"></div>
+        <p class="nota-pequena"><code>range(inicio, fin, paso)</code>: empieza en <code>inicio</code>, avanza de <code>paso</code> en <code>paso</code> y para <strong>antes</strong> de llegar a <code>fin</code>.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Con <code>var cultivos = ["nabo", "patata", "fresa"]</code>, ¿qué es <code>cultivos[1]</code>?</p>
+        <button data-opcion="a"><code>"nabo"</code></button>
+        <button data-opcion="b"><code>"patata"</code></button>
+        <button data-opcion="c"><code>"fresa"</code></button>
+        <p class="explicacion">Se cuenta desde 0: <code>[0]</code> es «nabo», <code>[1]</code> es «patata». Truco: <code>cultivos[-1]</code> es siempre el último.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">¿Qué imprime?</p>
+        <pre><code class="gdscript">func _ready():
+	var mochila = ["nabo"]
+	mochila.append("fresa")
+	mochila.append("maíz")
+	print(mochila.size())</code></pre>
+        <button data-opcion="a">1</button>
+        <button data-opcion="b">2</button>
+        <button data-opcion="c">3</button>
+        <p class="explicacion">Empieza con 1 elemento y añades 2: <code>size()</code> devuelve 3.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="4">
+        <p>Este código se rompe al ejecutarse. Toca la línea culpable:</p>
+        <pre><code>var cultivos = ["nabo", "patata", "fresa"]
+
+func _ready():
+	print(cultivos[3])</code></pre>
+        <p class="explicacion">Hay 3 elementos, con índices 0, 1 y 2. El índice 3 <strong>no existe</strong> («fuera de rango»). El último es <code>cultivos[2]</code> o <code>cultivos[-1]</code>.<br>Godot dice: <span class="error-texto">Invalid access of index '3' on a base object of type: 'Array'.</span></p>
+      </div>
+
+      <div class="aviso">
+        <strong>Cuidado con while</strong>
+        Si la condición de un <code>while</code> nunca deja de cumplirse, el bucle no termina nunca y <strong>tu juego se congela</strong>. Asegúrate de que algo dentro del bucle acabe haciendo falsa la condición (por ejemplo, <code>energia -= 10</code>).
+      </div>
+
+      <div class="ordenar" data-codigo>
+        <p>Ordena una función que riegue cada cultivo y, al final, avise de que ha terminado:</p>
+        <ul class="piezas">
+          <li>func regar_todo():</li>
+          <li>&#9;for cultivo in cultivos:</li>
+          <li>&#9;&#9;print("Riego: ", cultivo)</li>
+          <li>&#9;print("¡Todo regado!")</li>
+        </ul>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>datos_granja.gd</code>, añade arriba: <code>var cultivos_plantados: Array[String] = []</code> (una lista vacía de textos).</li>
+          <li>Crea la función <code>plantar(cultivo: String) -> void</code>, que haga <code>cultivos_plantados.append(cultivo)</code> y llame a <code>gastar_energia(5)</code>.</li>
+          <li>En <code>_ready()</code>, planta 3 nabos con <code>for i in range(3): plantar("nabo")</code> y luego una fresa.</li>
+          <li>Recorre <code>cultivos_plantados</code> con un <code>for</code> e imprime cada uno. Imprime también cuántos hay con <code>size()</code> y la energía que te queda.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("rangos");
+      const mision = document.getElementById("rango-mision");
+      const consola = document.getElementById("r-consola");
+      const inicio = document.getElementById("r-inicio");
+      const fin = document.getElementById("r-fin");
+      const paso = document.getElementById("r-paso");
+      const misiones = [
+        { texto: "Imprime los días de la semana: <strong>1, 2, 3, 4, 5, 6, 7</strong>.", objetivo: [1, 2, 3, 4, 5, 6, 7] },
+        { texto: "Imprime los días de mercado, que son los pares: <strong>2, 4, 6, 8, 10</strong>.", objetivo: [2, 4, 6, 8, 10] },
+        { texto: "Haz una cuenta atrás para el festival: <strong>3, 2, 1</strong>. (Pista: el paso puede ser negativo).", objetivo: [3, 2, 1] }
+      ];
+      let actual = 0;
+
+      function rango(a, b, s) {
+        const r = [];
+        if (s > 0) for (let i = a; i < b && r.length < 60; i += s) r.push(i);
+        else for (let i = a; i > b && r.length < 60; i += s) r.push(i);
+        return r;
+      }
+
+      function pintarMision() {
+        mision.innerHTML = actual < misiones.length
+          ? `<strong>Misión ${actual + 1}/${misiones.length}:</strong> ${misiones[actual].texto}`
+          : "🎉 <strong>¡Dominas range()!</strong> Recuerda: el final nunca se incluye.";
+      }
+
+      document.getElementById("r-ejecutar").addEventListener("click", () => {
+        const a = Math.trunc(Number(inicio.value));
+        const b = Math.trunc(Number(fin.value));
+        const s = Math.trunc(Number(paso.value));
+        if (s === 0) {
+          consola.innerHTML = '<span class="error">Error: el paso de range() no puede ser 0.</span>';
+          return;
+        }
+        const r = rango(a, b, s);
+        consola.textContent = r.length ? r.join("\n") : "(no se imprime nada: el bucle no da ni una vuelta)";
+        if (actual >= misiones.length) return;
+        const objetivo = misiones[actual].objetivo;
+        if (r.length === objetivo.length && r.every((x, k) => x === objetivo[k])) {
+          actual++;
+          pintarMision();
+          if (actual === misiones.length) window.GuiaGodot.resuelto(widget);
+        } else {
+          window.GuiaGodot.sacudir(consola);
+        }
+      });
+      pintarMision();
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

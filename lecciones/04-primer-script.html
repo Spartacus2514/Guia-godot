@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tu primer script en GDScript · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="04-primer-script">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Lección 4</span>
+      <h1>Tu primer script en GDScript</h1>
+
+      <p>Clic derecho en un nodo → <strong>Añadir script</strong> → Crear. Este script hace girar las aspas de un molino:</p>
+
+      <pre><code class="gdscript">extends Node3D                 # este script amplía un Node3D
+
+var velocidad = 1.5            # variable: cuánto gira por segundo
+
+func _ready():                 # se ejecuta UNA vez al empezar
+	print("¡El molino funciona!")  # escribe en el panel Salida
+
+func _process(delta):          # se ejecuta en CADA fotograma
+	rotation.z += velocidad * delta</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li>Orden habitual: <code>extends</code> → variables → funciones.</li>
+          <li>Lo que va <strong>dentro</strong> de una función lleva <strong>sangría</strong> (tabulador).</li>
+          <li><code>_ready()</code>: una vez. <code>_process(delta)</code>: cada fotograma.</li>
+          <li>En 3D hay tres ejes: <strong style="color:#ff6b6b">X</strong> (izquierda-derecha), <strong style="color:#7bd88f">Y</strong> (arriba-abajo) y <strong style="color:#6bb3ff">Z</strong> (delante-detrás). Se miden en <strong>metros</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Quieres que una gallina salte. ¿Qué parte de su posición cambias?</p>
+        <button data-opcion="a"><code>position.x</code></button>
+        <button data-opcion="b"><code>position.y</code></button>
+        <button data-opcion="c"><code>position.z</code></button>
+        <p class="explicacion">En Godot el eje <strong>Y</strong> apunta hacia arriba. Truco: los colores del editor son <strong>X roja, Y verde, Z azul</strong>.</p>
+      </div>
+
+      <div class="ordenar" data-codigo>
+        <p>Ordena el script (pon <code>_ready</code> antes que <code>_process</code>):</p>
+        <ul class="piezas">
+          <li>extends Node3D</li>
+          <li>var velocidad = 1.5</li>
+          <li>func _ready():</li>
+          <li>&#9;print("¡Hola!")</li>
+          <li>func _process(delta):</li>
+          <li>&#9;rotation.z += velocidad * delta</li>
+        </ul>
+      </div>
+
+      <div class="error-codigo" data-linea="6">
+        <p>Este script da error. Toca la línea culpable:</p>
+        <pre><code>extends Node3D
+
+var velocidad = 1.5
+
+func _process(delta):
+rotation.z += velocidad * delta</code></pre>
+        <p class="explicacion">Falta la <strong>sangría</strong>. Sin el tabulador, la línea no pertenece a <code>_process</code> y Godot da error.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Quieres mostrar «¡Buenos días, granjero!» una sola vez al empezar. ¿Dónde pones el <code>print()</code>?</p>
+        <button data-opcion="a">En <code>_process(delta)</code>.</button>
+        <button data-opcion="b">En <code>_ready()</code>.</button>
+        <button data-opcion="c">Fuera de cualquier función.</button>
+        <p class="explicacion">En <code>_process</code> se imprimiría unas 60 veces por segundo.</p>
+      </div>
+
+      <h2>¿Por qué <code>* delta</code>?</h2>
+      <p><code>delta</code> = segundos desde el fotograma anterior. Multiplicar por él convierte «por fotograma» en «<strong>por segundo</strong>», así el juego va igual en cualquier ordenador. Compruébalo:</p>
+
+      <div class="widget simulador">
+        <p class="widget-titulo">🎮 Mismo script, PC lento vs PC rápido (activa y desactiva delta)</p>
+        <canvas id="lienzo"></canvas>
+        <div class="controles">
+          <label><input type="checkbox" id="sim-delta" checked> Usar <code>delta</code></label>
+          <button class="boton secundario" id="sim-reiniciar">Reiniciar</button>
+        </div>
+        <pre><code id="sim-codigo"></code></pre>
+        <div class="widget-info" id="sim-explicacion"></div>
+      </div>
+
+      <div class="widget reto" id="bandera">
+        <p class="widget-titulo">🐄 Reto: lleva la vaca al establo</p>
+        <p class="widget-info" id="bandera-texto"></p>
+        <div class="pista-bandera" id="pista">
+          <div class="meta" id="meta">🛖</div>
+          <div class="corredor" id="corredor">🐄</div>
+        </div>
+        <pre><code><span class="t-clave">var</span> velocidad = <input type="number" id="bandera-vel" value="1" step="0.5">
+
+<span class="t-clave">func</span> <span class="t-funcion">_process</span>(delta):
+	position.x += velocidad * delta</code></pre>
+        <button class="boton" id="bandera-ejecutar">▶ Ejecutar 2 segundos</button>
+      </div>
+
+      <div class="completar">
+        <p>Haz que una moneda <strong>gire sobre el eje vertical</strong> a la misma velocidad en cualquier PC:</p>
+        <pre><code><input data-respuesta="extends"> Node3D
+
+var velocidad_giro = 3.0
+
+<input data-respuesta="func"> _process(delta):
+	rotation.<input data-respuesta="y|Y"> += velocidad_giro * <input data-respuesta="delta"></code></pre>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>granja.tscn</code>, añade un <code>MeshInstance3D</code> con un <em>BoxMesh</em>: será un objeto de prueba (luego pondrás tu molino o lo que quieras).</li>
+          <li>Clic derecho sobre él → <strong>Añadir script</strong> → guárdalo en <code>scripts/</code>.</li>
+          <li>Escribe el código de la moneda que gira. Godot habrá puesto <code>extends MeshInstance3D</code> en la primera línea: déjalo así, funciona igual porque un MeshInstance3D también <em>es</em> un Node3D.</li>
+          <li>Pulsa <kbd>F6</kbd> y mira cómo gira. Luego prueba <code>velocidad_giro = -3.0</code>.</li>
+          <li>Añade un <code>print("¡Buenos días, granjero!")</code> en <code>_ready()</code> y búscalo en la Salida.</li>
+        </ul>
+      </div>
+
+      <div class="consejo">
+        <strong>Truco</strong>
+        <kbd>Ctrl</kbd>+clic sobre cualquier palabra del código (como <code>rotation</code>) abre su documentación dentro de Godot.
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    // Simulador de delta
+    (function () {
+      const lienzo = document.getElementById("lienzo");
+      const ctx = lienzo.getContext("2d");
+      const checkDelta = document.getElementById("sim-delta");
+      const codigo = document.getElementById("sim-codigo");
+      const explicacion = document.getElementById("sim-explicacion");
+      const V = 150;
+      const pcs = [
+        { nombre: "PC lento · 30 FPS", fps: 30, x: 0, acumulado: 0, color: "#e8676b" },
+        { nombre: "PC rápido · 144 FPS", fps: 144, x: 0, acumulado: 0, color: "#5fcf80" }
+      ];
+      const TAM = 26;
+
+      function actualizarTexto() {
+        const usarDelta = checkDelta.checked;
+        codigo.innerHTML = window.GuiaGodot.resaltar(usarDelta
+          ? "func _process(delta):\n\tposition.x += velocidad * delta"
+          : "func _process(delta):\n\tposition.x += 2.5   # cantidad fija por fotograma");
+        explicacion.innerHTML = usarDelta
+          ? "<h4>Con delta ✅</h4><p>Los dos van igual de rápido.</p>"
+          : "<h4>Sin delta ❌</h4><p>El PC rápido ejecuta _process casi 5 veces más, así que va casi 5 veces más rápido.</p>";
+      }
+
+      function reiniciar() { pcs.forEach((pc) => { pc.x = 0; pc.acumulado = 0; }); }
+
+      function ajustarTamano() {
+        const escala = window.devicePixelRatio || 1;
+        lienzo.width = lienzo.clientWidth * escala;
+        lienzo.height = lienzo.clientHeight * escala;
+        ctx.setTransform(escala, 0, 0, escala, 0, 0);
+      }
+
+      function dibujar() {
+        const ancho = lienzo.clientWidth, alto = lienzo.clientHeight;
+        ctx.clearRect(0, 0, ancho, alto);
+        const fila = alto / pcs.length;
+        pcs.forEach((pc, i) => {
+          const y = i * fila;
+          ctx.fillStyle = "#a7b0bc";
+          ctx.font = "12px system-ui, sans-serif";
+          ctx.fillText(pc.nombre, 10, y + 18);
+          ctx.strokeStyle = "#3b4552";
+          ctx.beginPath();
+          ctx.moveTo(0, y + fila - 0.5);
+          ctx.lineTo(ancho, y + fila - 0.5);
+          ctx.stroke();
+          ctx.fillStyle = pc.color;
+          ctx.fillRect(pc.x % (ancho + TAM) - TAM, y + fila / 2 - TAM / 2 + 6, TAM, TAM);
+        });
+      }
+
+      let anterior = null;
+      function bucle(ahora) {
+        if (anterior !== null) {
+          const real = Math.min((ahora - anterior) / 1000, 0.1);
+          pcs.forEach((pc) => {
+            pc.acumulado += real;
+            const paso = 1 / pc.fps;
+            while (pc.acumulado >= paso) {
+              pc.acumulado -= paso;
+              pc.x += checkDelta.checked ? V * paso : 2.5;
+            }
+          });
+        }
+        anterior = ahora;
+        dibujar();
+        requestAnimationFrame(bucle);
+      }
+
+      checkDelta.addEventListener("change", () => { actualizarTexto(); reiniciar(); });
+      document.getElementById("sim-reiniciar").addEventListener("click", reiniciar);
+      window.addEventListener("resize", ajustarTamano);
+      ajustarTamano();
+      actualizarTexto();
+      requestAnimationFrame(bucle);
+    })();
+
+    // Reto: llega a la bandera
+    (function () {
+      const widget = document.getElementById("bandera");
+      const texto = document.getElementById("bandera-texto");
+      const corredor = document.getElementById("corredor");
+      const meta = document.getElementById("meta");
+      const entrada = document.getElementById("bandera-vel");
+      const boton = document.getElementById("bandera-ejecutar");
+      const LARGO = 10;        // metros que mide el prado
+      const OBJETIVO = 6;      // posición del establo
+      const TIEMPO = 2;        // segundos de ejecución
+      meta.style.left = (OBJETIVO / LARGO) * 100 + "%";
+      texto.innerHTML = `El establo está en <code>x = ${OBJETIVO}</code> metros. El juego corre <strong>${TIEMPO} segundos</strong>. ¿Qué <code>velocidad</code> (metros por segundo) necesita la vaca?`;
+
+      boton.addEventListener("click", () => {
+        const v = Number(entrada.value) || 0;
+        boton.disabled = true;
+        const inicio = performance.now();
+        function paso(ahora) {
+          const t = Math.min((ahora - inicio) / 1000, TIEMPO);
+          const x = Math.max(0, Math.min(v * t, LARGO));
+          corredor.style.left = (x / LARGO) * 100 + "%";
+          if (t < TIEMPO) return requestAnimationFrame(paso);
+          boton.disabled = false;
+          const final = v * TIEMPO;
+          if (Math.abs(final - OBJETIVO) < 0.001) {
+            texto.innerHTML = `🎉 <strong>¡La vaca está en el establo!</strong> ${v} m/s × ${TIEMPO} s = ${OBJETIVO} m.`;
+            window.GuiaGodot.resuelto(widget);
+          } else {
+            texto.innerHTML = `Has llegado a <code>x = ${final}</code> (${v} × ${TIEMPO}). ${final < OBJETIVO ? "Te quedas corto." : "Te pasas."} Pista: distancia = velocidad × tiempo.`;
+            window.GuiaGodot.sacudir(corredor);
+          }
+        }
+        corredor.style.left = "0%";
+        requestAnimationFrame(paso);
+      });
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

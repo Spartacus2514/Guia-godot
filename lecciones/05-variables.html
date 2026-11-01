@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variables y tipos · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="05-variables">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 1</span>
+      <h1>Variables y tipos</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Una <strong>variable</strong> es una caja con nombre que guarda un dato: tu dinero, tu energía, el nombre de la granja.</li>
+          <li>Se crea con <code>var nombre = valor</code> y se cambia con <code>nombre = otro_valor</code>.</li>
+          <li>Cada dato tiene un <strong>tipo</strong>: <code>int</code> (entero), <code>float</code> (decimal), <code>bool</code> (verdadero/falso), <code>String</code> (texto, entre comillas).</li>
+          <li><code>const</code> = un valor que <strong>nunca cambia</strong>. <code>@export</code> = la variable aparece en el <strong>Inspector</strong>.</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript">const PRECIO_NABO = 20                       # constante: nunca cambia
+@export var nombre_granja: String = "Valle Verde"   # se edita en el Inspector
+var dinero: int = 500                        # número entero
+var energia: float = 100.0                   # número con decimales
+var lloviendo: bool = false                  # true (sí) o false (no)</code></pre>
+
+      <p>El <code>: int</code> después del nombre es el <strong>tipo</strong>. Es opcional, pero ponlo siempre: así Godot te avisa si te equivocas antes de ejecutar el juego.</p>
+
+      <div class="consejo">
+        <strong>¿Para qué sirve <code>@export</code>?</strong>
+        Para cambiar un valor <strong>desde el editor, sin tocar el código</strong>. Dos usos que tendrás en tu juego:
+        <ul>
+          <li><strong>Ajustar mientras pruebas:</strong> con <code>@export var velocidad: float = 5.0</code> en el granjero, si al jugar lo notas lento, lo subes en el Inspector y vuelves a probar.</li>
+          <li><strong>Que cada copia de una escena sea distinta:</strong> todas las vacas usan el mismo script, pero con <code>@export var nombre: String</code> cada una puede llamarse distinto («Lola», «Pinta»…). Igual con la vida de cada enemigo o el precio de cada objeto.</li>
+        </ul>
+        En esta lección lo practicamos con el nombre de la granja porque se comprueba fácil. En el juego final, ese nombre lo elegirá el jugador en un menú.
+      </div>
+
+      <div class="paso-a-paso">
+        <pre><code>var dinero = 500
+var precio = 80
+
+func _ready():
+	dinero = dinero - precio
+	dinero -= precio
+	print("Te quedan ", dinero, " monedas")</code></pre>
+        <script type="application/json">[
+          {"l": 1, "v": {"dinero": "500"}, "n": "Se crea la caja <code>dinero</code> con 500 dentro."},
+          {"l": 2, "v": {"dinero": "500", "precio": "80"}, "n": "Otra caja: <code>precio</code> vale 80."},
+          {"l": 4, "v": {"dinero": "500", "precio": "80"}, "n": "Al empezar, Godot llama a <code>_ready()</code> y entra en ella."},
+          {"l": 5, "v": {"dinero": "420", "precio": "80"}, "n": "Primero se calcula lo de la derecha (500 − 80 = 420) y luego se guarda en <code>dinero</code>."},
+          {"l": 6, "v": {"dinero": "340", "precio": "80"}, "n": "<code>-=</code> es un atajo de <code>dinero = dinero - precio</code>. También existen <code>+=</code>, <code>*=</code> y <code>/=</code>."},
+          {"l": 7, "v": {"dinero": "340", "precio": "80"}, "s": ["Te quedan 340 monedas"], "n": "<code>print()</code> junta los textos y el número separados por comas y los escribe en la Salida."}
+        ]</script>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada valor con su tipo:</p>
+        <ul class="pares">
+          <li><span><code>500</code></span><span><code>int</code> (entero)</span></li>
+          <li><span><code>3.5</code></span><span><code>float</code> (decimal)</span></li>
+          <li><span><code>true</code></span><span><code>bool</code> (sí/no)</span></li>
+          <li><span><code>"nabo"</code></span><span><code>String</code> (texto)</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">¿De qué tipo es <code>"500"</code>, con comillas?</p>
+        <button data-opcion="a"><code>int</code></button>
+        <button data-opcion="b"><code>float</code></button>
+        <button data-opcion="c"><code>String</code></button>
+        <p class="explicacion">Las comillas lo convierten en texto. <code>500</code> es un número con el que puedes hacer cuentas; <code>"500"</code> es solo texto.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b" data-tipo="adivina">
+        <p class="pregunta">Repartes 7 zanahorias entre 2 vacas: <code>var por_vaca = 7 / 2</code>. ¿Cuánto vale <code>por_vaca</code>?</p>
+        <button data-opcion="a"><code>3.5</code></button>
+        <button data-opcion="b"><code>3</code></button>
+        <button data-opcion="c">Da error.</button>
+        <p class="explicacion">¡Trampa típica! Entero entre entero da <strong>entero</strong>: se pierden los decimales. Si quieres <code>3.5</code>, escribe <code>7 / 2.0</code>.</p>
+      </div>
+
+      <div class="esencial">
+        <p><strong>Texto y números no se mezclan con <code>+</code>.</strong> Para escribir ambos con <code>print</code>, sepáralos con comas: <code>print("Dinero: ", dinero)</code>. O convierte el número en texto con <code>str()</code>: <code>"Dinero: " + str(dinero)</code>.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="4">
+        <p>Este script da error al ejecutarse. Toca la línea culpable:</p>
+        <pre><code>var dinero = 500
+
+func _ready():
+	print("Dinero: " + dinero)</code></pre>
+        <p class="explicacion">No se puede <strong>sumar texto y número</strong>. Dos soluciones: <code>print("Dinero: ", dinero)</code> (con coma) o convertir el número en texto con <code>"Dinero: " + str(dinero)</code>.<br>Godot dice: <span class="error-texto">Invalid operands 'String' and 'int' in operator '+'.</span></p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">El precio de venta de un nabo es siempre 20 y nunca cambia durante el juego. ¿Cómo lo declaras?</p>
+        <button data-opcion="a"><code>var PRECIO_NABO = 20</code></button>
+        <button data-opcion="b"><code>const PRECIO_NABO = 20</code></button>
+        <button data-opcion="c"><code>@export var PRECIO_NABO = 20</code></button>
+        <p class="explicacion">Con <code>const</code>, si por error intentas cambiarlo, Godot te avisa. Las constantes se suelen escribir en MAYÚSCULAS.</p>
+      </div>
+
+      <div class="completar">
+        <p>Completa: la velocidad debe verse en el Inspector, el dinero es un número entero, la energía máxima nunca cambia y hoy <strong>sí</strong> llueve.</p>
+        <pre><code><input data-respuesta="@export"> var velocidad: float = 5.0
+var dinero: <input data-respuesta="int"> = 500
+<input data-respuesta="const"> MAX_ENERGIA = 100
+var lloviendo: bool = <input data-respuesta="true"></code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>Nombres</strong>
+        En GDScript se usa <code>minusculas_con_guiones_bajos</code> para variables y funciones. Evita tildes y la ñ en los nombres: <code>energia</code>, no <code>energía</code>.
+      </div>
+
+      <h2>Tu script de datos</h2>
+      <p>A partir de ahora, cada lección añade algo a un mismo script con los datos de tu granja. Al final del módulo será la base de tu economía.</p>
+
+      <pre><code class="gdscript">extends Node
+
+const PRECIO_NABO = 20
+
+@export var nombre_granja: String = "Valle Verde"
+
+var dinero: int = 500
+var energia: int = 100
+
+
+func _ready():
+	print("Bienvenido a ", nombre_granja)
+	print("Dinero: ", dinero, " · Energía: ", energia)</code></pre>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>granja.tscn</code>, añade un nodo <code>Node</code> (el más básico) como hijo de <code>Granja</code> y llámalo <code>Datos</code>.</li>
+          <li>Añádele un script y guárdalo como <code>scripts/datos_granja.gd</code>.</li>
+          <li>Escribe el script de arriba (escríbelo tú en vez de copiarlo: se aprende mucho más).</li>
+          <li>Pulsa <kbd>F6</kbd> y busca los dos mensajes en la Salida.</li>
+          <li>Selecciona <code>Datos</code>, cambia <em>Nombre Granja</em> en el Inspector y vuelve a pulsar <kbd>F6</kbd>.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chuleta y glosario · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-extra="chuleta">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Herramientas</span>
+      <h1>📒 Chuleta y glosario</h1>
+      <p>Todo lo aprendido, en una página. Tenla abierta junto a Godot mientras programas.</p>
+
+      <input class="buscador" id="buscador" type="search" placeholder="Buscar: diccionario, señal, null, velocity, rayo…" autocomplete="off">
+      <nav class="indice-chuleta" id="indice-chuleta">
+        <a href="#estructura">Script</a>
+        <a href="#variables">Variables</a>
+        <a href="#condiciones">Condiciones</a>
+        <a href="#funciones">Funciones</a>
+        <a href="#arrays">Arrays</a>
+        <a href="#bucles">Bucles</a>
+        <a href="#diccionarios">Diccionarios</a>
+        <a href="#vector3">Vector3</a>
+        <a href="#nodos-senales">Nodos y señales</a>
+        <a href="#controles">Controles</a>
+        <a href="#personaje">Personaje</a>
+        <a href="#camara">Cámara y giros</a>
+        <a href="#animaciones">Animaciones</a>
+        <a href="#interactuar">Interactuar</a>
+        <a href="#atajos">Atajos</a>
+        <a href="#errores">Errores frecuentes</a>
+        <a href="#glosario">Glosario</a>
+      </nav>
+      <p class="sin-resultados" id="sin-resultados" hidden>No hay nada con esa palabra. Prueba con otra (en español o en inglés).</p>
+
+      <section class="bloque-chuleta" id="estructura">
+        <h2>Estructura de un script</h2>
+        <div class="entrada">
+          <h3>Orden habitual</h3>
+          <pre><code class="gdscript">extends Node3D                     # qué tipo de nodo amplía
+
+signal cultivo_listo(nombre: String)   # señales
+const PRECIO = 20                  # constantes
+@export var velocidad: float = 5.0 # variables del Inspector
+var dinero: int = 500              # variables normales
+
+
+func _ready():                     # una vez, al empezar
+	pass
+
+
+func _process(delta):              # cada fotograma
+	pass</code></pre>
+          <p>Fuera de las funciones solo hay declaraciones. Las instrucciones (como <code>print</code>) van <strong>dentro</strong> de una función. <code>pass</code> = «no hagas nada» (para bloques vacíos).</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="variables">
+        <h2>Variables y tipos</h2>
+        <div class="entrada">
+          <h3>Declarar variables y constantes</h3>
+          <pre><code class="gdscript">var dinero: int = 500       # entero
+var energia: float = 99.5   # decimal
+var lloviendo: bool = false # true / false
+var nombre: String = "Ana"  # texto
+var vidas := 3              # := deduce el tipo (int)
+const MAX_ENERGIA = 100     # nunca cambia
+@export var velocidad := 5.0 # editable en el Inspector</code></pre>
+        </div>
+        <div class="entrada">
+          <h3>Operaciones</h3>
+          <pre><code class="gdscript">dinero += 50     # dinero = dinero + 50   (también -=, *=, /=)
+7 / 2            # 3   (entero / entero = entero)
+7 / 2.0          # 3.5
+7 % 2            # 1   (resto de la división)
+str(dinero)      # el número convertido en texto: "550"
+"Hola " + nombre # unir textos
+print("Dinero: ", dinero)  # print une varias cosas separadas por comas</code></pre>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="condiciones">
+        <h2>Condiciones</h2>
+        <div class="entrada">
+          <h3>if, elif, else</h3>
+          <pre><code class="gdscript">if energia &lt;= 0:
+	print("Te desmayas")
+elif energia &lt; 30:
+	print("Estás cansado")
+else:
+	print("Tienes energía")</code></pre>
+          <p>Solo se ejecuta la <strong>primera</strong> rama que se cumple.</p>
+        </div>
+        <div class="entrada">
+          <h3>Comparar y combinar</h3>
+          <pre><code class="gdscript">a == b   # iguales          a != b   # distintos
+a &lt; b    a &gt; b    a &lt;= b    a &gt;= b
+tiene_pico and not es_de_noche   # and: las dos · or: al menos una · not: lo contrario
+if "nabo" in inventario:         # ¿está dentro?</code></pre>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="funciones">
+        <h2>Funciones</h2>
+        <div class="entrada">
+          <h3>Definir y llamar</h3>
+          <pre><code class="gdscript">func gastar_energia(cantidad: int = 5) -> void:  # = 5: valor por defecto
+	energia -= cantidad
+
+func puede_comprar(precio: int) -> bool:  # devuelve un bool
+	return dinero >= precio
+
+gastar_energia(10)   # llamar con un dato
+gastar_energia()     # usa el valor por defecto (5)
+if puede_comprar(20):
+	print("¡A comprar!")</code></pre>
+          <p>Las variables creadas dentro de una función son <strong>locales</strong>: solo existen ahí. <code>return</code> devuelve un valor y termina la función.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="arrays">
+        <h2>Arrays (listas)</h2>
+        <div class="entrada">
+          <h3>Crear y usar</h3>
+          <pre><code class="gdscript">var cultivos: Array[String] = ["nabo", "patata"]
+cultivos[0]              # "nabo" (se empieza en 0)
+cultivos[-1]             # el último
+cultivos.append("fresa") # añadir al final
+cultivos.size()          # cuántos hay
+cultivos.has("nabo")     # ¿está? → true / false
+cultivos.erase("nabo")   # quitar por valor
+cultivos.remove_at(0)    # quitar por posición
+cultivos.clear()         # vaciar
+cultivos.is_empty()      # ¿está vacío?</code></pre>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="bucles">
+        <h2>Bucles</h2>
+        <div class="entrada">
+          <h3>for y range</h3>
+          <pre><code class="gdscript">for cultivo in cultivos:   # una vuelta por elemento
+	print(cultivo)
+
+for i in range(5):         # 0, 1, 2, 3, 4
+	pass
+for i in range(1, 8):      # 1 … 7 (el final no se incluye)
+	pass
+for i in range(10, 0, -2): # 10, 8, 6, 4, 2
+	pass</code></pre>
+        </div>
+        <div class="entrada">
+          <h3>while, break y continue</h3>
+          <pre><code class="gdscript">while energia > 0:   # repite mientras se cumpla
+	energia -= 10    # ¡algo debe hacer falsa la condición!
+
+for cultivo in cultivos:
+	if cultivo == "seco":
+		continue     # salta a la siguiente vuelta
+	if cultivo == "maleza":
+		break        # sale del bucle
+	print(cultivo)</code></pre>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="diccionarios">
+        <h2>Diccionarios</h2>
+        <div class="entrada">
+          <h3>Crear y usar</h3>
+          <pre><code class="gdscript">var inventario: Dictionary = {"nabo": 3, "patata": 5}
+inventario["nabo"]            # 3 (¡error si la clave no existe!)
+inventario["fresa"] = 2       # añadir o cambiar
+inventario.get("melon", 0)    # 0 si no existe (sin error)
+inventario.has("nabo")        # ¿existe la clave?
+inventario.erase("patata")    # quitar
+inventario.keys()             # ["nabo", "fresa"]
+inventario.values()           # [3, 2]
+
+for objeto in inventario:     # recorre las CLAVES
+	print(objeto, ": ", inventario[objeto])
+
+# Sumar exista o no:
+inventario["nabo"] = inventario.get("nabo", 0) + 1</code></pre>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="vector3">
+        <h2>Vector3</h2>
+        <div class="entrada">
+          <h3>Posiciones y direcciones</h3>
+          <pre><code class="gdscript">position = Vector3(3, 0, -2)       # colocar (en metros)
+position += Vector3(1, 0, 0)       # mover desde donde está
+Vector3.ZERO      # (0, 0, 0)
+Vector3.UP        # (0, 1, 0)   arriba es +Y
+Vector3.FORWARD   # (0, 0, -1)  adelante es −Z
+Vector3.RIGHT     # (1, 0, 0)
+
+a.distance_to(b)          # metros entre a y b
+(b - a).normalized()      # dirección de a hacia b (largo 1)
+global_position           # posición en el mundo (position es relativa al padre)</code></pre>
+          <p>Al imprimir un vector, Godot muestra los decimales: <code>print(Vector3.FORWARD)</code> escribe <code>(0.0, 0.0, -1.0)</code>.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="nodos-senales">
+        <h2>Nodos y señales</h2>
+        <div class="entrada">
+          <h3>Acceder a otros nodos</h3>
+          <pre><code class="gdscript">$Timer                          # el hijo llamado "Timer"
+$Huerto/Nabo                    # un nodo dentro de otro
+@onready var reloj: Timer = $Timer  # guardarlo al empezar</code></pre>
+          <p>El nombre tiene que coincidir <strong>exactamente</strong> con el del árbol, mayúsculas incluidas.</p>
+        </div>
+        <div class="entrada">
+          <h3>Señales</h3>
+          <pre><code class="gdscript">signal cultivo_listo(nombre: String)       # declarar
+cultivo_listo.emit("nabo")                 # emitir
+$Nabo.cultivo_listo.connect(_on_cultivo_listo)  # conectar (¡sin paréntesis!)
+
+func _on_cultivo_listo(nombre: String):    # la función que responde
+	print("¡Listo: ", nombre, "!")</code></pre>
+          <p>Señales que ya traen los nodos: <code>Timer.timeout</code>, <code>Button.pressed</code>, <code>Area3D.body_entered</code>, <code>AnimationPlayer.animation_finished</code>. También se conectan desde la pestaña <strong>Nodo</strong>, junto al Inspector.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="controles">
+        <h2>Controles (Input)</h2>
+        <div class="entrada">
+          <h3>Acciones del Mapa de Entrada</h3>
+          <pre><code class="gdscript">Input.is_action_pressed("mover_adelante")        # mientras la mantienes
+Input.is_action_just_pressed("interactuar")      # solo al pulsarla
+Input.is_action_just_released("usar_herramienta")  # solo al soltarla</code></pre>
+          <p>Se crean en <strong>Proyecto → Configuración del Proyecto → Mapa de Entrada</strong>: escribe el nombre en <em>Añadir Nueva Acción</em> → Añadir → <strong>+</strong> en su fila → pulsa la tecla → Aceptar. Una acción puede tener varias teclas y botones del mando.</p>
+        </div>
+        <div class="entrada">
+          <h3>Dirección de las teclas</h3>
+          <pre><code class="gdscript">var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+var giro := Input.get_axis("camara_izquierda", "camara_derecha")</code></pre>
+          <p><code>get_vector</code> devuelve un <code>Vector2</code>: x = −1 izquierda / +1 derecha, y = −1 adelante / +1 atrás. En diagonal, <code>(0.707107, -0.707107)</code>: el largo nunca pasa de 1. <code>get_axis</code> es un solo eje: −1, 0 o +1. <code>:=</code> deduce el tipo de la variable.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="personaje">
+        <h2>El personaje: CharacterBody3D</h2>
+        <div class="entrada">
+          <h3>Caminar con gravedad</h3>
+          <pre><code class="gdscript">extends CharacterBody3D
+
+@export var velocidad: float = 4.0
+
+func _physics_process(delta: float) -> void:
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	var direccion := Vector3(entrada.x, 0, entrada.y)
+	velocity.x = direccion.x * velocidad
+	velocity.z = direccion.z * velocidad
+	move_and_slide()</code></pre>
+          <p><code>velocity</code>: metros por segundo. <code>move_and_slide()</code> mueve, se para al chocar y se desliza (sin nada dentro de los paréntesis y sin multiplicar por <code>delta</code>). Cambia solo la x y la z: la y es la gravedad. Va en <code>_physics_process</code>, que se ejecuta 60 veces por segundo.</p>
+        </div>
+        <div class="entrada">
+          <h3>Qué necesita para chocar</h3>
+          <p>El personaje: una <code>CollisionShape3D</code> con una cápsula (<em>Position Y</em> = 1 para que los pies queden en el suelo). El suelo, las vallas y las casas: un <code>StaticBody3D</code> con su forma. Atajo: selecciona el <code>MeshInstance3D</code> → <strong>Malla → Crear Forma de Colisión…</strong> → Hijo de Cuerpo Estático. Con <code>position +=</code> se atraviesa todo.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="camara">
+        <h2>Cámara y giros</h2>
+        <div class="entrada">
+          <h3>Cámara que sigue</h3>
+          <pre><code>Granjero (CharacterBody3D)
+└─ BrazoCamara (SpringArm3D)   ← Position Y = 1.5 · Rotation X = -50 · Spring Length = 8
+   └─ Camara (Camera3D)</code></pre>
+          <p>El brazo es hijo del granjero, así que la cámara le sigue sola. Sale hacia atrás (+Z) y se encoge si algo se mete en medio. Gíralo en Y para dar vueltas alrededor: <code>brazo.rotation.y += giro * 2.0 * delta</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Moverse según la cámara</h3>
+          <pre><code class="gdscript">var direccion := Vector3(entrada.x, 0, entrada.y).rotated(Vector3.UP, brazo.rotation.y)</code></pre>
+          <p>Gira la dirección de las teclas lo mismo que el brazo: «adelante» siempre es hacia el fondo de la pantalla.</p>
+        </div>
+        <div class="entrada">
+          <h3>Girar el modelo hacia donde camina</h3>
+          <pre><code class="gdscript">if direccion != Vector3.ZERO:
+	var angulo := atan2(direccion.x, direccion.z)
+	modelo.rotation.y = lerp_angle(modelo.rotation.y, angulo, velocidad_giro * delta)</code></pre>
+          <p>Gira solo el <code>Modelo</code> (si giras el Granjero, gira la cámara). Los <code>.glb</code> miran hacia +Z (<code>Vector3.MODEL_FRONT</code>); si el tuyo va de espaldas, usa <code>atan2(-direccion.x, -direccion.z)</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Ángulos e interpolación</h3>
+          <p>En el código los ángulos van en <strong>radianes</strong>: <code>PI</code> ≈ 3.14 = 180°, <code>PI / 2</code> = 90°. En el Inspector, en grados (<code>rotation_degrees</code>). <code>lerp(0, 10, 0.5)</code> = 5: un valor entre dos. <code>x = lerp(x, objetivo, peso)</code> en cada fotograma = acercarse suave. <code>lerp_angle</code> hace lo mismo con ángulos, por el camino corto.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="animaciones">
+        <h2>Animaciones</h2>
+        <div class="entrada">
+          <h3>Reproducir animaciones del modelo</h3>
+          <pre><code class="gdscript">@onready var animaciones: AnimationPlayer = $Modelo/AnimationPlayer
+
+func animar(direccion: Vector3) -> void:
+	if direccion != Vector3.ZERO:
+		animaciones.play("caminar")
+	else:
+		animaciones.play("quieto")</code></pre>
+          <p>Llamar a <code>play</code> con la animación que ya suena no la reinicia. Los nombres son exactos (mayúsculas incluidas): míralos con <code>print(animaciones.get_animation_list())</code>. <code>play("caminar", 0.2)</code> mezcla durante 0.2 s.</p>
+        </div>
+        <div class="entrada">
+          <h3>Animaciones en bucle</h3>
+          <p>Doble clic en el <code>.glb</code> → Ajustes Avanzados de Importación → selecciona la animación → <em>Loop Mode</em>: <strong>Linear</strong> → Reimportar. En Blender: termina el nombre en <code>-loop</code> y Godot la importa ya en bucle.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="interactuar">
+        <h2>Interactuar y grupos</h2>
+        <div class="entrada">
+          <h3>Rayo hacia delante</h3>
+          <pre><code class="gdscript">rayo.target_position = mirando * 1.5     # 1.5 m hacia donde mira
+
+func interactuar() -> void:
+	if not rayo.is_colliding():
+		return
+	var objeto := rayo.get_collider()
+	if objeto.has_method("interactuar"):
+		objeto.interactuar()</code></pre>
+          <p>El <code>RayCast3D</code> ignora a su padre (<em>Exclude Parent</em>). <code>get_collider()</code> devuelve el cuerpo tocado (<code>StaticBody3D</code>, <code>CharacterBody3D</code>…): el script con <code>interactuar()</code> va en ese cuerpo. Para zonas (entrar en la mina), mejor un <code>Area3D</code> con <code>body_entered</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Grupos</h3>
+          <pre><code class="gdscript">objeto.is_in_group("vacas")                        # ¿tiene la etiqueta?
+for vaca in get_tree().get_nodes_in_group("vacas"):  # todos los del grupo
+	print(vaca.name)</code></pre>
+          <p>Se añaden en la pestaña <strong>Nodo → Grupos</strong>: <strong>+</strong>, escribe el nombre y Crear (el nodo seleccionado entra en el grupo).</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="atajos">
+        <h2>Atajos del editor</h2>
+        <div class="entrada">
+          <h3>Ejecutar</h3>
+          <p><kbd>F5</kbd> ejecutar el proyecto · <kbd>F6</kbd> ejecutar la escena abierta · <kbd>F8</kbd> detener (en macOS: <kbd>⌘</kbd>+<kbd>B</kbd> y <kbd>⌘</kbd>+<kbd>R</kbd>).</p>
+        </div>
+        <div class="entrada">
+          <h3>Escena y visor 3D</h3>
+          <p><kbd>Ctrl</kbd>+<kbd>A</kbd> añadir nodo hijo · <kbd>Ctrl</kbd>+<kbd>D</kbd> duplicar · <kbd>Ctrl</kbd>+<kbd>S</kbd> guardar · <kbd>Ctrl</kbd>+<kbd>Z</kbd> deshacer · <kbd>F</kbd> centrar en lo seleccionado · <kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd> seleccionar, mover, rotar, escalar · clic derecho + <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> volar.</p>
+        </div>
+        <div class="entrada">
+          <h3>Scripts y depurador</h3>
+          <p><kbd>Ctrl</kbd>+clic en una palabra: abrir su documentación · <kbd>F9</kbd> poner o quitar un punto de ruptura · <kbd>F10</kbd> avanzar una línea · <kbd>F11</kbd> entrar en la función.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="errores">
+        <h2>Errores frecuentes</h2>
+        <p>Los mensajes salen en inglés. Estos son los de <strong>Godot 4.7</strong>, comprobados provocando cada error; en otras versiones el texto puede cambiar un poco, así que fíjate en las <strong>palabras clave</strong>. Haz clic en el error, en la Salida o en el Depurador, y Godot te lleva a la línea.</p>
+        <div class="entrada">
+          <h3>Expected indented block</h3>
+          <p class="error-texto">Expected indented block after "if" block.</p>
+          <p>Después de una línea que acaba en <code>:</code> (<code>if</code>, <code>for</code>, <code>func</code>…) falta la sangría. Pon un tabulador al principio de las líneas de dentro.</p>
+        </div>
+        <div class="entrada">
+          <h3>Used space character for indentation</h3>
+          <p class="error-texto">Used space character for indentation instead of tab as used before in the file.</p>
+          <p>Has mezclado tabuladores y espacios en la sangría (pasa mucho al copiar código). Usa solo tabuladores: el menú <em>Editar</em> del editor de scripts tiene una opción para convertir la sangría.</p>
+        </div>
+        <div class="entrada">
+          <h3>Expected ":"</h3>
+          <p class="error-texto">Expected ":" after "if" condition.</p>
+          <p>Falta el <code>:</code> al final de un <code>if</code>, <code>elif</code>, <code>else</code>, <code>for</code>, <code>while</code> o <code>func</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Assignment is not allowed inside an expression</h3>
+          <p class="error-texto">Assignment is not allowed inside an expression.</p>
+          <p>Has puesto un solo <code>=</code> donde querías comparar: <code>if dinero = 100:</code>. Para comparar se usan dos: <code>==</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Unexpected identifier in class body</h3>
+          <p class="error-texto">Unexpected identifier "print" in class body.</p>
+          <p>Hay una instrucción (como <code>print</code>) fuera de cualquier función. Fuera de las funciones solo van declaraciones: muévela dentro de <code>_ready()</code> o de otra función.</p>
+        </div>
+        <div class="entrada">
+          <h3>Not declared in the current scope</h3>
+          <p class="error-texto">Identifier "cosecha" not declared in the current scope.</p>
+          <p>Esa variable no existe ahí: está mal escrita, o es local de otra función. Declárala arriba del script o pásala como parámetro.</p>
+        </div>
+        <div class="entrada">
+          <h3>Function not found</h3>
+          <p class="error-texto">Function "gastar_enrgia()" not found in base self.</p>
+          <p>Llamas a una función que no existe: casi siempre es una falta de ortografía.</p>
+        </div>
+        <div class="entrada">
+          <h3>Invalid operands</h3>
+          <p class="error-texto">Invalid operands 'String' and 'int' in operator '+'.</p>
+          <p>Intentas sumar texto y número. Usa <code>str(numero)</code> o separa con comas dentro de <code>print</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Cannot assign … type</h3>
+          <p class="error-texto">Cannot assign a value of type "String" as "int".</p>
+          <p>Metes un dato de un tipo en una variable de otro tipo (por ejemplo, texto en un <code>int</code>).</p>
+        </div>
+        <div class="entrada">
+          <h3>Node not found</h3>
+          <p class="error-texto">Node not found: "Timer" (relative to "/root/Granja/Datos").</p>
+          <p>El <code>$Nodo</code> no existe con ese nombre o esa ruta. Compara con el árbol: las mayúsculas cuentan. El mensaje te dice desde qué nodo buscaba.</p>
+        </div>
+        <div class="entrada">
+          <h3>null value / Nil</h3>
+          <p class="error-texto">Cannot call method 'start' on a null value.</p>
+          <p class="error-texto">Invalid call. Nonexistent function 'start' in base 'Nil'.</p>
+          <p class="error-texto">Cannot call method 'has_method' on a null value.</p>
+          <p>Estás usando algo vacío (<code>null</code>, que Godot también llama <code>Nil</code>). El primer mensaje sale si la variable tiene tipo (<code>var reloj: Timer</code>), y el segundo si no lo tiene. Casi siempre viene de un <code>Node not found</code> anterior, de una variable a la que nunca diste valor o de un <code>get_collider()</code> sin nada delante (comprueba antes <code>is_colliding()</code>). El error salta donde se <em>usa</em>, pero la causa suele estar antes.</p>
+        </div>
+        <div class="entrada">
+          <h3>Invalid access of index</h3>
+          <p class="error-texto">Invalid access of index '3' on a base object of type: 'Array'.</p>
+          <p>Pides una posición del array que no existe («fuera de rango»). Con 3 elementos, los índices son 0, 1 y 2.</p>
+        </div>
+        <div class="entrada">
+          <h3>Invalid access to property or key</h3>
+          <p class="error-texto">Invalid access to property or key 'melon' on a base object of type 'Dictionary'.</p>
+          <p>Lees una clave de diccionario (o una propiedad) que no existe. Revisa cómo está escrita, o usa <code>get(clave, valor_por_defecto)</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>InputMap action doesn't exist</h3>
+          <p class="error-texto">The InputMap action "mover_adelnte" doesn't exist. Did you mean "mover_adelante"?</p>
+          <p>Esa acción no está en el Mapa de Entrada: casi siempre, una falta de ortografía. El juego no se para, pero la acción nunca cuenta como pulsada.</p>
+        </div>
+        <div class="entrada">
+          <h3>"$" before "_ready()"</h3>
+          <p class="error-texto">The default value uses "$" which won't return nodes in the scene tree before "_ready()" is called. Use the "@onready" annotation to solve this.</p>
+          <p>Falta <code>@onready</code> delante de una variable que usa <code>$Nodo</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>velocity / move_and_slide no existen</h3>
+          <p class="error-texto">Identifier "velocity" not declared in the current scope.</p>
+          <p class="error-texto">Function "move_and_slide()" not found in base self.</p>
+          <p>El script no extiende <code>CharacterBody3D</code> (por ejemplo, pone <code>extends Node3D</code>).</p>
+        </div>
+        <div class="entrada">
+          <h3>Too many / too few arguments</h3>
+          <p class="error-texto">Too many arguments for "move_and_slide()" call. Expected at most 0 but received 1.</p>
+          <p class="error-texto">Too few arguments for "get_vector()" call. Expected at least 4 but received 2.</p>
+          <p>Le pasas a una función más o menos datos de los que acepta. <code>move_and_slide(velocity)</code> es de Godot 3: en Godot 4 va vacío. <code>get_vector</code> necesita las cuatro acciones.</p>
+        </div>
+        <div class="entrada">
+          <h3>Vector2 en un Vector3</h3>
+          <p class="error-texto">Value of type "Vector2" cannot be assigned to a variable of type "Vector3".</p>
+          <p>Por ejemplo, <code>velocity = entrada * velocidad</code>: <code>get_vector</code> da dos números y <code>velocity</code> necesita tres. Pásalo a 3D con <code>Vector3(entrada.x, 0, entrada.y)</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Cannot infer the type</h3>
+          <p class="error-texto">Cannot infer the type of "objeto" variable because the value doesn't have a set type.</p>
+          <p>Usas <code>:=</code> con algo cuyo tipo Godot no conoce (por ejemplo, de una variable sin tipo). Ponle tipo a la variable de origen (<code>@onready var rayo: RayCast3D = …</code>) o usa <code>=</code> en vez de <code>:=</code>.</p>
+        </div>
+        <div class="entrada">
+          <h3>Animation not found</h3>
+          <p class="error-texto">Animation not found: "Caminar".</p>
+          <p>Esa animación no existe con ese nombre: las mayúsculas cuentan. Míralos con <code>print(animaciones.get_animation_list())</code>.</p>
+        </div>
+      </section>
+
+      <section class="bloque-chuleta" id="glosario">
+        <h2>Glosario</h2>
+        <p>Los términos en inglés te sirven para buscar ayuda y entender los errores.</p>
+        <table class="tabla-glosario">
+          <thead><tr><th>Español</th><th>Inglés</th><th>Qué es</th></tr></thead>
+          <tbody>
+            <tr><td>Nodo</td><td>node</td><td>Pieza básica con una función (mostrar, chocar, sonar…).</td></tr>
+            <tr><td>Escena</td><td>scene</td><td>Árbol de nodos guardado en un <code>.tscn</code>.</td></tr>
+            <tr><td>Árbol de escena</td><td>scene tree</td><td>Todos los nodos del juego mientras se ejecuta.</td></tr>
+            <tr><td>Padre / hijo</td><td>parent / child</td><td>Relación entre nodos del árbol.</td></tr>
+            <tr><td>Instanciar</td><td>instantiate / instance</td><td>Meter una copia de una escena dentro de otra.</td></tr>
+            <tr><td>Script</td><td>script</td><td>Archivo <code>.gd</code> con código que amplía un nodo.</td></tr>
+            <tr><td>Variable</td><td>variable</td><td>Caja con nombre que guarda un dato.</td></tr>
+            <tr><td>Constante</td><td>constant</td><td>Valor que nunca cambia (<code>const</code>).</td></tr>
+            <tr><td>Tipo</td><td>type</td><td><code>int</code>, <code>float</code>, <code>bool</code>, <code>String</code>…</td></tr>
+            <tr><td>Entero / decimal</td><td>integer / float</td><td>Número sin decimales / con decimales.</td></tr>
+            <tr><td>Texto</td><td>string</td><td>Texto entre comillas.</td></tr>
+            <tr><td>Booleano</td><td>boolean</td><td><code>true</code> o <code>false</code>.</td></tr>
+            <tr><td>Función / método</td><td>function / method</td><td>Bloque de código con nombre que se puede llamar.</td></tr>
+            <tr><td>Parámetro / argumento</td><td>parameter / argument</td><td>Dato que recibe una función.</td></tr>
+            <tr><td>Devolver</td><td>return</td><td>Responder con un valor y terminar la función.</td></tr>
+            <tr><td>Condición</td><td>condition</td><td>Pregunta que es verdadera o falsa.</td></tr>
+            <tr><td>Bucle</td><td>loop</td><td>Código que se repite (<code>for</code>, <code>while</code>).</td></tr>
+            <tr><td>Lista</td><td>array</td><td>Colección ordenada de elementos.</td></tr>
+            <tr><td>Índice</td><td>index</td><td>Posición en un array (empieza en 0).</td></tr>
+            <tr><td>Diccionario</td><td>dictionary</td><td>Parejas clave: valor.</td></tr>
+            <tr><td>Clave / valor</td><td>key / value</td><td>El nombre y el dato de cada pareja de un diccionario.</td></tr>
+            <tr><td>Señal</td><td>signal</td><td>Aviso que emite un nodo y escuchan otros.</td></tr>
+            <tr><td>Emitir / conectar</td><td>emit / connect</td><td>Lanzar una señal / escucharla con una función.</td></tr>
+            <tr><td>Nulo</td><td>null / Nil</td><td>«Nada»: una variable o nodo vacío.</td></tr>
+            <tr><td>Fotograma</td><td>frame</td><td>Cada imagen que dibuja el juego (60 por segundo, por ejemplo).</td></tr>
+            <tr><td>Malla</td><td>mesh</td><td>La forma 3D que se dibuja.</td></tr>
+            <tr><td>Colisión</td><td>collision</td><td>Choque entre cuerpos físicos.</td></tr>
+            <tr><td>Cuerpo físico</td><td>physics body</td><td><code>StaticBody3D</code>, <code>CharacterBody3D</code>, <code>RigidBody3D</code>.</td></tr>
+            <tr><td>Recurso</td><td>resource</td><td>Datos guardados en un archivo (<code>.tres</code>): texturas, cultivos, objetos…</td></tr>
+            <tr><td>Autocarga</td><td>autoload / singleton</td><td>Script siempre disponible desde cualquier escena (módulo 5).</td></tr>
+            <tr><td>Salida</td><td>output</td><td>Panel donde aparecen los <code>print</code> y los errores.</td></tr>
+            <tr><td>Depurador</td><td>debugger</td><td>Herramienta para pausar el juego y ver qué pasa.</td></tr>
+            <tr><td>Punto de ruptura</td><td>breakpoint</td><td>Línea en la que el depurador pausa el juego.</td></tr>
+            <tr><td>Acción</td><td>action</td><td>Nombre de un control (<code>mover_adelante</code>) con sus teclas y botones.</td></tr>
+            <tr><td>Mapa de entrada</td><td>input map</td><td>Lista de acciones del proyecto y sus teclas.</td></tr>
+            <tr><td>Mando / joystick</td><td>gamepad / joypad / joystick</td><td>Control de consola. Sus botones se añaden a las mismas acciones.</td></tr>
+            <tr><td>Velocidad</td><td>velocity</td><td>Metros por segundo en cada eje, en un <code>Vector3</code>.</td></tr>
+            <tr><td>Gravedad</td><td>gravity</td><td>Lo que hace caer: <code>(0, -9.8, 0)</code> por defecto.</td></tr>
+            <tr><td>Proceso de física</td><td>physics process</td><td><code>_physics_process</code>: se ejecuta a ritmo fijo, 60 veces por segundo.</td></tr>
+            <tr><td>Deslizar</td><td>slide</td><td>Seguir moviéndose a lo largo de una pared al chocar con ella.</td></tr>
+            <tr><td>Brazo con muelle</td><td>spring arm</td><td><code>SpringArm3D</code>: sujeta la cámara y se encoge si algo se mete en medio.</td></tr>
+            <tr><td>Radián</td><td>radian</td><td>Unidad de ángulos del código: <code>PI</code> radianes = 180°.</td></tr>
+            <tr><td>Interpolar</td><td>interpolate / lerp</td><td>Calcular un valor intermedio entre dos; para movimientos y giros suaves.</td></tr>
+            <tr><td>Rayo</td><td>raycast</td><td>Línea invisible que detecta lo que toca.</td></tr>
+            <tr><td>Grupo</td><td>group</td><td>Etiqueta para nodos («vacas», «cultivos»).</td></tr>
+            <tr><td>Animación en bucle</td><td>looping animation</td><td>Animación que vuelve a empezar sola al acabar (caminar, quieto).</td></tr>
+            <tr><td>Mezcla</td><td>blend</td><td>Paso suave de una animación a otra.</td></tr>
+            <tr><td>Advertencia</td><td>warning</td><td>Aviso amarillo: no rompe el juego, pero algo es sospechoso.</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      // Buscador: filtra entradas y filas del glosario, sin importar tildes ni mayúsculas.
+      const normalizar = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+      const buscador = document.getElementById("buscador");
+      const bloques = document.querySelectorAll(".bloque-chuleta");
+      const indice = document.getElementById("indice-chuleta");
+      const sinResultados = document.getElementById("sin-resultados");
+
+      buscador.addEventListener("input", () => {
+        const q = normalizar(buscador.value.trim());
+        let alguno = false;
+        bloques.forEach((bloque) => {
+          const titulo = normalizar(bloque.querySelector("h2").textContent);
+          const items = bloque.querySelectorAll(".entrada, tbody tr");
+          let visibles = 0;
+          items.forEach((item) => {
+            const ver = !q || titulo.includes(q) || normalizar(item.textContent).includes(q);
+            item.hidden = !ver;
+            if (ver) visibles++;
+          });
+          bloque.hidden = visibles === 0;
+          if (visibles) alguno = true;
+        });
+        indice.hidden = !!q;
+        sinResultados.hidden = alguno;
+      });
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nodos y escenas en 3D · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="03-nodos-escenas">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Lección 3</span>
+      <h1>Nodos y escenas en 3D</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Un <strong>nodo</strong> es una pieza con una sola función: mostrar un modelo, chocar, iluminar…</li>
+          <li>Los nodos forman un <strong>árbol</strong>. Los <strong>hijos se mueven con su padre</strong>.</li>
+          <li>Una <strong>escena</strong> (<code>.tscn</code>) es un árbol de nodos guardado: el granjero, una vaca, la granja, la mina…</li>
+          <li><strong>Instanciar</strong> = meter una escena dentro de otra. Es un molde: si cambias el molde, cambian todas las copias.</li>
+        </ul>
+      </div>
+
+      <div class="widget">
+        <p class="widget-titulo">🌳 Así es la escena del granjero (toca los nodos)</p>
+        <ul class="arbol" id="arbol">
+          <li>
+            <button class="nodo" data-nodo="granjero"><span class="icono">🧑‍🌾</span>Granjero <span class="tipo">CharacterBody3D</span></button>
+            <ul>
+              <li><button class="nodo" data-nodo="modelo"><span class="icono">🧍</span>Modelo <span class="tipo">granjero.glb</span></button></li>
+              <li><button class="nodo" data-nodo="colision"><span class="icono">💊</span>Colision <span class="tipo">CollisionShape3D</span></button></li>
+              <li>
+                <button class="nodo" data-nodo="brazo"><span class="icono">🦾</span>BrazoCamara <span class="tipo">SpringArm3D</span></button>
+                <ul>
+                  <li><button class="nodo" data-nodo="camara"><span class="icono">🎥</span>Camara <span class="tipo">Camera3D</span></button></li>
+                </ul>
+              </li>
+              <li><button class="nodo" data-nodo="rayo"><span class="icono">👉</span>Interaccion <span class="tipo">RayCast3D</span></button></li>
+            </ul>
+          </li>
+        </ul>
+        <div class="widget-info" id="info-nodo"><p>Toca un nodo.</p></div>
+      </div>
+
+      <div class="esencial">
+        <p>Los nodos 3D que más vas a usar:</p>
+        <ul>
+          <li><code>MeshInstance3D</code>: <strong>muestra un modelo 3D</strong> (una caja, un suelo, una calabaza…).</li>
+          <li><code>CollisionShape3D</code>: la <strong>forma física</strong> con la que se choca. No se ve.</li>
+          <li><code>StaticBody3D</code>: algo que <strong>choca pero no se mueve</strong>: una valla, una casa, una roca.</li>
+          <li><code>CharacterBody3D</code>: un <strong>personaje que mueves por código</strong>, como el granjero.</li>
+          <li><code>Camera3D</code>: decide <strong>qué se ve</strong> en pantalla.</li>
+          <li><code>DirectionalLight3D</code>: la <strong>luz del sol</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada tipo de nodo 3D con su función:</p>
+        <ul class="pares">
+          <li><span><code>MeshInstance3D</code></span><span>Muestra un modelo 3D</span></li>
+          <li><span><code>CollisionShape3D</code></span><span>Da forma física para chocar</span></li>
+          <li><span><code>StaticBody3D</code></span><span>Algo que choca pero no se mueve (valla, casa)</span></li>
+          <li><span><code>CharacterBody3D</code></span><span>Personaje que mueves por código</span></li>
+          <li><span><code>Camera3D</code></span><span>Decide qué se ve en pantalla</span></li>
+          <li><span><code>DirectionalLight3D</code></span><span>La luz del sol</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Mueves al <code>Granjero</code> 3 metros hacia delante. ¿Qué pasa con su hija <code>Camara</code>?</p>
+        <button data-opcion="a">Se mueve con él: le sigue.</button>
+        <button data-opcion="b">Se queda donde estaba.</button>
+        <button data-opcion="c">Desaparece.</button>
+        <p class="explicacion">La posición de un hijo es relativa a su padre. Por eso basta con hacer la cámara hija del granjero para que le siga.</p>
+      </div>
+
+      <h2>Instanciar escenas</h2>
+      <div class="widget reto" id="instancias">
+        <p class="widget-titulo">🧪 Reto: planta copias desde un molde</p>
+        <p class="widget-info" id="inst-mision"></p>
+        <div class="instancias-paneles">
+          <div class="panel-escena">
+            <p class="etq">cultivo.tscn <span class="tipo">(el molde)</span></p>
+            <div class="enemigo grande" id="molde"></div>
+            <p class="etq">Modelo del molde:</p>
+            <div class="modelos">
+              <button class="pieza" data-modelo="🌱">🌱</button>
+              <button class="pieza" data-modelo="🌿">🌿</button>
+              <button class="pieza" data-modelo="🥕">🥕</button>
+              <button class="pieza" data-modelo="🎃">🎃</button>
+            </div>
+          </div>
+          <div class="panel-escena">
+            <p class="etq">huerto.tscn</p>
+            <div class="nivel huerto" id="nivel"></div>
+            <button class="boton" id="instanciar">+ Instanciar cultivo.tscn</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Tienes 40 calabazas instanciadas desde <code>calabaza.tscn</code> y quieres que todas sean más grandes. ¿Qué haces?</p>
+        <button data-opcion="a">Escalar las 40 una a una.</button>
+        <button data-opcion="b">Borrarlas y colocarlas de nuevo.</button>
+        <button data-opcion="c">Editar <code>calabaza.tscn</code> una vez.</button>
+        <p class="explicacion">Los cambios en el molde llegan a todas las instancias. En tu juego: granjero, cada animal, cada cultivo, cada roca de la mina y cada enemigo serán su propia escena.</p>
+      </div>
+
+      <div class="aviso">
+        <strong>En 3D, sin luz ni cámara no se ve nada</strong>
+        El editor te muestra un sol y un cielo «de prueba», pero <strong>no salen en el juego</strong>. Tu escena necesita su propia <code>Camera3D</code> y su <code>DirectionalLight3D</code>. En la barra del visor, el menú <strong>⋮</strong> junto a los iconos del sol y del cielo tiene <em>Añadir sol a la escena</em> y <em>Añadir entorno a la escena</em>: un atajo para tener luz y cielo de verdad.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Crea una escena 3D nueva y renombra la raíz (<code>Node3D</code>) a <code>Granja</code>.</li>
+          <li>Añade un <code>MeshInstance3D</code> (<kbd>Ctrl</kbd>+<kbd>A</kbd>), y en su propiedad <em>Mesh</em> elige <strong>Nuevo PlaneMesh</strong>. Ponle tamaño 20 × 20: es el suelo.</li>
+          <li>Añade un <code>DirectionalLight3D</code> y rótalo hacia abajo (<kbd>E</kbd>) para que ilumine el suelo.</li>
+          <li>Añade una <code>Camera3D</code> y colócala en alto mirando al suelo. Truco: con la cámara seleccionada, marca <em>Vista previa</em> en el visor para ver lo que ve.</li>
+          <li>Guarda como <code>escenas/granja.tscn</code> y pulsa <kbd>F6</kbd>. ¡Tu primer trozo de granja!</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const nodos = {
+        granjero: ["Granjero · CharacterBody3D", "La raíz. Un cuerpo físico para personajes que mueves por código con move_and_slide(). Choca con el suelo, las vallas y las paredes."],
+        modelo: ["Modelo · granjero.glb", "El modelo 3D importado de Blender (u otro programa). Es solo la parte visual; dentro lleva su AnimationPlayer con las animaciones."],
+        colision: ["Colision · CollisionShape3D", "La forma física, normalmente una cápsula. Sin ella, CharacterBody3D no sabe con qué chocar (Godot te avisa con ⚠️)."],
+        brazo: ["BrazoCamara · SpringArm3D", "Un «brazo» que sujeta la cámara a cierta distancia. Si hay una pared en medio, se encoge para que la cámara no la atraviese."],
+        camara: ["Camara · Camera3D", "Qué parte del mundo se ve. Es nieta del granjero, así que le sigue sola a todas partes."],
+        rayo: ["Interaccion · RayCast3D", "Un rayo invisible que apunta hacia delante y detecta qué tienes enfrente: un cultivo, una vaca, un NPC, una roca…"]
+      };
+      const info = document.getElementById("info-nodo");
+      document.querySelectorAll("#arbol .nodo").forEach((el) => {
+        el.addEventListener("click", () => {
+          document.querySelectorAll("#arbol .nodo").forEach((n) => n.classList.remove("activo"));
+          el.classList.add("activo");
+          const [titulo, texto] = nodos[el.dataset.nodo];
+          info.innerHTML = `<h4>${titulo}</h4><p>${texto}</p>`;
+        });
+      });
+
+      // Reto de instancias
+      const widget = document.getElementById("instancias");
+      const mision = document.getElementById("inst-mision");
+      const nivel = document.getElementById("nivel");
+      const molde = document.getElementById("molde");
+      let modelo = "🌱";
+      let copias = 0;
+      molde.textContent = modelo;
+
+      function actualizarMision(cambiado) {
+        if (copias < 4) {
+          mision.innerHTML = `<strong>Paso 1:</strong> planta 4 cultivos en el huerto (${copias}/4).`;
+        } else if (!cambiado) {
+          mision.innerHTML = "<strong>Paso 2:</strong> ahora cambia el modelo <em>del molde</em> y mira el huerto.";
+        } else {
+          mision.innerHTML = "🎉 <strong>¡Eso es instanciar!</strong> Un cambio en el molde y todas las copias se actualizan.";
+          window.GuiaGodot.resuelto(widget);
+        }
+      }
+
+      document.getElementById("instanciar").addEventListener("click", () => {
+        if (copias >= 8) return;
+        copias++;
+        const e = document.createElement("div");
+        e.className = "enemigo";
+        e.textContent = modelo;
+        nivel.appendChild(e);
+        actualizarMision(false);
+      });
+
+      widget.querySelectorAll(".modelos button").forEach((b) => {
+        b.addEventListener("click", () => {
+          modelo = b.dataset.modelo;
+          molde.textContent = modelo;
+          nivel.querySelectorAll(".enemigo").forEach((e) => (e.textContent = modelo));
+          if (copias >= 4) actualizarMision(true);
+        });
+      });
+
+      actualizarMision(false);
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

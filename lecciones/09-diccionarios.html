@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diccionarios · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="09-diccionarios">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 5</span>
+      <h1>Diccionarios</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Un <strong>diccionario</strong> guarda parejas <strong>clave: valor</strong>. Es perfecto para el inventario: <code>{"nabo": 3, "patata": 5}</code>.</li>
+          <li>Leer: <code>inventario["nabo"]</code>. Cambiar o añadir: <code>inventario["fresa"] = 2</code>.</li>
+          <li><strong>Leer una clave que no existe da error</strong> (también con <code>+=</code>, que primero lee). ¿Existe? <code>inventario.has("nabo")</code>. Leer sin riesgo: <code>inventario.get("melon", 0)</code> (devuelve 0 si no existe).</li>
+          <li>Quitar: <code>inventario.erase("nabo")</code>. Recorrer: <code>for objeto in inventario:</code> te da cada <strong>clave</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="widget reto" id="inventario">
+        <p class="widget-titulo">🎒 Reto: ordena la mochila</p>
+        <p class="widget-info">Ejecuta líneas hasta que el inventario quede <strong>exactamente</strong> así: <code>{ "nabo": 5, "fresa": 1 }</code>. Si te lías, reinicia.</p>
+        <p class="etq-inventario">inventario =</p>
+        <div class="inventario-estado" id="inv-estado"></div>
+        <div class="inventario-botones" id="inv-botones"></div>
+        <div class="consola" id="inv-consola"></div>
+        <button class="boton secundario" id="inv-reiniciar">↺ Reiniciar</button>
+      </div>
+
+      <div class="paso-a-paso">
+        <pre><code>var inventario = {"nabo": 3, "fresa": 1}
+
+func _ready():
+	inventario["nabo"] += 2
+	inventario["patata"] = 4
+	for objeto in inventario:
+		print(objeto, ": ", inventario[objeto])</code></pre>
+        <script type="application/json">[
+          {"l": 1, "v": {"inventario": "{\"nabo\": 3, \"fresa\": 1}"}, "n": "Dos parejas: la clave <code>\"nabo\"</code> vale 3 y <code>\"fresa\"</code> vale 1."},
+          {"l": 4, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1}"}, "n": "Lee el valor de <code>\"nabo\"</code> (3), le suma 2 y lo guarda."},
+          {"l": 5, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}"}, "n": "<code>\"patata\"</code> no existía: al asignarle un valor, se <strong>añade</strong>."},
+          {"l": 6, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}", "objeto": "\"nabo\""}, "n": "El <code>for</code> recorre las <strong>claves</strong>, en el orden en que se añadieron."},
+          {"l": 7, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}", "objeto": "\"nabo\""}, "s": ["nabo: 5"], "n": "Con la clave sacas el valor: <code>inventario[objeto]</code>."},
+          {"l": 6, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}", "objeto": "\"fresa\""}, "n": "Siguiente clave."},
+          {"l": 7, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}", "objeto": "\"fresa\""}, "s": ["fresa: 1"], "n": "Imprime la fresa."},
+          {"l": 6, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}", "objeto": "\"patata\""}, "n": "Última clave."},
+          {"l": 7, "v": {"inventario": "{\"nabo\": 5, \"fresa\": 1, \"patata\": 4}", "objeto": "\"patata\""}, "s": ["patata: 4"], "n": "Y así tienes un listado de tu inventario en tres líneas de código."}
+        ]</script>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Con <code>var inventario = {"nabo": 3}</code>, ¿qué devuelve <code>inventario.get("melon", 0)</code>?</p>
+        <button data-opcion="a"><code>0</code></button>
+        <button data-opcion="b"><code>3</code></button>
+        <button data-opcion="c">Da error.</button>
+        <p class="explicacion">No hay melones, así que <code>get</code> devuelve el valor por defecto que le has dado: 0. Con <code>inventario["melon"]</code>, en cambio, sí daría error.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Quieres guardar el precio de venta de cada cultivo. ¿Qué usas?</p>
+        <button data-opcion="a">Un array: <code>[20, 35, 60]</code></button>
+        <button data-opcion="b">Un diccionario: <code>{"nabo": 20, "patata": 35, "fresa": 60}</code></button>
+        <button data-opcion="c">Tres variables sueltas.</button>
+        <p class="explicacion">Con el diccionario buscas por nombre: <code>precios["fresa"]</code>. Con el array tendrías que recordar que la fresa es la posición 2. Regla: <strong>lista de cosas → array; buscar algo por su nombre → diccionario</strong>.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="6">
+        <p>Este código se rompe en una línea. ¿Cuál?</p>
+        <pre><code>var inventario = {"nabo": 3}
+
+func _ready():
+	inventario["nabo"] += 1
+	inventario["fresa"] = 2
+	inventario["melon"] += 1</code></pre>
+        <p class="explicacion"><code>+=</code> primero tiene que <strong>leer</strong> el valor actual, y <code>"melon"</code> no existe. La línea de la fresa sí funciona: con <code>=</code> solo se escribe, y eso crea la clave.<br>Godot dice: <span class="error-texto">Invalid access to property or key 'melon' on a base object of type 'Dictionary'.</span></p>
+      </div>
+
+      <div class="completar">
+        <p>Completa la función que añade objetos al inventario, exista ya o no:</p>
+        <pre><code>func agregar_objeto(nombre: String, cantidad: int) -> void:
+	if inventario.<input data-respuesta="has">(nombre):
+		inventario[nombre] <input data-respuesta="+="> cantidad
+	<input data-respuesta="else">:
+		inventario[nombre] <input data-respuesta="="> cantidad</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>Atajo</strong>
+        La función entera cabe en una línea: <code>inventario[nombre] = inventario.get(nombre, 0) + cantidad</code>. Si no existe, <code>get</code> devuelve 0 y suma desde ahí.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>datos_granja.gd</code>, cambia <code>const PRECIO_NABO = 20</code> por <code>const PRECIOS = {"nabo": 20, "patata": 35, "fresa": 60}</code>, y donde usabas <code>PRECIO_NABO</code> pon <code>PRECIOS["nabo"]</code>.</li>
+          <li>Añade <code>var inventario: Dictionary = {}</code> y la función <code>agregar_objeto</code>.</li>
+          <li>En <code>_ready()</code>, agrega 3 nabos, 2 fresas y otro nabo. Imprime el inventario: debería salir <code>{ "nabo": 4, "fresa": 2 }</code>.</li>
+          <li>Recórrelo con un <code>for</code> e imprime cuánto ganarías vendiendo cada cosa: <code>inventario[objeto] * PRECIOS[objeto]</code>.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("inventario");
+      const estado = document.getElementById("inv-estado");
+      const botones = document.getElementById("inv-botones");
+      const consola = document.getElementById("inv-consola");
+      const OBJETIVO = { nabo: 5, fresa: 1 };
+      let inv;
+
+      // Cada acción devuelve un mensaje de error si la línea fallaría en Godot.
+      const acciones = [
+        ['inventario["nabo"] += 1', () => sumar("nabo", 1)],
+        ['inventario["fresa"] = 1', () => { inv.fresa = 1; }],
+        ['inventario["fresa"] += 1', () => sumar("fresa", 1)],
+        ['inventario["patata"] -= 1', () => sumar("patata", -1)],
+        ['inventario.erase("patata")', () => { delete inv.patata; }],
+        ['inventario["melon"] += 1', () => sumar("melon", 1)]
+      ];
+
+      function sumar(clave, n) {
+        if (!(clave in inv)) return `Error: la clave "${clave}" no existe en el diccionario.`;
+        inv[clave] += n;
+      }
+
+      function formatear(d) {
+        const partes = Object.entries(d).map(([k, v]) => `"${k}": ${v}`);
+        return partes.length ? `{ ${partes.join(", ")} }` : "{}";
+      }
+
+      function pintar() {
+        const claves = Object.keys(inv);
+        estado.innerHTML = claves.length
+          ? claves.map((k) => `<span class="ranura">${k} <strong>${inv[k]}</strong></span>`).join("")
+          : '<span class="ranura vacia">vacío</span>';
+        estado.title = formatear(inv);
+      }
+
+      function reiniciar() {
+        inv = { nabo: 3, patata: 5 };
+        consola.textContent = "";
+        pintar();
+      }
+
+      acciones.forEach(([codigo, accion]) => {
+        const b = document.createElement("button");
+        b.className = "pieza codigo";
+        b.innerHTML = window.GuiaGodot.resaltar(codigo);
+        b.addEventListener("click", () => {
+          if (widget.classList.contains("superado")) return;
+          const error = accion();
+          const linea = document.createElement("div");
+          if (error) {
+            linea.className = "error";
+            linea.textContent = `${codigo}  →  ${error}`;
+            window.GuiaGodot.sacudir(b);
+          } else {
+            linea.textContent = `${codigo}  →  ${formatear(inv)}`;
+          }
+          consola.appendChild(linea);
+          consola.scrollTop = consola.scrollHeight;
+          pintar();
+          const claves = Object.keys(inv);
+          if (claves.length === Object.keys(OBJETIVO).length && claves.every((k) => inv[k] === OBJETIVO[k])) {
+            const ok = document.createElement("div");
+            ok.textContent = "✅ ¡Mochila perfecta!";
+            consola.appendChild(ok);
+            window.GuiaGodot.resuelto(widget);
+          }
+        });
+        botones.appendChild(b);
+      });
+
+      document.getElementById("inv-reiniciar").addEventListener("click", () => {
+        if (!widget.classList.contains("superado")) reiniciar();
+      });
+      reiniciar();
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examen del módulo 1 · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="04b-examen-m1">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Examen</span>
+      <h1>Examen del módulo 1</h1>
+
+      <p>Nada nuevo: el editor, los nodos, las escenas y tu primer script, mezclados. Si un reto se te atraganta, vuelve a su lección.</p>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Estás montando la mina en <code>mina.tscn</code> y quieres probarla sin pasar por la granja. ¿Qué pulsas?</p>
+        <button data-opcion="a"><kbd>F5</kbd></button>
+        <button data-opcion="b"><kbd>F6</kbd></button>
+        <button data-opcion="c"><kbd>F8</kbd></button>
+        <p class="explicacion"><kbd>F6</kbd> ejecuta la escena abierta; <kbd>F5</kbd>, el proyecto desde la escena principal.</p>
+      </div>
+
+      <div class="relacionar">
+        <p>¿Qué nodo usarías para cada cosa de tu granja?</p>
+        <ul class="pares">
+          <li><span>El granjero, que mueves con el teclado</span><span><code>CharacterBody3D</code></span></li>
+          <li><span>Una valla que no se mueve pero bloquea el paso</span><span><code>StaticBody3D</code></span></li>
+          <li><span>El sol</span><span><code>DirectionalLight3D</code></span></li>
+          <li><span>Lo que ve el jugador en pantalla</span><span><code>Camera3D</code></span></li>
+          <li><span>El modelo de una calabaza</span><span><code>MeshInstance3D</code></span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Quieres que la cámara siga al granjero a todas partes sin escribir código. ¿Qué haces?</p>
+        <button data-opcion="a">Hacer la cámara hija del granjero.</button>
+        <button data-opcion="b">Poner la cámara muy lejos para que lo vea todo.</button>
+        <button data-opcion="c">Instanciar una cámara en cada escena.</button>
+        <p class="explicacion">Los hijos se mueven con su padre. (En el módulo 3 la colgaremos de un <code>SpringArm3D</code> para que no atraviese paredes).</p>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Quieres que una moneda gire como una peonza, sobre el eje vertical. ¿Qué cambias?</p>
+        <button data-opcion="a"><code>rotation.x</code></button>
+        <button data-opcion="b"><code>rotation.z</code></button>
+        <button data-opcion="c"><code>rotation.y</code></button>
+        <p class="explicacion">El eje vertical es Y (el verde). Girar sobre él es dar vueltas como una peonza.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Quieres que suene la música de la granja una sola vez, al empezar la escena. ¿Dónde lo pones?</p>
+        <button data-opcion="a">En <code>_ready()</code>.</button>
+        <button data-opcion="b">En <code>_process(delta)</code>.</button>
+        <button data-opcion="c">En cualquiera de las dos, da igual.</button>
+        <p class="explicacion">En <code>_process</code> la música arrancaría unas 60 veces por segundo.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="4">
+        <p>Este molino gira muchísimo más rápido en el PC de tu amigo, que tiene un monitor de 144 Hz. Toca la línea culpable:</p>
+        <pre><code>extends Node3D
+
+func _process(delta):
+	rotation.z += 0.05</code></pre>
+        <p class="explicacion">Suma una cantidad fija <strong>por fotograma</strong>: con más FPS, gira más rápido. Solución: <code>rotation.z += velocidad * delta</code>, que es «por segundo».</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Tienes 30 vallas instanciadas desde <code>valla.tscn</code> y quieres cambiarles el color a todas. ¿Qué haces?</p>
+        <button data-opcion="a">Cambiar el color de cada una en el Inspector.</button>
+        <button data-opcion="b">Abrir <code>valla.tscn</code> y cambiarlo una vez.</button>
+        <button data-opcion="c">Borrar las vallas y crear una nueva.</button>
+        <p class="explicacion">La escena es el molde: al cambiarla, se actualizan las 30 copias.</p>
+      </div>
+
+      <div class="ordenar">
+        <p>Ordena los pasos para añadir un script a un nodo y probarlo:</p>
+        <ul class="piezas">
+          <li>Clic derecho en el nodo → Añadir script</li>
+          <li>Elegir dónde se guarda y pulsar Crear</li>
+          <li>Escribir el código en _ready() o _process()</li>
+          <li>Guardar con Ctrl + S</li>
+          <li>Pulsar F6 y mirar la Salida</li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa el script de las aspas del molino: giran sobre el eje <strong>Z</strong>, a la misma velocidad en cualquier ordenador.</p>
+        <pre><code><input data-respuesta="extends"> Node3D
+
+var velocidad = 1.5
+
+func <input data-respuesta="_process">(delta):
+	rotation.<input data-respuesta="z|Z"> += velocidad * <input data-respuesta="delta"></code></pre>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Tu proyecto tiene las carpetas <code>escenas</code>, <code>scripts</code> y <code>modelos</code>.</li>
+          <li><code>escenas/granja.tscn</code> tiene un suelo (<code>MeshInstance3D</code> con <em>PlaneMesh</em>), un <code>DirectionalLight3D</code> y una <code>Camera3D</code>.</li>
+          <li>Hay un objeto que gira con su propio script en <code>scripts/</code>.</li>
+          <li>Al pulsar <kbd>F6</kbd> se ve la granja y el objeto gira (multiplicando por <code>delta</code>).</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Condiciones · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="06-condiciones">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 2</span>
+      <h1>Condiciones: if, elif, else</h1>
+
+      <div class="esencial">
+        <ul>
+          <li><code>if condición:</code> ejecuta las líneas de dentro (con sangría) <strong>solo si</strong> la condición es verdadera.</li>
+          <li><code>elif</code> = «si no, pero si…». <code>else</code> = «en cualquier otro caso».</li>
+          <li>Se ejecuta <strong>solo la primera rama</strong> cuya condición se cumpla; las demás se saltan.</li>
+          <li>Comparar: <code>==</code> igual, <code>!=</code> distinto, <code>&lt;</code> <code>&gt;</code> <code>&lt;=</code> <code>&gt;=</code>. Combinar: <code>and</code>, <code>or</code>, <code>not</code>.</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript">if dinero >= precio:
+	print("Compras la semilla")
+else:
+	print("No te llega el dinero")</code></pre>
+
+      <div class="widget reto" id="tienda">
+        <p class="widget-titulo">🏪 Reto: la tienda decide</p>
+        <p class="widget-info" id="tienda-mision"></p>
+        <div class="controles">
+          <label>dinero <input type="range" id="t-dinero" min="0" max="200" step="10" value="120"> <output id="t-dinero-valor">120</output></label>
+          <label><input type="checkbox" id="t-abierta" checked> tienda_abierta</label>
+        </div>
+        <pre class="codigo-vivo"><code id="t-codigo"></code></pre>
+        <button class="boton" id="t-comprar">▶ Ejecutar comprar()</button>
+        <div class="consola" id="t-consola"></div>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada operador con su significado:</p>
+        <ul class="pares">
+          <li><span><code>==</code></span><span>¿Son iguales?</span></li>
+          <li><span><code>!=</code></span><span>¿Son distintos?</span></li>
+          <li><span><code>&gt;=</code></span><span>¿Es mayor o igual?</span></li>
+          <li><span><code>and</code></span><span>Se cumplen las dos</span></li>
+          <li><span><code>or</code></span><span>Se cumple al menos una</span></li>
+          <li><span><code>not</code></span><span>Lo contrario</span></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Con <code>energia = 30</code>, ¿qué se imprime?</p>
+        <pre><code class="gdscript">if energia > 50:
+	print("A tope")
+elif energia > 20:
+	print("Cansado")
+else:
+	print("Agotado")</code></pre>
+        <button data-opcion="a">A tope</button>
+        <button data-opcion="b">Cansado</button>
+        <button data-opcion="c">Agotado</button>
+        <p class="explicacion">30 no es mayor que 50, así que se salta la primera rama. 30 sí es mayor que 20: «Cansado».</p>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Mismo código, ahora con <code>energia = 80</code>. ¿Qué se imprime?</p>
+        <button data-opcion="a">Solo «A tope».</button>
+        <button data-opcion="b">«A tope» y «Cansado».</button>
+        <button data-opcion="c">Solo «Cansado».</button>
+        <p class="explicacion">80 cumple las dos condiciones, pero solo se ejecuta la <strong>primera</strong> rama verdadera. Por eso el orden de las condiciones importa.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Solo puedes bajar a la mina si tienes pico y no es de noche. ¿Qué condición es?</p>
+        <button data-opcion="a"><code>if tiene_pico or not es_de_noche:</code></button>
+        <button data-opcion="b"><code>if not tiene_pico and es_de_noche:</code></button>
+        <button data-opcion="c"><code>if tiene_pico and not es_de_noche:</code></button>
+        <p class="explicacion">Hacen falta <strong>las dos</strong> cosas (<code>and</code>): tener pico, y que <strong>no</strong> sea de noche (<code>not</code>).</p>
+      </div>
+
+      <div class="error-codigo" data-linea="1">
+        <p>Este código no funciona. Toca la línea culpable:</p>
+        <pre><code>if dinero = 100:
+	print("¡Tienes 100 monedas!")</code></pre>
+        <p class="explicacion">Un solo <code>=</code> <strong>guarda</strong> un valor; dos <code>==</code> <strong>comparan</strong>. Dentro de un <code>if</code> casi siempre quieres <code>==</code>.<br>Godot dice: <span class="error-texto">Assignment is not allowed inside an expression.</span></p>
+      </div>
+
+      <div class="ordenar" data-codigo>
+        <p>Ordena: con energía 0 o menos te desmayas; con menos de 30 estás cansado; si no, tienes energía.</p>
+        <ul class="piezas">
+          <li>if energia &lt;= 0:</li>
+          <li>&#9;print("Te desmayas")</li>
+          <li>elif energia &lt; 30:</li>
+          <li>&#9;print("Estás cansado")</li>
+          <li>else:</li>
+          <li>&#9;print("Tienes energía")</li>
+        </ul>
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>En <code>datos_granja.gd</code>, cambia <code>var dinero</code> por <code>@export var dinero</code> para poder probar valores desde el Inspector.</li>
+          <li>Al final de <code>_ready()</code>, añade un <code>if</code>/<code>else</code> que imprima «Puedes comprar semillas de nabo» si <code>dinero &gt;= PRECIO_NABO</code>, y «No te llega para semillas» si no.</li>
+          <li>Pulsa <kbd>F6</kbd>. Luego pon <em>Dinero</em> a <code>10</code> en el Inspector y vuelve a probar: debe salir el otro mensaje.</li>
+          <li>Extra: añade un <code>elif</code> que diga «¡Eres rico!» si tienes más de 1000.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const PRECIO = 50;
+      const widget = document.getElementById("tienda");
+      const mision = document.getElementById("tienda-mision");
+      const inputDinero = document.getElementById("t-dinero");
+      const salidaDinero = document.getElementById("t-dinero-valor");
+      const checkAbierta = document.getElementById("t-abierta");
+      const codigo = document.getElementById("t-codigo");
+      const consola = document.getElementById("t-consola");
+      const mensajes = {
+        cerrada: "La tienda está cerrada",
+        compra: "¡Semilla comprada!",
+        pobre: "No te llega el dinero"
+      };
+      const vistos = new Set();
+
+      function fuente() {
+        return [
+          `var dinero = ${inputDinero.value}`,
+          `var precio = ${PRECIO}`,
+          `var tienda_abierta = ${checkAbierta.checked}`,
+          "",
+          "func comprar():",
+          "\tif not tienda_abierta:",
+          `\t\tprint("${mensajes.cerrada}")`,
+          "\telif dinero >= precio:",
+          "\t\tdinero -= precio",
+          `\t\tprint("${mensajes.compra}")`,
+          "\telse:",
+          `\t\tprint("${mensajes.pobre}")`
+        ];
+      }
+
+      function pintarCodigo(activas) {
+        codigo.innerHTML = fuente()
+          .map((t, i) => `<span class="linea${activas.includes(i + 1) ? " activa" : ""}">${window.GuiaGodot.resaltar(t) || " "}\n</span>`)
+          .join("");
+      }
+
+      function pintarMision() {
+        const lista = Object.entries(mensajes)
+          .map(([clave, texto]) => `${vistos.has(clave) ? "✅" : "⬜"} «${texto}»`)
+          .join("<br>");
+        mision.innerHTML = vistos.size === 3
+          ? "🎉 <strong>¡Has recorrido las tres ramas!</strong> Fíjate en que cada vez solo se ejecuta una."
+          : `Cambia <code>dinero</code> y <code>tienda_abierta</code> y ejecuta hasta ver los tres mensajes:<br>${lista}`;
+      }
+
+      document.getElementById("t-comprar").addEventListener("click", () => {
+        const dinero = Number(inputDinero.value);
+        let clave, activas;
+        if (!checkAbierta.checked) {
+          clave = "cerrada"; activas = [6, 7];
+        } else if (dinero >= PRECIO) {
+          clave = "compra"; activas = [6, 8, 9, 10];
+          inputDinero.value = dinero - PRECIO;
+          salidaDinero.textContent = inputDinero.value;
+        } else {
+          clave = "pobre"; activas = [6, 8, 11, 12];
+        }
+        consola.textContent = mensajes[clave];
+        vistos.add(clave);
+        pintarCodigo(activas);
+        pintarMision();
+        if (vistos.size === 3) window.GuiaGodot.resuelto(widget);
+      });
+
+      inputDinero.addEventListener("input", () => {
+        salidaDinero.textContent = inputDinero.value;
+        pintarCodigo([]);
+      });
+      checkAbierta.addEventListener("change", () => pintarCodigo([]));
+      pintarCodigo([]);
+      pintarMision();
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

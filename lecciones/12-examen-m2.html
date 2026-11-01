@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examen del módulo 2 · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="12-examen-m2">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Examen</span>
+      <h1>Examen del módulo 2</h1>
+
+      <p>Nada nuevo: todo lo que has aprendido, mezclado. Si un reto se te atraganta, vuelve a su lección; no pasa nada por repasar.</p>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">¿Qué imprime?</p>
+        <pre><code class="gdscript">func _ready():
+	var cosecha = ["nabo", "fresa", "nabo"]
+	var total = 0
+	for c in cosecha:
+		if c == "nabo":
+			total += 20
+		else:
+			total += 60
+	print(total)</code></pre>
+        <button data-opcion="a">80</button>
+        <button data-opcion="b">40</button>
+        <button data-opcion="c">100</button>
+        <p class="explicacion">Dos nabos (20 + 20) y una fresa (60): 100.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">¿Qué imprime?</p>
+        <pre><code class="gdscript">var inventario = {"nabo": 2}
+
+func _ready():
+	if inventario.get("fresa", 0) > 0:
+		print("Tienes fresas")
+	elif inventario.has("nabo"):
+		print("Tienes ", inventario["nabo"], " nabos")
+	else:
+		print("Mochila vacía")</code></pre>
+        <button data-opcion="a">Tienes fresas</button>
+        <button data-opcion="b">Tienes 2 nabos</button>
+        <button data-opcion="c">Mochila vacía</button>
+        <p class="explicacion">No hay fresas, así que <code>get</code> devuelve 0 y la primera condición es falsa. Sí hay nabos: segunda rama.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">El granjero está en <code>(0, 0, 0)</code> y la vaca en <code>(0, 0, -3)</code>. ¿Qué imprime?</p>
+        <pre><code class="gdscript">if granjero.distance_to(vaca) &lt; 2.0:
+	print("Ordeñas la vaca")
+else:
+	print("Acércate más")</code></pre>
+        <button data-opcion="a">Acércate más</button>
+        <button data-opcion="b">Ordeñas la vaca</button>
+        <button data-opcion="c">Da error: la distancia es negativa.</button>
+        <p class="explicacion">La vaca está 3 metros por delante. Las distancias nunca son negativas, y 3 no es menor que 2.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">¿Qué imprime?</p>
+        <pre><code class="gdscript">func repartir(zanahorias: int, vacas: int) -> int:
+	return zanahorias / vacas
+
+func _ready():
+	print(repartir(10, 4))</code></pre>
+        <button data-opcion="a">2.5</button>
+        <button data-opcion="b">2</button>
+        <button data-opcion="c">3</button>
+        <p class="explicacion">Entero entre entero da entero: se quitan los decimales (no se redondea). La trampa de la lección de variables.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="4">
+        <p>Este script no arranca. Toca la línea culpable:</p>
+        <pre><code>extends Node
+
+var dinero = 500
+print("Dinero: ", dinero)
+
+func _ready():
+	pass</code></pre>
+        <p class="explicacion">Fuera de las funciones solo puede haber <strong>declaraciones</strong> (<code>var</code>, <code>const</code>, <code>signal</code>, <code>func</code>…). Las instrucciones, como <code>print</code>, van <strong>dentro</strong> de una función, por ejemplo en <code>_ready()</code>.<br>Godot dice: <span class="error-texto">Unexpected identifier "print" in class body.</span></p>
+      </div>
+
+      <div class="error-codigo" data-linea="4">
+        <p>Godot marca un error antes de ejecutar. ¿Dónde?</p>
+        <pre><code>var dinero: int = 500
+
+func _ready():
+	dinero = "mil monedas"</code></pre>
+        <p class="explicacion"><code>dinero</code> es de tipo <code>int</code> y le intentas meter un texto. Gracias al tipo, Godot te avisa antes de que el fallo llegue al juego.<br>Godot dice: <span class="error-texto">Cannot assign a value of type "String" as "int".</span></p>
+      </div>
+
+      <div class="relacionar">
+        <p>¿Qué herramienta usarías para cada necesidad de tu juego?</p>
+        <ul class="pares">
+          <li><span>La lista de cultivos que has plantado</span><span><code>Array</code></span></li>
+          <li><span>Cuántos objetos tienes de cada tipo</span><span><code>Dictionary</code></span></li>
+          <li><span>Avisar de que empieza un día nuevo</span><span><code>signal</code></span></li>
+          <li><span>Un precio que nunca cambia</span><span><code>const</code></span></li>
+          <li><span>Dónde está la vaca</span><span><code>Vector3</code></span></li>
+          <li><span>Regar, una acción que repites mucho</span><span><code>func</code></span></li>
+        </ul>
+      </div>
+
+      <div class="ordenar" data-codigo>
+        <p>Ordena la función que suma lo que vale todo el inventario, lo vacía y devuelve el total:</p>
+        <ul class="piezas">
+          <li>func vender_todo() -> int:</li>
+          <li>&#9;var total = 0</li>
+          <li>&#9;for objeto in inventario:</li>
+          <li>&#9;&#9;total += inventario[objeto] * PRECIOS[objeto]</li>
+          <li>&#9;inventario.clear()</li>
+          <li>&#9;return total</li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa: quitar objetos del inventario solo si tienes suficientes, y decir si se pudo.</p>
+        <pre><code>func quitar_objeto(nombre: String, cantidad: int) -> bool:
+	if inventario.<input data-respuesta="get">(nombre, 0) <input data-respuesta="<"> cantidad:
+		return <input data-respuesta="false">
+	inventario[nombre] -= cantidad
+	return <input data-respuesta="true"></code></pre>
+      </div>
+
+      <h2>Tu script de datos, completo</h2>
+      <p>Así queda <code>datos_granja.gd</code> con todo el módulo. Compáralo con el tuyo. En el módulo 5 lo convertiremos en la economía real del juego.</p>
+
+      <pre><code class="gdscript">extends Node
+
+signal dinero_cambiado(nuevo_dinero: int)
+signal energia_agotada
+
+const PRECIOS = {"nabo": 20, "patata": 35, "fresa": 60}
+const MAX_ENERGIA = 100
+
+@export var nombre_granja: String = "Valle Verde"
+@export var dinero: int = 500
+
+var energia: int = MAX_ENERGIA
+var inventario: Dictionary = {}
+var cultivos_plantados: Array[String] = []
+
+
+func _ready() -> void:
+	dinero_cambiado.connect(_on_dinero_cambiado)
+	energia_agotada.connect(_on_energia_agotada)
+	print("Bienvenido a ", nombre_granja)
+
+	comprar_semillas("nabo", 3)
+	plantar("nabo")
+	plantar("nabo")
+	print("Inventario: ", inventario)
+	print("Plantados: ", cultivos_plantados)
+
+
+func puede_comprar(precio: int) -> bool:
+	return dinero >= precio
+
+
+func comprar_semillas(cultivo: String, cantidad: int) -> void:
+	var total: int = PRECIOS[cultivo] * cantidad
+	if not puede_comprar(total):
+		print("No te llega el dinero")
+		return
+	dinero -= total
+	dinero_cambiado.emit(dinero)
+	agregar_objeto("semilla_" + cultivo, cantidad)
+
+
+func agregar_objeto(nombre: String, cantidad: int) -> void:
+	inventario[nombre] = inventario.get(nombre, 0) + cantidad
+
+
+func quitar_objeto(nombre: String, cantidad: int) -> bool:
+	if inventario.get(nombre, 0) &lt; cantidad:
+		return false
+	inventario[nombre] -= cantidad
+	if inventario[nombre] == 0:
+		inventario.erase(nombre)
+	return true
+
+
+func plantar(cultivo: String) -> void:
+	if not quitar_objeto("semilla_" + cultivo, 1):
+		print("No tienes semillas de ", cultivo)
+		return
+	cultivos_plantados.append(cultivo)
+	gastar_energia(5)
+
+
+func gastar_energia(cantidad: int) -> void:
+	energia -= cantidad
+	if energia &lt;= 0:
+		energia = 0
+		energia_agotada.emit()
+
+
+func _on_dinero_cambiado(nuevo_dinero: int) -> void:
+	print("Dinero: ", nuevo_dinero)
+
+
+func _on_energia_agotada() -> void:
+	print("¡Te desmayas!")</code></pre>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Repasa tu <code>datos_granja.gd</code> y complétalo hasta que haga lo mismo que el de arriba (si tienes la función del Timer de la lección anterior, déjala).</li>
+          <li>Pulsa <kbd>F6</kbd>. En la Salida debe aparecer: «Bienvenido a…», «Dinero: 440», el inventario con 1 semilla de nabo y la lista con 2 nabos plantados.</li>
+          <li>Prueba a comprar 100 semillas de fresa: debe salir «No te llega el dinero».</li>
+          <li>Planta 3 nabos teniendo solo 1 semilla: los otros dos deben decir «No tienes semillas de nabo».</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

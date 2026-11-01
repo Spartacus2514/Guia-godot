@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Señales · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="11-senales">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 2 · Lección 7</span>
+      <h1>Señales</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Una <strong>señal</strong> es un aviso: «¡el nabo está listo!», «¡empieza un día nuevo!», «¡te has quedado sin energía!».</li>
+          <li>Quien avisa <strong>emite</strong> la señal sin saber quién escucha. Quien quiere enterarse la <strong>conecta</strong> a una de sus funciones.</li>
+          <li>Se declara con <code>signal nombre</code>, se lanza con <code>nombre.emit()</code> y se escucha con <code>nombre.connect(funcion)</code>.</li>
+          <li><code>$Nabo</code> es el nodo hijo llamado «Nabo». Es como escribir su ruta en el árbol.</li>
+          <li>Al conectar, la función va <strong>sin paréntesis</strong>: <code>connect(_on_cultivo_listo)</code>. Con paréntesis la llamarías en ese momento, en vez de entregarla para que Godot la llame cuando llegue el aviso.</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript"># nabo.gd: quien avisa
+signal cultivo_listo(nombre: String)
+
+func terminar_de_crecer():
+	cultivo_listo.emit("nabo")</code></pre>
+
+      <pre><code class="gdscript"># granja.gd: quien escucha
+func _ready():
+	$Nabo.cultivo_listo.connect(_on_cultivo_listo)
+
+func _on_cultivo_listo(nombre: String):
+	print("¡Ya puedes cosechar el ", nombre, "!")</code></pre>
+
+      <div class="widget reto" id="senales">
+        <p class="widget-titulo">📡 Reto: conecta solo a quien debe enterarse</p>
+        <p class="widget-info" id="senal-mision">Cuando el nabo esté listo, debe salir un aviso en el <strong>HUD</strong> y sonar la <strong>campana</strong>. La vaca y el granjero <strong>no</strong> deben reaccionar. Conecta y emite.</p>
+        <div class="oyentes" id="oyentes"></div>
+        <pre class="codigo-vivo"><code id="senal-codigo"></code></pre>
+        <button class="boton" id="senal-emitir">🌱 cultivo_listo.emit("nabo")</button>
+        <div class="consola" id="senal-consola"></div>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">El nabo emite <code>cultivo_listo</code>. ¿Necesita saber quién está escuchando?</p>
+        <button data-opcion="a">Sí, tiene que llamar a cada uno.</button>
+        <button data-opcion="b">No: emite el aviso y le llega a quien esté conectado.</button>
+        <button data-opcion="c">Solo si hay más de un oyente.</button>
+        <p class="explicacion">Esa es la gracia: puedes añadir oyentes nuevos (un logro, un sonido, una misión) sin tocar el código del nabo. Así los sistemas de tu juego no se enredan entre sí.</p>
+      </div>
+
+      <div class="esencial">
+        <p>Muchos nodos ya traen sus propias señales. Las más usadas:</p>
+        <ul>
+          <li><code>Timer</code> → <code>timeout</code>: se ha acabado el tiempo.</li>
+          <li><code>Button</code> → <code>pressed</code>: alguien ha pulsado el botón.</li>
+          <li><code>Area3D</code> → <code>body_entered</code>: algo ha entrado en la zona (por ejemplo, el granjero en la puerta de la mina).</li>
+          <li><code>AnimationPlayer</code> → <code>animation_finished</code>: ha terminado una animación.</li>
+        </ul>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada nodo con su señal más usada:</p>
+        <ul class="pares">
+          <li><span><code>Timer</code></span><span><code>timeout</code>: se acabó el tiempo</span></li>
+          <li><span><code>Button</code></span><span><code>pressed</code>: lo han pulsado</span></li>
+          <li><span><code>Area3D</code></span><span><code>body_entered</code>: algo ha entrado en la zona</span></li>
+          <li><span><code>AnimationPlayer</code></span><span><code>animation_finished</code>: terminó la animación</span></li>
+        </ul>
+      </div>
+
+      <div class="error-codigo" data-linea="2">
+        <p>Este código da error. Toca la línea culpable:</p>
+        <pre><code>func _ready():
+	$Nabo.cultivo_listo.connect(_on_cultivo_listo())
+
+func _on_cultivo_listo(nombre):
+	print("Listo: ", nombre)</code></pre>
+        <p class="explicacion">Sobran los paréntesis. Con <code>_on_cultivo_listo()</code> <strong>llamas</strong> a la función ahora mismo; sin paréntesis, <code>_on_cultivo_listo</code>, la <strong>entregas</strong> para que Godot la llame cuando llegue el aviso.</p>
+      </div>
+
+      <div class="completar">
+        <p>Completa: declara la señal, emítela cuando cambie el dinero y conéctala.</p>
+        <pre><code><input data-respuesta="signal"> dinero_cambiado(nuevo_dinero: int)
+
+func _ready():
+	dinero_cambiado.<input data-respuesta="connect">(_on_dinero_cambiado)
+
+func gastar(cantidad: int):
+	dinero -= cantidad
+	dinero_cambiado.<input data-respuesta="emit">(dinero)
+
+func _on_dinero_cambiado(nuevo_dinero: int):
+	print("Dinero: ", nuevo_dinero)</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>Conectar desde el editor</strong>
+        Selecciona el nodo y abre la pestaña <strong>Nodo</strong> (junto al Inspector). Haz doble clic en la señal y elige el nodo que debe escuchar: Godot crea la función <code>_on_…</code> por ti.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Añade un nodo <code>Timer</code> como hijo de <code>Datos</code>. En el Inspector: <em>Wait Time</em> = 2 y activa <em>Autostart</em>.</li>
+          <li>Con el Timer seleccionado: pestaña <strong>Nodo</strong> → doble clic en <code>timeout()</code> → elige <code>Datos</code> → Conectar. Godot crea <code>_on_timer_timeout()</code>.</li>
+          <li>Dentro, llama a <code>gastar_energia(10)</code> e imprime la energía. Pulsa <kbd>F6</kbd>: baja 10 cada 2 segundos.</li>
+          <li>Declara <code>signal energia_agotada</code> y emítela en <code>gastar_energia</code> cuando la energía llegue a 0. Conéctala en <code>_ready()</code> a una función que imprima «¡Te desmayas!».</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("senales");
+      const mision = document.getElementById("senal-mision");
+      const contenedor = document.getElementById("oyentes");
+      const codigo = document.getElementById("senal-codigo");
+      const consola = document.getElementById("senal-consola");
+      const oyentes = [
+        { id: "HUD", icono: "📋", reaccion: "Muestra: «¡Nabo listo!»", debe: true },
+        { id: "Campana", icono: "🔔", reaccion: "¡Ding, ding!", debe: true },
+        { id: "Vaca", icono: "🐄", reaccion: "¡Muuu! (¿por qué se entera la vaca?)", debe: false },
+        { id: "Granjero", icono: "🧑‍🌾", reaccion: "Da un salto (no debía)", debe: false }
+      ];
+      const conectados = new Set();
+
+      oyentes.forEach((o) => {
+        const tarjeta = document.createElement("label");
+        tarjeta.className = "oyente";
+        tarjeta.innerHTML = `<input type="checkbox"> <span class="oyente-icono">${o.icono}</span> <span>$${o.id}</span><span class="bocadillo"></span>`;
+        const casilla = tarjeta.querySelector("input");
+        casilla.addEventListener("change", () => {
+          if (widget.classList.contains("superado")) { casilla.checked = conectados.has(o.id); return; }
+          if (casilla.checked) conectados.add(o.id); else conectados.delete(o.id);
+          tarjeta.classList.toggle("conectado", casilla.checked);
+          pintarCodigo();
+        });
+        o.tarjeta = tarjeta;
+        contenedor.appendChild(tarjeta);
+      });
+
+      function pintarCodigo() {
+        const lineas = ["func _ready():"];
+        oyentes.filter((o) => conectados.has(o.id)).forEach((o) => {
+          lineas.push(`\t$Nabo.cultivo_listo.connect($${o.id}._on_cultivo_listo)`);
+        });
+        if (lineas.length === 1) lineas.push("\tpass  # sin conexiones: nadie escucha");
+        codigo.innerHTML = lineas.map((t) => `<span class="linea">${window.GuiaGodot.resaltar(t)}\n</span>`).join("");
+      }
+
+      document.getElementById("senal-emitir").addEventListener("click", () => {
+        if (widget.classList.contains("superado")) return;
+        consola.textContent = "";
+        oyentes.forEach((o) => {
+          const bocadillo = o.tarjeta.querySelector(".bocadillo");
+          bocadillo.textContent = "";
+          o.tarjeta.classList.remove("reacciona");
+          if (conectados.has(o.id)) {
+            void o.tarjeta.offsetWidth;
+            o.tarjeta.classList.add("reacciona");
+            bocadillo.textContent = o.reaccion;
+            consola.textContent += `${o.id}._on_cultivo_listo("nabo") → ${o.reaccion}\n`;
+          }
+        });
+        if (!conectados.size) consola.textContent = "Nadie está conectado: la señal se emite, pero nadie la oye.";
+        const correcto = oyentes.every((o) => o.debe === conectados.has(o.id));
+        if (correcto) {
+          mision.innerHTML = "🎉 <strong>¡Perfecto!</strong> El nabo emitió una sola señal y solo reaccionaron los conectados.";
+          window.GuiaGodot.resuelto(widget);
+        } else {
+          window.GuiaGodot.sacudir(contenedor);
+        }
+      });
+
+      pintarCodigo();
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

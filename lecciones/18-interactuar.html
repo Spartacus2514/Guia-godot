@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactuar con lo que tienes delante · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="18-interactuar">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Lección 6</span>
+      <h1>Interactuar con lo que tienes delante</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Un <code>RayCast3D</code> es un <strong>rayo invisible</strong> que sale del nodo hasta <code>target_position</code>. Te dice si toca algo, <code>is_colliding()</code>, y qué es, <code>get_collider()</code>.</li>
+          <li>Lo apuntamos <strong>hacia donde mira el granjero</strong>: guardamos la última dirección en la que caminó y ponemos el final del rayo 1.5 metros por delante.</li>
+          <li>Al pulsar <code>interactuar</code>: si el rayo toca algo y ese algo tiene una función <code>interactuar()</code>, la llamamos. <strong>Cada objeto decide qué hace</strong>: el buzón te da una carta, la vaca muge, la cama te deja dormir…</li>
+          <li><code>has_method("interactuar")</code> pregunta «¿tienes esta función?». Así el granjero no necesita saber qué es cada cosa, y lo que no tiene la función (un árbol) simplemente no hace nada.</li>
+        </ul>
+      </div>
+
+      <pre><code>Granjero (CharacterBody3D)
+├─ Modelo
+├─ Colision
+├─ BrazoCamara
+│  └─ Camara
+└─ Interaccion (RayCast3D)   ← Position Y = 1</code></pre>
+
+      <pre><code class="gdscript">var mirando := Vector3.BACK   # hacia dónde mira: al empezar, hacia la cámara (+Z)
+
+@onready var rayo: RayCast3D = $Interaccion
+
+
+func interactuar() -> void:
+	if not rayo.is_colliding():
+		return
+	var objeto := rayo.get_collider()
+	if objeto.has_method("interactuar"):
+		objeto.interactuar()</code></pre>
+
+      <p>Y al final de <code>_physics_process</code>:</p>
+      <pre><code class="gdscript">if direccion != Vector3.ZERO:
+	mirando = direccion
+rayo.target_position = mirando * 1.5
+if Input.is_action_just_pressed("interactuar"):
+	interactuar()</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li><code>Vector3.BACK</code> es <code>(0, 0, 1)</code>: hacia +Z, que es hacia donde mira el modelo al empezar.</li>
+          <li>El rayo sale desde dentro de la cápsula del granjero, pero no lo detecta: por defecto ignora a su padre (la casilla <em>Exclude Parent</em> del Inspector).</li>
+          <li><code>get_collider()</code> devuelve el <strong>cuerpo</strong> que ha tocado (un <code>StaticBody3D</code>, un <code>CharacterBody3D</code>…). Por eso el script con <code>interactuar()</code> va en ese cuerpo.</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript"># buzon.gd, en la raíz (StaticBody3D) de la escena del buzón
+extends StaticBody3D
+
+func interactuar() -> void:
+	print("Tienes una carta del alcalde")</code></pre>
+
+      <div class="widget reto" id="rayo">
+        <p class="widget-titulo">👉 Reto: habla con lo que tienes delante (vista desde arriba)</p>
+        <p class="widget-info" id="rayo-mision">Gira al granjero con las flechas y pulsa <kbd>E</kbd>. Misión: <strong>lee la carta del buzón</strong> y <strong>saluda a la vaca</strong>. Prueba también con el árbol y la cama.</p>
+        <p class="nota-pequena">Cada cuadro es 1 metro. La línea roja es el rayo: mide 1.5 metros.</p>
+        <div class="mapa-contenedor">
+          <div class="mapa mapa-cerca" id="rayo-mapa">
+            <div class="rayo-linea" id="rayo-linea"></div>
+            <div class="ficha" style="left:66.67%;top:50%" title="Buzón: StaticBody3D con interactuar()">📫</div>
+            <div class="ficha" style="left:50%;top:33.33%" title="Vaca: CharacterBody3D con interactuar()">🐄</div>
+            <div class="ficha" style="left:33.33%;top:50%" title="Árbol: StaticBody3D sin script">🌳</div>
+            <div class="ficha" style="left:50%;top:91.67%" title="Cama: a 2.5 metros">🛏️</div>
+            <div class="ficha granjero" style="left:50%;top:50%">🧑‍🌾</div>
+          </div>
+        </div>
+        <div class="controles">
+          <button class="boton secundario" data-mirar="0,-1">▲</button>
+          <button class="boton secundario" data-mirar="-1,0">◀</button>
+          <button class="boton secundario" data-mirar="1,0">▶</button>
+          <button class="boton secundario" data-mirar="0,1">▼</button>
+          <button class="boton" id="rayo-e">E · interactuar</button>
+        </div>
+        <pre class="codigo-vivo"><code id="rayo-codigo"></code></pre>
+        <div class="consola" id="rayo-consola"></div>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">La escena del buzón tiene como raíz un <code>StaticBody3D</code> llamado <code>Buzon</code>, con un <code>MeshInstance3D</code> y un <code>CollisionShape3D</code> dentro. El rayo lo toca. ¿Qué devuelve <code>get_collider()</code>?</p>
+        <button data-opcion="a">El <code>MeshInstance3D</code>, porque es lo que se ve.</button>
+        <button data-opcion="b">El <code>StaticBody3D</code> <code>Buzon</code>: el cuerpo que ha tocado.</button>
+        <button data-opcion="c">El <code>CollisionShape3D</code>.</button>
+        <p class="explicacion">Devuelve el cuerpo físico, dueño de la forma que ha tocado. Por eso el script con <code>interactuar()</code> va en la raíz <code>StaticBody3D</code>. Si lo pusieras en el modelo, <code>has_method</code> diría que no.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="3">
+        <p>Funciona delante del buzón, pero si pulsas <kbd>E</kbd> sin nada delante, el juego se para con <span class="error-texto">Cannot call method 'has_method' on a null value.</span> Toca la línea que falla:</p>
+        <pre><code>func interactuar() -> void:
+	var objeto := rayo.get_collider()
+	if objeto.has_method("interactuar"):
+		objeto.interactuar()</code></pre>
+        <p class="explicacion">Sin nada delante, <code>get_collider()</code> devuelve <code>null</code> (nada), y a «nada» no se le pueden pedir funciones. Falta comprobar antes <code>if not rayo.is_colliding(): return</code>.</p>
+      </div>
+
+      <h2>Grupos: etiquetas para tus nodos</h2>
+      <div class="esencial">
+        <ul>
+          <li>Un <strong>grupo</strong> es una etiqueta que le pones a un nodo: «animales», «cultivos», «rocas». Un nodo puede estar en varios.</li>
+          <li><code>objeto.is_in_group("animales")</code> pregunta si tiene esa etiqueta. Útil cuando algo depende del tipo de cosa: con la regadera solo haces algo si delante hay un cultivo.</li>
+          <li><code>get_tree().get_nodes_in_group("animales")</code> te da un <code>Array</code> con <strong>todos</strong> los nodos del grupo, por ejemplo para dar de comer a todos los animales al empezar el día.</li>
+          <li>Se añaden en la pestaña <strong>Nodo → Grupos</strong>, junto al Inspector.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Al empezar el día quieres que <strong>todas</strong> las vacas de la granja tengan hambre. Están en el grupo «vacas». ¿Qué usas?</p>
+        <button data-opcion="a"><code>rayo.get_collider()</code></button>
+        <button data-opcion="b"><code>is_in_group("vacas")</code></button>
+        <button data-opcion="c"><code>get_tree().get_nodes_in_group("vacas")</code> y un <code>for</code></button>
+        <p class="explicacion">Te da un Array con todas: <code>for vaca in get_tree().get_nodes_in_group("vacas"):</code> y dentro <code>vaca.tener_hambre()</code>. <code>is_in_group</code> solo pregunta por un nodo concreto.</p>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada función con la pregunta que responde:</p>
+        <ul class="pares">
+          <li><span><code>rayo.is_colliding()</code></span><span>¿Toca algo el rayo?</span></li>
+          <li><span><code>rayo.get_collider()</code></span><span>¿Qué cuerpo toca?</span></li>
+          <li><span><code>objeto.has_method("interactuar")</code></span><span>¿Tiene esa función?</span></li>
+          <li><span><code>objeto.is_in_group("vacas")</code></span><span>¿Tiene esa etiqueta?</span></li>
+          <li><span><code>get_tree().get_nodes_in_group("vacas")</code></span><span>¿Cuáles son todos los de ese grupo?</span></li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa el script de la vaca: al interactuar con ella, muge.</p>
+        <pre><code><input data-respuesta="extends"> CharacterBody3D
+
+func <input data-respuesta="interactuar">() -> void:
+	<input data-respuesta="print">("¡Muuu!")</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>¿Y para zonas, como la puerta de la mina?</strong>
+        Para saber cuándo el granjero <strong>entra</strong> en un sitio no hace falta rayo: usa un <code>Area3D</code> con su forma y su señal <code>body_entered</code>, la que viste en la lección de señales.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Añade un <code>RayCast3D</code> llamado <code>Interaccion</code> como hijo de <code>Granjero</code>, con <em>Position Y</em> = 1.</li>
+          <li>En <code>granjero.gd</code>, añade <code>mirando</code>, el <code>@onready</code> del rayo, la función <code>interactuar()</code> y las líneas del final de <code>_physics_process</code>.</li>
+          <li>Crea <code>escenas/buzon.tscn</code>: raíz <code>StaticBody3D</code> llamada <code>Buzon</code>, con un <code>MeshInstance3D</code> (<em>BoxMesh</em> de 0.5 × 1.2 × 0.5, <em>Position Y</em> = 0.6) y un <code>CollisionShape3D</code> con un <em>BoxShape3D</em> igual. Ponle a la raíz el script <code>buzon.gd</code>.</li>
+          <li>Pon el buzón en la granja. Pulsa <kbd>F6</kbd>, ponte delante, mira hacia él y pulsa <kbd>E</kbd>: sale la carta en la Salida. De espaldas, no.</li>
+          <li>Con <code>Buzon</code> seleccionado, ve a <strong>Nodo → Grupos</strong>, pulsa <strong>+</strong>, escribe <code>buzones</code> y <strong>Crear</strong>. En <code>interactuar()</code> del granjero, prueba <code>print(objeto.is_in_group("buzones"))</code>.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const widget = document.getElementById("rayo");
+      const mision = document.getElementById("rayo-mision");
+      const linea = document.getElementById("rayo-linea");
+      const codigo = document.getElementById("rayo-codigo");
+      const consola = document.getElementById("rayo-consola");
+      // Lo que hay alrededor del granjero (metros en x y z) y lo que hace cada cosa.
+      const COSAS = [
+        { x: 1, z: 0, nombre: "Buzon", tipo: "StaticBody3D", metodo: true, texto: "Tienes una carta del alcalde", clave: "buzon" },
+        { x: 0, z: -1, nombre: "Vaca", tipo: "CharacterBody3D", metodo: true, texto: "¡Muuu! La vaca está contenta", clave: "vaca" },
+        { x: -1, z: 0, nombre: "Arbol", tipo: "StaticBody3D", metodo: false },
+        { x: 0, z: 2.5, nombre: "Cama", tipo: "StaticBody3D", metodo: true, texto: "¿Dormir hasta mañana?" }
+      ];
+      const ALCANCE = 1.5;
+      let mirando = { x: 0, z: 1 };
+      const hechos = new Set();
+
+      function vector(v) { return `(${v.x.toFixed(1)}, 0.0, ${v.z.toFixed(1)})`; }
+      function pintar() {
+        const grados = Math.atan2(mirando.z, mirando.x) * 180 / Math.PI;
+        linea.style.transform = `rotate(${grados}deg)`;
+        codigo.innerHTML = [
+          `mirando = ${vector(mirando)}`,
+          `rayo.target_position = mirando * 1.5  # → ${vector({ x: mirando.x * ALCANCE, z: mirando.z * ALCANCE })}`
+        ].map((t) => `<span class="linea">${window.GuiaGodot.resaltar(t)}\n</span>`).join("");
+      }
+
+      // Lo primero que toca el rayo en esa dirección, si está a su alcance.
+      function tocado() {
+        return COSAS.filter((c) => {
+          const delante = c.x * mirando.x + c.z * mirando.z;
+          const lado = Math.abs(c.x * mirando.z - c.z * mirando.x);
+          return delante > 0 && delante <= ALCANCE && lado < 0.3;
+        })[0];
+      }
+
+      widget.querySelectorAll("[data-mirar]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const [x, z] = b.dataset.mirar.split(",").map(Number);
+          mirando = { x, z };
+          pintar();
+        });
+      });
+
+      document.getElementById("rayo-e").addEventListener("click", () => {
+        const cosa = tocado();
+        const lineas = ["interactuar()"];
+        lineas.push(`rayo.is_colliding()  → ${!!cosa}`);
+        if (!cosa) {
+          const lejos = COSAS.find((c) => c.x * mirando.x + c.z * mirando.z > ALCANCE && Math.abs(c.x * mirando.z - c.z * mirando.x) < 0.3);
+          lineas.push(lejos ? `return  (la ${lejos.nombre.toLowerCase()} está a ${lejos.z} m: el rayo solo mide 1.5)` : "return  (no hay nada delante)");
+        } else {
+          lineas.push(`rayo.get_collider()  → ${cosa.nombre} (${cosa.tipo})`);
+          lineas.push(`objeto.has_method("interactuar")  → ${cosa.metodo}`);
+          if (cosa.metodo) {
+            lineas.push(`objeto.interactuar()`);
+            lineas.push(`» ${cosa.texto}`);
+            if (cosa.clave) hechos.add(cosa.clave);
+          } else {
+            lineas.push("(el árbol no tiene interactuar(): no pasa nada, y sin error)");
+          }
+        }
+        consola.textContent = lineas.join("\n");
+        if (widget.classList.contains("superado")) return;
+        if (hechos.has("buzon") && hechos.has("vaca")) {
+          mision.innerHTML = "🎉 <strong>¡Hecho!</strong> El granjero solo pregunta «¿tienes interactuar()?» y cada cosa responde a su manera. Así añadirás cientos de objetos sin tocar el script del granjero.";
+          window.GuiaGodot.resuelto(widget);
+        } else if (cosa && cosa.clave) {
+          consola.textContent += `\n✅ Te falta: ${hechos.has("buzon") ? "saludar a la vaca" : "leer la carta del buzón"}.`;
+        }
+      });
+
+      pintar();
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

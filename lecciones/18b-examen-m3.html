@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Examen del módulo 3 · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="18b-examen-m3">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Examen</span>
+      <h1>Examen del módulo 3</h1>
+
+      <p>Nada nuevo: el granjero entero, mezclado. Si un reto se te atraganta, vuelve a su lección. Al acabar tendrás el primer gran hito de tu juego: <strong>un granjero que camina por tu granja</strong>.</p>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">El jugador mantiene pulsadas <kbd>W</kbd> y <kbd>D</kbd>. ¿Qué devuelve <code>Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")</code>?</p>
+        <button data-opcion="a"><code>(1.0, 1.0)</code></button>
+        <button data-opcion="b"><code>(0.707107, -0.707107)</code></button>
+        <button data-opcion="c"><code>(1.0, -1.0)</code></button>
+        <p class="explicacion">Derecha es x positiva y adelante, y negativa. Y en diagonal el largo se recorta a 1, para no caminar más rápido.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Para dar de comer a la vaca al pulsar <kbd>E</kbd> una vez, ¿qué condición usas?</p>
+        <button data-opcion="a"><code>Input.is_action_pressed("interactuar")</code></button>
+        <button data-opcion="b"><code>Input.get_axis("interactuar", "interactuar")</code></button>
+        <button data-opcion="c"><code>Input.is_action_just_pressed("interactuar")</code></button>
+        <p class="explicacion">Solo es <code>true</code> en el instante de pulsar. Con <code>is_action_pressed</code> le darías de comer en cada fotograma mientras mantienes la tecla.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="6">
+        <p>El granjero camina bien, pero si sale caminando de lo alto de una caja, se queda flotando en el aire. Toca la línea culpable:</p>
+        <pre><code>func _physics_process(delta: float) -> void:
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+	var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	var direccion := Vector3(entrada.x, 0, entrada.y)
+	velocity = direccion * velocidad
+	move_and_slide()</code></pre>
+        <p class="explicacion">Como <code>direccion.y</code> es 0, esa línea borra en cada fotograma la caída que acaba de sumar la gravedad. Hay que cambiar solo <code>velocity.x</code> y <code>velocity.z</code>.</p>
+      </div>
+
+      <div class="error-codigo" data-linea="4">
+        <p>El modelo gira hacia donde caminas, pero la cámara también da vueltas y marea. Toca la línea culpable:</p>
+        <pre><code>func girar_modelo(direccion: Vector3, delta: float) -> void:
+	if direccion != Vector3.ZERO:
+		var angulo := atan2(direccion.x, direccion.z)
+		rotation.y = lerp_angle(rotation.y, angulo, velocidad_giro * delta)</code></pre>
+        <p class="explicacion"><code>rotation.y</code> a secas es la del propio Granjero, y con él giran todos sus hijos, el brazo de la cámara incluido. Debe ser <code>modelo.rotation.y</code>.</p>
+      </div>
+
+      <div class="relacionar">
+        <p>¿Qué usas para cada cosa?</p>
+        <ul class="pares">
+          <li><span>Que el granjero no atraviese las vallas</span><span><code>CharacterBody3D</code> + <code>move_and_slide()</code></span></li>
+          <li><span>Que la cámara no se quede detrás de una pared</span><span><code>SpringArm3D</code></span></li>
+          <li><span>Saber qué tiene delante el granjero</span><span><code>RayCast3D</code></span></li>
+          <li><span>Pasar de «quieto» a «caminar»</span><span><code>AnimationPlayer</code></span></li>
+          <li><span>Cambiar de tecla sin tocar el código</span><span>Acciones del Mapa de Entrada</span></li>
+          <li><span>Encontrar todas las vacas de la granja</span><span>Un grupo</span></li>
+        </ul>
+      </div>
+
+      <div class="ordenar">
+        <p>Ordena lo que hace el granjero en cada fotograma para caminar (cada paso necesita el anterior):</p>
+        <ul class="piezas">
+          <li>Leer las teclas: <code>var entrada := Input.get_vector(…)</code></li>
+          <li>Pasarlas a 3D según la cámara: <code>var direccion := Vector3(entrada.x, 0, entrada.y).rotated(…)</code></li>
+          <li>Poner la velocidad: <code>velocity.x = direccion.x * velocidad</code> (y la z)</li>
+          <li>Moverse chocando: <code>move_and_slide()</code></li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">El modelo mira a 170° y quieres que gire suave hasta −170°. ¿Qué usas?</p>
+        <button data-opcion="a"><code>lerp_angle(modelo.rotation.y, angulo, peso)</code></button>
+        <button data-opcion="b"><code>lerp(modelo.rotation.y, angulo, peso)</code></button>
+        <button data-opcion="c"><code>modelo.rotation.y = angulo</code></button>
+        <p class="explicacion"><code>lerp_angle</code> gira 20° por el camino corto. <code>lerp</code> daría casi una vuelta entera (340°), y la asignación directa giraría de golpe.</p>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">¿Qué pasa con <code>var rayo: RayCast3D = $Interaccion</code>, <strong>sin</strong> <code>@onready</code>?</p>
+        <button data-opcion="a">Funciona igual.</button>
+        <button data-opcion="b">Error: cuando se crea la variable, los hijos todavía no están en la escena.</button>
+        <button data-opcion="c">El rayo apunta hacia abajo.</button>
+        <p class="explicacion"><code>@onready</code> espera a que la escena esté lista para buscar el nodo. Godot incluso te lo sugiere en el mensaje de error.</p>
+      </div>
+
+      <div class="completar">
+        <p>Completa la interacción, sin que falle cuando no hay nada delante:</p>
+        <pre><code>func interactuar() -> void:
+	if not rayo.<input data-respuesta="is_colliding">():
+		return
+	var objeto := rayo.<input data-respuesta="get_collider">()
+	if objeto.<input data-respuesta="has_method">("interactuar"):
+		objeto.interactuar()</code></pre>
+      </div>
+
+      <h2>Tu granjero, completo</h2>
+      <p>Así queda <code>granjero.gd</code> con todo el módulo. Compáralo con el tuyo: si cambiaste los nombres de las animaciones por los de tu modelo, déjalos.</p>
+
+      <pre><code class="gdscript">extends CharacterBody3D
+
+@export var velocidad: float = 4.0
+@export var velocidad_giro: float = 10.0
+
+var mirando := Vector3.BACK
+
+@onready var modelo: Node3D = $Modelo
+@onready var animaciones: AnimationPlayer = $Modelo/AnimationPlayer
+@onready var brazo: SpringArm3D = $BrazoCamara
+@onready var rayo: RayCast3D = $Interaccion
+
+
+func _physics_process(delta: float) -> void:
+	# Girar la cámara con Q y R.
+	var giro := Input.get_axis("camara_izquierda", "camara_derecha")
+	brazo.rotation.y += giro * 2.0 * delta
+
+	# Gravedad.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Caminar según la cámara.
+	var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+	var direccion := Vector3(entrada.x, 0, entrada.y).rotated(Vector3.UP, brazo.rotation.y)
+	velocity.x = direccion.x * velocidad
+	velocity.z = direccion.z * velocidad
+	move_and_slide()
+
+	girar_modelo(direccion, delta)
+	animar(direccion)
+
+	# Interactuar con lo que hay delante.
+	if direccion != Vector3.ZERO:
+		mirando = direccion
+	rayo.target_position = mirando * 1.5
+	if Input.is_action_just_pressed("interactuar"):
+		interactuar()
+
+
+func girar_modelo(direccion: Vector3, delta: float) -> void:
+	if direccion != Vector3.ZERO:
+		var angulo := atan2(direccion.x, direccion.z)
+		modelo.rotation.y = lerp_angle(modelo.rotation.y, angulo, velocidad_giro * delta)
+
+
+func animar(direccion: Vector3) -> void:
+	if direccion != Vector3.ZERO:
+		animaciones.play("caminar")
+	else:
+		animaciones.play("quieto")
+
+
+func interactuar() -> void:
+	if not rayo.is_colliding():
+		return
+	var objeto := rayo.get_collider()
+	if objeto.has_method("interactuar"):
+		objeto.interactuar()</code></pre>
+
+      <p>Y la escena <code>granjero.tscn</code>:</p>
+      <pre><code>Granjero (CharacterBody3D)            ← granjero.gd
+├─ Modelo (tu .glb)                   ← Scale a tu gusto
+│  └─ AnimationPlayer
+├─ Colision (CollisionShape3D)        ← CapsuleShape3D · Position Y = 1
+├─ BrazoCamara (SpringArm3D)          ← Position Y = 1.5 · Rotation X = -50 · Spring Length = 8
+│  └─ Camara (Camera3D)
+└─ Interaccion (RayCast3D)            ← Position Y = 1</code></pre>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Repasa tu <code>granjero.gd</code> hasta que haga lo mismo que el de arriba.</li>
+          <li>Pulsa <kbd>F6</kbd> en la granja: el granjero cae al suelo, camina con WASD (o con el mando) y choca con las vallas deslizándose.</li>
+          <li>La cámara le sigue desde arriba y se encoge al pasar junto a una pared alta.</li>
+          <li>Con <kbd>Q</kbd> y <kbd>R</kbd> la cámara gira, y aun así <kbd>W</kbd> siempre va hacia el fondo de la pantalla.</li>
+          <li>El modelo gira suave hacia donde caminas y cambia entre «quieto» y «caminar».</li>
+          <li>Delante del buzón, <kbd>E</kbd> escribe la carta en la Salida; de espaldas, no pasa nada (y no da error).</li>
+          <li>🎉 <strong>Hito 1 conseguido.</strong> Guarda una copia del proyecto antes de seguir: en la fase 2 empieza la granja de verdad.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

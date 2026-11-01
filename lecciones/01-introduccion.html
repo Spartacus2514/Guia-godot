@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Qué es Godot? · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="01-introduccion">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 1 · Lección 1</span>
+      <h1>¿Qué es Godot?</h1>
+
+      <div class="esencial">
+        <ul>
+          <li><strong>Godot</strong> es un motor para crear juegos 2D y 3D, como tu granja.</li>
+          <li>Es <strong>gratis y libre</strong> (licencia MIT): sin pagos ni royalties, aunque vendas tu juego.</li>
+          <li>No se instala: <strong>descargas, descomprimes y abres</strong>.</li>
+          <li>Se programa en <strong>GDScript</strong>, un lenguaje sencillo pensado para juegos. Será tu primer lenguaje y lo aprenderás aquí desde cero.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Terminas tu juego de granja y lo vendes. ¿Cuánto pagas a Godot?</p>
+        <button data-opcion="a">Un 5 % de los ingresos.</button>
+        <button data-opcion="b">Una licencia anual.</button>
+        <button data-opcion="c">Nada.</button>
+        <p class="explicacion">La licencia MIT permite cualquier uso, también comercial, gratis.</p>
+      </div>
+
+      <h2>El proyecto</h2>
+      <p>Descárgalo en <a href="https://godotengine.org/download" target="_blank" rel="noopener">godotengine.org/download</a> (versión <strong>estándar</strong>; la <em>.NET</em> es solo para C#).</p>
+
+      <div class="ordenar">
+        <p>Ordena los pasos para crear un proyecto:</p>
+        <ul class="piezas">
+          <li>Descargar Godot (versión estándar)</li>
+          <li>Descomprimir y abrir el ejecutable</li>
+          <li>En el gestor de proyectos, pulsar «Crear»</li>
+          <li>Poner nombre y elegir una carpeta vacía</li>
+          <li>Pulsar «Crear y editar»</li>
+        </ul>
+      </div>
+
+      <div class="esencial">
+        <p>Al crear el proyecto, Godot te pide un <strong>renderizador</strong>: la parte del motor que dibuja los gráficos. Hay tres:</p>
+        <ul>
+          <li><strong>Forward+</strong> (el que viene por defecto): el más completo, con las mejores luces y sombras. Para <strong>juegos 3D de PC</strong>.</li>
+          <li><strong>Mobile</strong>: más ligero, pensado para móviles.</li>
+          <li><strong>Compatibility</strong>: el más sencillo. Para juegos en el <strong>navegador</strong> u ordenadores muy antiguos.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="a">
+        <p class="pregunta">Tu juego es en 3D y para PC. ¿Qué renderizador eliges al crear el proyecto?</p>
+        <button data-opcion="a">Forward+</button>
+        <button data-opcion="b">Compatibility</button>
+        <button data-opcion="c">Da igual.</button>
+        <p class="explicacion"><em>Forward+</em> (el que viene por defecto) es el más completo para 3D en PC: mejores luces, sombras y efectos. <em>Compatibility</em> es para web u ordenadores muy antiguos.</p>
+      </div>
+
+      <h2>Los archivos que verás</h2>
+      <div class="esencial">
+        <ul>
+          <li><code>project.godot</code>: la configuración del proyecto. Es lo que hace que una carpeta sea un proyecto de Godot.</li>
+          <li><code>.tscn</code>: una <strong>escena</strong> (tu granja, el granjero, una vaca…). Lo verás en la lección 3.</li>
+          <li><code>.gd</code>: un <strong>script</strong>, es decir, un archivo con código GDScript.</li>
+          <li><code>.glb</code>: un <strong>modelo 3D</strong>, por ejemplo hecho en Blender.</li>
+          <li><code>res://</code>: así llama Godot a la <strong>carpeta raíz</strong> de tu proyecto. Todas las rutas empiezan así.</li>
+        </ul>
+      </div>
+      <div class="relacionar">
+        <p>Une cada archivo o ruta con lo que es:</p>
+        <ul class="pares">
+          <li><span><code>project.godot</code></span><span>Configuración del proyecto</span></li>
+          <li><span><code>.tscn</code></span><span>Una escena (tu granja, el granjero, una vaca…)</span></li>
+          <li><span><code>.gd</code></span><span>Un script de GDScript</span></li>
+          <li><span><code>.glb</code></span><span>Un modelo 3D (por ejemplo, de Blender)</span></li>
+          <li><span><code>res://</code></span><span>La carpeta raíz del proyecto</span></li>
+        </ul>
+      </div>
+
+      <div class="consejo">
+        <strong>Ordena tu proyecto desde el principio</strong>
+        Un juego como el tuyo tendrá cientos de archivos. Una estructura que funciona bien:
+        <code>escenas/</code>, <code>scripts/</code>, <code>modelos/</code>, <code>texturas/</code>, <code>sonidos/</code>, <code>datos/</code>.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Abre tu proyecto en Godot (o créalo con <em>Forward+</em> si aún no lo tienes).</li>
+          <li>Comprueba la versión en la esquina inferior derecha del editor: debe empezar por <strong>4.</strong> (también está en <em>Ayuda → Acerca de Godot</em>).</li>
+          <li>Crea las carpetas <code>escenas</code>, <code>scripts</code> y <code>modelos</code> en el Sistema de archivos (clic derecho → Crear nueva → Carpeta).</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>

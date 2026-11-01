@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moverse según la cámara y girar el modelo · Guía Godot</title>
+  <link rel="stylesheet" href="../css/estilos.css">
+</head>
+<body data-leccion="16-girar-modelo">
+  <button class="boton secundario" id="boton-menu">☰ Índice</button>
+  <div class="leccion">
+    <nav id="lateral"></nav>
+    <main class="contenido">
+      <span class="etiqueta-modulo">Módulo 3 · Lección 4</span>
+      <h1>Moverse según la cámara y girar el modelo</h1>
+
+      <div class="esencial">
+        <ul>
+          <li>Si la cámara gira, «adelante» debe ser <strong>hacia donde mira la cámara</strong>, no la −Z del mundo.</li>
+          <li>Solución: girar la dirección de las teclas <strong>lo mismo que el brazo</strong>, con <code>.rotated(Vector3.UP, brazo.rotation.y)</code>. Gira el vector alrededor del eje vertical (<code>UP</code>) ese ángulo.</li>
+          <li>Con <code>rotation.y = 0</code> (cámara sin girar), <code>rotated</code> no cambia nada: por eso hasta ahora funcionaba.</li>
+        </ul>
+      </div>
+
+      <pre><code class="gdscript">var entrada := Input.get_vector("mover_izquierda", "mover_derecha", "mover_adelante", "mover_atras")
+var direccion := Vector3(entrada.x, 0, entrada.y).rotated(Vector3.UP, brazo.rotation.y)</code></pre>
+
+      <div class="widget reto" id="relativo">
+        <p class="widget-titulo">🧭 Reto: que W vaya hacia el fondo (vista desde arriba)</p>
+        <p class="widget-info" id="relativo-mision">Gira la cámara y consigue que, al pulsar W, el granjero <strong>se aleje de la cámara</strong>: hacia el fondo de lo que ve.</p>
+        <div class="controles">
+          <button class="boton secundario" id="relativo-q">Q ⟲ girar −90°</button>
+          <button class="boton secundario" id="relativo-r">R ⟳ girar +90°</button>
+          <label>Código:
+            <select id="relativo-codigo">
+              <option value="sin">Sin rotated: Vector3(entrada.x, 0, entrada.y)</option>
+              <option value="con">Con rotated: Vector3(entrada.x, 0, entrada.y).rotated(Vector3.UP, brazo.rotation.y)</option>
+            </select>
+          </label>
+        </div>
+        <div class="mapa-contenedor">
+          <div class="mapa" id="relativo-mapa">
+            <span class="eje eje-x">X →</span>
+            <span class="eje eje-z">↑ −Z</span>
+            <div class="ficha" id="relativo-cam">🎥</div>
+            <div class="ficha granjero" id="relativo-granjero">🧑‍🌾</div>
+          </div>
+        </div>
+        <pre class="codigo-vivo"><code id="relativo-codigo-vivo"></code></pre>
+        <div class="controles"><button class="boton" id="relativo-w">W ▲ caminar 2 m</button></div>
+        <div class="consola" id="relativo-consola"></div>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta">Tu cámara está fija y nunca gira: <code>brazo.rotation.y</code> siempre vale 0. ¿Necesitas el <code>.rotated(…)</code>?</p>
+        <button data-opcion="a">Sí, o el granjero caminará al revés.</button>
+        <button data-opcion="b">No hace falta: girar 0 deja la dirección igual. Pero ponerlo no estorba y te deja girar la cámara en el futuro.</button>
+        <button data-opcion="c">Sí, porque sin él no funciona la gravedad.</button>
+        <p class="explicacion">Girar un vector 0 radianes lo deja igual. Déjalo puesto: si un día añades una cámara que gira (o cambias de ángulo en una escena), el movimiento seguirá siendo correcto.</p>
+      </div>
+
+      <h2>El modelo mira hacia donde camina</h2>
+      <div class="esencial">
+        <ul>
+          <li>Gira <strong>solo el <code>Modelo</code></strong>, no el <code>Granjero</code>. Si giras el Granjero, giran todos sus hijos… ¡también el brazo de la cámara!</li>
+          <li><code>atan2(direccion.x, direccion.z)</code> convierte una dirección en el <strong>ángulo Y</strong> que hace mirar al modelo hacia ella. Cuenta con que el modelo mira hacia <strong>+Z</strong>, que es como vienen los modelos <code>.glb</code> importados (Godot lo llama <code>Vector3.MODEL_FRONT</code>).</li>
+          <li>Con <code>modelo.rotation.y = angulo</code> se giraría <strong>de golpe</strong>. Para girarlo suave se usa una <strong>interpolación</strong>.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="c">
+        <p class="pregunta">Para girar al granjero pones el giro en el propio <code>Granjero</code> (<code>rotation.y = angulo</code>) y, al caminar, la cámara empieza a dar vueltas. ¿Por qué?</p>
+        <button data-opcion="a">Porque el <code>SpringArm3D</code> se encoge al girar.</button>
+        <button data-opcion="b">Porque <code>atan2</code> devuelve el ángulo en grados.</button>
+        <button data-opcion="c">Porque el brazo de la cámara es hijo del Granjero y gira con él.</button>
+        <p class="explicacion">Los hijos heredan el movimiento <strong>y el giro</strong> del padre. Por eso el modelo va en su propio nodo: gira él solo y la cámara se queda quieta.</p>
+      </div>
+
+      <h2>Interpolar: acercarse poco a poco</h2>
+      <div class="esencial">
+        <ul>
+          <li><code>lerp(a, b, peso)</code> da un valor <strong>entre</strong> a y b: con peso 0 da a, con 1 da b, y con 0.5, el punto medio. <code>lerp(0, 10, 0.5)</code> = 5 y <code>lerp(0, 10, 0.1)</code> = 1.</li>
+          <li>Si en cada fotograma haces <code>x = lerp(x, objetivo, peso)</code>, x avanza ese trozo del camino que le queda: rápido al principio y frenando al llegar. Un giro suave.</li>
+          <li>Para ángulos se usa <code>lerp_angle</code>, que gira por el <strong>camino corto</strong>. Con <code>lerp</code>, pasar de 172° a −172° (casi la misma dirección) daría casi una vuelta entera.</li>
+        </ul>
+      </div>
+
+      <div class="quiz" data-respuesta="b">
+        <p class="pregunta"><code>x</code> vale 0 y en cada fotograma haces <code>x = lerp(x, 10, 0.5)</code>. Tras el primero vale 5. ¿Cuánto vale tras el <strong>segundo</strong>?</p>
+        <button data-opcion="a">10</button>
+        <button data-opcion="b">7.5</button>
+        <button data-opcion="c">5</button>
+        <p class="explicacion">Ahora va de 5 a 10: la mitad es 7.5. Luego 8.75, 9.375… cada vez se acerca menos. Esa frenada final es lo que hace que el giro se vea suave.</p>
+      </div>
+
+      <div class="widget reto" id="giro">
+        <p class="widget-titulo">🔄 Reto: gira por el camino corto (vista desde arriba)</p>
+        <p class="widget-info" id="giro-mision">El granjero mira casi hacia arriba (172°, <code>rotation.y</code> = 3.0) y pulsas para que mire a −172° (−3.0), casi la misma dirección. Elige la función que lo gira <strong>por el camino corto</strong>.</p>
+        <div class="controles">
+          <label>Código:
+            <select id="giro-funcion">
+              <option value="lerp">lerp(modelo.rotation.y, angulo, 0.15)</option>
+              <option value="lerp_angle">lerp_angle(modelo.rotation.y, angulo, 0.15)</option>
+            </select>
+          </label>
+          <button class="boton" id="giro-ejecutar">▶ Girar</button>
+        </div>
+        <div class="dial-contenedor">
+          <div class="dial">
+            <div class="dial-objetivo" id="giro-objetivo"></div>
+            <div class="dial-aguja" id="giro-aguja"></div>
+            <span class="dial-centro">🧑‍🌾</span>
+          </div>
+        </div>
+        <div class="consola" id="giro-consola"></div>
+      </div>
+
+      <pre><code class="gdscript">@export var velocidad_giro: float = 10.0
+
+@onready var modelo: Node3D = $Modelo
+
+
+func girar_modelo(direccion: Vector3, delta: float) -> void:
+	if direccion != Vector3.ZERO:
+		var angulo := atan2(direccion.x, direccion.z)
+		modelo.rotation.y = lerp_angle(modelo.rotation.y, angulo, velocidad_giro * delta)</code></pre>
+
+      <div class="esencial">
+        <ul>
+          <li><code>if direccion != Vector3.ZERO</code>: solo gira mientras caminas. Al soltar las teclas, el modelo sigue mirando hacia donde iba (si no, <code>atan2(0, 0)</code> da 0 y se volvería hacia la cámara).</li>
+          <li><code>velocidad_giro * delta</code>: con 10 y 60 fotogramas por segundo, el peso es 0.17 en cada fotograma. Súbelo para girar más rápido.</li>
+          <li>La función se llama desde <code>_physics_process</code> con <code>girar_modelo(direccion, delta)</code>, después de <code>move_and_slide()</code>.</li>
+        </ul>
+      </div>
+
+      <div class="relacionar">
+        <p>Une cada función con lo que hace:</p>
+        <ul class="pares">
+          <li><span><code>.rotated(Vector3.UP, a)</code></span><span>Gira un vector alrededor del eje vertical</span></li>
+          <li><span><code>atan2(d.x, d.z)</code></span><span>Pasa una dirección a un ángulo Y</span></li>
+          <li><span><code>lerp(a, b, peso)</code></span><span>Un valor entre a y b</span></li>
+          <li><span><code>lerp_angle(a, b, peso)</code></span><span>Un ángulo entre a y b, por el camino corto</span></li>
+        </ul>
+      </div>
+
+      <div class="completar">
+        <p>Completa: la dirección según la cámara y el giro suave del modelo.</p>
+        <pre><code>var direccion := Vector3(entrada.x, 0, entrada.y).<input data-respuesta="rotated">(Vector3.UP, brazo.rotation.y)
+if direccion != Vector3.<input data-respuesta="ZERO">:
+	var angulo := <input data-respuesta="atan2">(direccion.x, direccion.z)
+	modelo.rotation.y = <input data-respuesta="lerp_angle">(modelo.rotation.y, angulo, velocidad_giro * delta)</code></pre>
+      </div>
+
+      <div class="consejo">
+        <strong>¿Tu modelo camina de espaldas?</strong>
+        Algunos modelos miran hacia −Z en vez de +Z. Usa <code>atan2(-direccion.x, -direccion.z)</code>: le das la vuelta a la dirección y el modelo queda de frente.
+      </div>
+
+      <div class="en-tu-juego">
+        <ul>
+          <li>Para ver hacia dónde mira la cápsula, ponle una «nariz»: un <code>MeshInstance3D</code> con un <em>BoxMesh</em> pequeño (0.2 × 0.2 × 0.2) como hijo de <code>Modelo</code>, con <em>Position Z</em> = 0.5 (su frente, +Z).</li>
+          <li>En <code>granjero.gd</code>, añade <code>.rotated(Vector3.UP, brazo.rotation.y)</code> a la línea de <code>direccion</code>.</li>
+          <li>Añade <code>velocidad_giro</code>, el <code>@onready</code> del modelo y la función <code>girar_modelo</code>, y llámala después de <code>move_and_slide()</code>.</li>
+          <li>Pulsa <kbd>F6</kbd>: la nariz apunta hacia donde caminas y gira suave. Gira la cámara con <kbd>Q</kbd> y pulsa <kbd>W</kbd>: el granjero va hacia el fondo de la pantalla.</li>
+          <li>Prueba <code>velocidad_giro</code> = 3 y = 30 en el Inspector y quédate con el que más te guste.</li>
+        </ul>
+      </div>
+
+      <div id="navegacion"></div>
+    </main>
+  </div>
+
+  <script src="../js/curso.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    (function () {
+      const LIMITE = 5;
+      const aPorcentaje = (v) => ((v + LIMITE) / (2 * LIMITE)) * 100 + "%";
+      const num = (n) => (Math.abs(n) < 0.005 ? "0.0" : (Math.round(n * 100) / 100).toString().replace(/^(-?\d+)$/, "$1.0"));
+
+      // ---- Reto 1: moverse según la cámara ----
+      const w1 = document.getElementById("relativo");
+      const mision1 = document.getElementById("relativo-mision");
+      const cam = document.getElementById("relativo-cam");
+      const granjero = document.getElementById("relativo-granjero");
+      const selCodigo = document.getElementById("relativo-codigo");
+      const vivo = document.getElementById("relativo-codigo-vivo");
+      const consola1 = document.getElementById("relativo-consola");
+      let giros = 0;   // en cuartos de vuelta: brazo.rotation.y = giros * PI/2
+      let ocupado = false;
+
+      const yaw = () => giros * Math.PI / 2;
+      function colocar(f, p) { f.style.left = aPorcentaje(p.x); f.style.top = aPorcentaje(p.z); }
+      function pintar1() {
+        const a = yaw();
+        colocar(cam, { x: 3.5 * Math.sin(a), z: 3.5 * Math.cos(a) });
+        let grados = ((giros * 90) % 360 + 540) % 360 - 180;
+        if (grados === -180) grados = 180;
+        const radianes = grados === 0 ? "0.0" : (grados === 180 ? "PI" : (grados > 0 ? "PI / 2" : "-PI / 2"));
+        vivo.innerHTML = [
+          `brazo.rotation.y = ${radianes}  # ${grados}°`,
+          `var direccion := ${selCodigo.value === "con" ? "Vector3(entrada.x, 0, entrada.y).rotated(Vector3.UP, brazo.rotation.y)" : "Vector3(entrada.x, 0, entrada.y)"}`
+        ].map((t) => `<span class="linea">${window.GuiaGodot.resaltar(t)}\n</span>`).join("");
+      }
+      document.getElementById("relativo-q").addEventListener("click", () => { if (!ocupado) { giros--; pintar1(); } });
+      document.getElementById("relativo-r").addEventListener("click", () => { if (!ocupado) { giros++; pintar1(); } });
+      selCodigo.addEventListener("change", pintar1);
+      document.getElementById("relativo-w").addEventListener("click", () => {
+        if (ocupado) return;
+        ocupado = true;
+        const a = yaw();
+        // W = entrada (0, -1) → Vector3(0, 0, -1), girado o no.
+        const d = selCodigo.value === "con" ? { x: -Math.sin(a), z: -Math.cos(a) } : { x: 0, z: -1 };
+        colocar(granjero, { x: 2 * d.x, z: 2 * d.z });
+        // Hacia dónde mira la cámara (su −Z) y su derecha (su +X).
+        const fondo = { x: -Math.sin(a), z: -Math.cos(a) };
+        const derecha = { x: Math.cos(a), z: -Math.sin(a) };
+        const alFondo = d.x * fondo.x + d.z * fondo.z;
+        const aLaDerecha = d.x * derecha.x + d.z * derecha.z;
+        let vista;
+        if (alFondo > 0.9) vista = "se aleja de la cámara: hacia el fondo ✅";
+        else if (alFondo < -0.9) vista = "viene hacia la cámara ❌";
+        else vista = (aLaDerecha > 0 ? "va hacia la derecha de la pantalla" : "va hacia la izquierda de la pantalla") + " ❌";
+        consola1.textContent = `direccion = (${num(d.x)}, 0.0, ${num(d.z)})\nDesde la cámara, el granjero ${vista}`;
+        const girada = giros % 4 !== 0;
+        if (alFondo > 0.9 && girada && !w1.classList.contains("superado")) {
+          mision1.innerHTML = "🎉 <strong>¡Eso es!</strong> Con <code>rotated</code>, «adelante» siempre es hacia donde mira la cámara, la gires como la gires.";
+          window.GuiaGodot.resuelto(w1);
+        } else if (alFondo > 0.9 && !girada && !w1.classList.contains("superado")) {
+          consola1.textContent += "\nCon la cámara sin girar, cualquiera de los dos códigos funciona. Gírala con Q o R.";
+        }
+        setTimeout(() => { colocar(granjero, { x: 0, z: 0 }); ocupado = false; }, 1300);
+      });
+      colocar(granjero, { x: 0, z: 0 });
+      pintar1();
+
+      // ---- Reto 2: lerp o lerp_angle ----
+      const w2 = document.getElementById("giro");
+      const mision2 = document.getElementById("giro-mision");
+      const aguja = document.getElementById("giro-aguja");
+      const objetivo = document.getElementById("giro-objetivo");
+      const consola2 = document.getElementById("giro-consola");
+      const DESDE = 3.0, HASTA = -3.0;
+      let girando = false;
+      // En pantalla: ángulo 0 = mira hacia abajo (+Z, hacia la cámara). CSS gira en el otro sentido.
+      const css = (r) => `rotate(${-r * 180 / Math.PI}deg)`;
+      aguja.style.transform = css(DESDE);
+      objetivo.style.transform = css(HASTA);
+
+      // lerp_angle de Godot: va por el camino corto.
+      function lerpAngle(a, b, t) {
+        const dif = ((b - a) % (2 * Math.PI) + 3 * Math.PI) % (2 * Math.PI) - Math.PI;
+        return a + dif * t;
+      }
+
+      document.getElementById("giro-ejecutar").addEventListener("click", () => {
+        if (girando) return;
+        girando = true;
+        const corto = document.getElementById("giro-funcion").value === "lerp_angle";
+        let r = DESDE, recorrido = 0, frame = 0;
+        const valores = [];
+        function paso() {
+          const nuevo = corto ? lerpAngle(r, HASTA, 0.15) : r + (HASTA - r) * 0.15;
+          recorrido += Math.abs(nuevo - r);
+          r = nuevo;
+          frame++;
+          if (frame <= 4) valores.push(r.toFixed(2));
+          aguja.style.transform = css(r);
+          if (frame < 40) { setTimeout(paso, 40); return; }
+          girando = false;
+          const grados = Math.round(recorrido * 180 / Math.PI);
+          consola2.textContent = `rotation.y: 3.0 → ${valores.join(" → ")} → …\nHa girado ${grados}°` +
+            (corto ? ": el camino corto, pasando por 180° (PI)." : ": ¡casi una vuelta entera! lerp no sabe que 172° y −172° están al lado.");
+          if (corto && !w2.classList.contains("superado")) {
+            mision2.innerHTML = "🎉 <strong>¡Perfecto!</strong> <code>lerp_angle</code> sabe que los ángulos dan la vuelta y elige el camino corto.";
+            window.GuiaGodot.resuelto(w2);
+          } else if (!corto) {
+            window.GuiaGodot.sacudir(aguja.parentElement);
+          }
+          setTimeout(() => { if (!girando) aguja.style.transform = css(DESDE); }, 1500);
+        }
+        aguja.style.transform = css(DESDE);
+        setTimeout(paso, 300);
+      });
+    })();
+  </script>
+  <script src="../js/nube.js"></script>
+</body>
+</html>
